@@ -1,0 +1,2 @@
+/Users/ludoviccabre/Documents/workspace/KikinVideo/Classes/PListFile.m:68: warning: property 'fileName' requires method '-fileName' to be defined - use @synthesize, @dynamic or provide a method implementation
+/Users/ludoviccabre/Documents/workspace/KikinVideo/Classes/PListFile.m:68: warning: property 'fileName' requires the method 'setFileName:' to be defined - use @synthesize, @dynamic or provide a method implementation
