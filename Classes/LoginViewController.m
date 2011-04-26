@@ -79,6 +79,7 @@
 
 - (void) onClickConnectButton: (UIButton*)sender {
 	facebook.sessionDelegate = self;
+	[facebook removeAllCookies];
 	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
 }
 

@@ -52,6 +52,8 @@
 
 - (BOOL)handleOpenURL:(NSURL *)url;
 
+- (void) removeAllCookies;
+
 - (void)logout:(id<FBSessionDelegate>)delegate;
 
 - (FBRequest*)requestWithParams:(NSMutableDictionary *)params

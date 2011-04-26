@@ -247,6 +247,7 @@
 		3591FF7D136220F40000A814 /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF77136220F40000A814 /* FBDialog.m */; };
 		3591FF7E136220F40000A814 /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF79136220F40000A814 /* FBLoginDialog.m */; };
 		3591FF7F136220F40000A814 /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF7B136220F40000A814 /* FBRequest.m */; };
+		35CDF20F1367483D006CF279 /* NoImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 35CDF20E1367483D006CF279 /* NoImage.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -540,6 +541,7 @@
 		3591FF79136220F40000A814 /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginDialog.m; sourceTree = "<group>"; };
 		3591FF7A136220F40000A814 /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRequest.h; sourceTree = "<group>"; };
 		3591FF7B136220F40000A814 /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
+		35CDF20E1367483D006CF279 /* NoImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoImage.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* KikinVideo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "KikinVideo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -935,6 +937,7 @@
 		357A201A1318A2230050C2CA /* images */ = {
 			isa = PBXGroup;
 			children = (
+				35CDF20E1367483D006CF279 /* NoImage.png */,
 				357A20C6131BFA4C0050C2CA /* kikin_logo.png */,
 				357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */,
 			);
@@ -1241,6 +1244,7 @@
 				357A20201318A22E0050C2CA /* kikin_logo_bottom_right.gif in Resources */,
 				357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */,
 				359108FC13661F670000A814 /* AppIcon.png in Resources */,
+				35CDF20F1367483D006CF279 /* NoImage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

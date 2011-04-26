@@ -342,6 +342,16 @@ static NSString* kSDKVersion = @"2";
   }
 }
 
+- (void) removeAllCookies {
+	NSHTTPCookieStorage* cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+	NSArray* facebookCookies = [cookies cookiesForURL:
+								[NSURL URLWithString:@"http://login.facebook.com"]];
+	
+	for (NSHTTPCookie* cookie in facebookCookies) {
+		[cookies deleteCookie:cookie];
+	}
+}
+
 /**
  * Make a request to Facebook's REST API with the given
  * parameters. One of the parameter keys must be "method" and its value

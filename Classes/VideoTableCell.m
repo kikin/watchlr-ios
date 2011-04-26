@@ -49,15 +49,19 @@
 }
 
 - (void) loadImage: (NSString*)imageUrl {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	NSURL *url = [NSURL URLWithString:imageUrl];
-	NSData *data = [NSData dataWithContentsOfURL:url];
-	UIImage *img = [[UIImage alloc] initWithData:data];
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-	[videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+	NSURL* url = [NSURL URLWithString:imageUrl];
+	NSData* data = [NSData dataWithContentsOfURL:url];
+	if (data != nil) {
+		UIImage* img = [[UIImage alloc] initWithData:data];
+		if (img != nil) {
+			[videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+			[img release];
+		}
+	}
 	
-	[img release];
-    [pool release];
+	[pool release];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
@@ -100,7 +104,7 @@
 	}
 	
 	// update image
-	videoImageView.image = nil;
+	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
 	NSThread* myThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.imageUrl];
 	[myThread start];
 }
