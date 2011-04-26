@@ -7,60 +7,67 @@
 //
 
 #import "KikinVideoAppDelegate.h"
-
+#import "LoginViewController.h"
+#import <libkern/OSMemoryNotification.h>
+#import "UserObject.h"
+#import "MostViewedViewController.h"
 
 @implementation KikinVideoAppDelegate
 
-@synthesize window, viewController;
-
-#pragma mark -
-#pragma mark Application lifecycle
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
-    // Override point for customization after app launch.
-    
-    // Add the tab bar controller's current view as a subview of the window
-    [self.window addSubview:viewController.view];
-    [self.window makeKeyAndVisible];
-    
+	// create the main window
+	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+	window.backgroundColor = [UIColor whiteColor];
+	
+	//UserObject* user = [UserObject getUser];
+	//if (user.sessionId != nil) {
+	//	// create the list view
+	//	viewController = [[MostViewedViewController alloc] init];
+	//} else {
+		// create the login view
+		viewController = [[LoginViewController alloc] init];
+	//}
+	window.rootViewController = viewController;
+	[window makeKeyAndVisible];
+	
     return YES;
 }
 
-
 - (void)applicationWillResignActive:(UIApplication *)application {
-    /*
-     Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-     Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-     */
+	// track the stop time
+	if (startDate != nil) {
+		NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
+		LOG_EVENT(@"eventStopApp", LOGGER_LOCATION_APP, [NSString stringWithFormat:@"%ld", (int)time]);
+	} else {
+		LOG_EVENT(@"eventStopApp", LOGGER_LOCATION_APP, @"no_date");
+	}
 }
-
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    /*
-     Restart any tasks that were paused (or not yet started) while the application was inactive.
-     */
+	// update the start date
+	[startDate release], startDate = nil;
+	startDate = [[NSDate alloc] init];
+	
+	// track that
+	LOG_EVENT(@"eventStartApp", LOGGER_LOCATION_APP);
 }
-
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    /*
-     Called when the application is about to terminate.
-     */
+
 }
-
-
-#pragma mark -
-#pragma mark Memory management
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    /*
-     Free up as much memory as possible by purging cached data objects that can be recreated (or reloaded from disk) later.
-     */
+#if !TARGET_IPHONE_SIMULATOR
+	// track if the application receive fatal memory issues
+	int level = OSMemoryNotificationCurrentLevel();
+	if (level > OSMemoryNotificationLevelWarning) {
+		LOG_ERROR(@"memory warning level %ld", level);
+	}
+#endif
 }
 
-
 - (void)dealloc {
+	[startDate release];
     [viewController release];
     [window release];
     [super dealloc];

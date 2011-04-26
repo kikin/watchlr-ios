@@ -11,22 +11,23 @@
 
 @implementation LinkDeviceRequest
 
-- (void) doLinkDeviceRequest:(NSString*)token {
+- (void) doLinkDeviceRequest:(NSString*)facebookId {
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-	[params setObject:token forKey:@"token"];
+	[params setObject:facebookId forKey:@"id"];
 	
 	// do request	
-	[self doGetRequest:@"http://video.kikin.com/api/enable" params:params];
+	[self doGetRequest:@"http://video.kikin.com/api/fb_swap" params:params];
 }
 
 - (void) onRequestSuccess: (id)jsonObject {
 	LinkDeviceResponse* response = [[LinkDeviceResponse alloc] initWithResponse:jsonObject];
-	[successHandlerObject performSelector:successHandlerSelector withObject:response];
+	[successCallback execute:response];
+	[response release];
 }
 
 - (void) onRequestFailed: (NSString*)errorMessage {
-	[errorHandlerObject performSelector:errorHandlerSelector withObject:errorMessage];
+	[errorCallback execute:errorMessage];
 }
 
 @end

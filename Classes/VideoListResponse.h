@@ -7,18 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DefaultResponse.h"
 
-
-@interface VideoListResponse : NSObject {
+@interface VideoListResponse : DefaultResponse {
 	int			count;
 	int			start;
 	NSMutableArray* videos;
 }
 
+- (NSArray*) videos;
 - (id) initWithResponse: (id)jsonObject;
-
-@property(nonatomic) int count;
-@property(nonatomic) int start;
-@property(nonatomic,copy) NSMutableArray* videos;
 
 @end

@@ -1,33 +1,29 @@
 //
-//  VideoListRequest.h
-//  KikinVideo
+//  JsonRequest.h
+//  KikinIos
 //
-//  Created by ludovic cabre on 2/24/11.
+//  Created by ludovic cabre on 4/1/11.
 //  Copyright 2011 kikin. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "JSON.h"
+#import "Callback.h"
 
 @interface JsonRequest : NSObject {
-	NSURLRequest *urlRequest;
-	NSMutableData *responseData;
-	
-	id errorHandlerObject;
-	SEL errorHandlerSelector;
-	
-	id successHandlerObject;
-	SEL successHandlerSelector;
+	NSMutableData* responseData;
+	NSURLConnection* urlConnection;
+	NSLock* connectionLock;
+	Callback* errorCallback;
+	Callback* successCallback;
 }
 
-- (void) doGetRequest: (NSString *)url params:(NSDictionary*)params;
-- (void) setErrorCallback: (id)object callback:(SEL)callback;
-- (void) setSuccessCallback: (id)object callback:(SEL)callback;
+- (void) doGetRequest: (NSString *)url params:(NSMutableDictionary*)params;
+- (bool) isRequesting;
+- (void) cancelRequest;
 
-@property(nonatomic,copy) id errorHandlerObject;
-@property(nonatomic) SEL errorHandlerSelector;
-@property(nonatomic,copy) id successHandlerObject;
-@property(nonatomic) SEL successHandlerSelector;
+@property(retain) Callback* errorCallback;
+@property(retain) Callback* successCallback;
 
 @end
 

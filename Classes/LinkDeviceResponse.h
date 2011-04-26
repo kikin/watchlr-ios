@@ -7,14 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DefaultResponse.h"
 
-
-@interface LinkDeviceResponse : NSObject {
-	NSString*		userId;
+@interface LinkDeviceResponse : DefaultResponse {
+	NSString* sessionId;
 }
 
-- (id) initWithResponse: (id)jsonObject;
-
-@property(nonatomic,copy) NSString* userId;
+- (NSString*) sessionId;
+- (id) initWithResponse: (NSDictionary*)jsonObject;
 
 @end

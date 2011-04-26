@@ -10,15 +10,22 @@
 #import "VideoTableCell.h"
 #import "VideoListResponse.h"
 #import "PlayerViewController.h"
+#import "VideoListRequest.h"
+#import "DeleteVideoRequest.h"
 
-@interface MostViewedViewController : UIViewController {
+@interface MostViewedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
+	VideoListRequest* videoListRequest;
 	VideoListResponse* videoListResponse;
-	IBOutlet UITableView* listTableView;
-	IBOutlet PlayerViewController* playerViewController;
+	DeleteVideoRequest* deleteVideoRequest;
+	UITableView* videosTable;
+	UIBarButtonItem* disconnectButton;
+	UIBarButtonItem* refreshButton;
+	UIToolbar* topToolbar;
+	NSMutableArray* videos;
 }
 
 - (void)doVideoListRequest;
-- (IBAction) onClickDisctonnect;
-- (IBAction) onClickRefresh;
+- (void) onClickDisctonnect;
+- (void) onClickRefresh;
 
 @end

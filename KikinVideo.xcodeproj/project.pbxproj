@@ -11,12 +11,7 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		28216C970DB411BC00E5133A /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28216C960DB411BC00E5133A /* FirstViewController.m */; };
-		282CCBFE0DB6C98000C4EA27 /* SecondView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 282CCBFD0DB6C98000C4EA27 /* SecondView.xib */; };
-		284F764110B34E8A00D7BA5B /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284F764010B34E8A00D7BA5B /* SecondViewController.m */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
-		28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD73870D9D96C1002E5188 /* MainWindow.xib */; };
-		28D4B068107A5DE70093E739 /* FirstView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28D4B067107A5DE70093E739 /* FirstView.xib */; };
 		357A09911316AEF30050C2CA /* 01-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A08C91316AEF30050C2CA /* 01-refresh.png */; };
 		357A09921316AEF30050C2CA /* 02-redo.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A08CA1316AEF30050C2CA /* 02-redo.png */; };
 		357A09931316AEF30050C2CA /* 03-loopback.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A08CB1316AEF30050C2CA /* 03-loopback.png */; };
@@ -218,9 +213,7 @@
 		357A0A571316AEF30050C2CA /* 98-palette.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A098F1316AEF30050C2CA /* 98-palette.png */; };
 		357A0A581316AEF30050C2CA /* 99-umbrella.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A09901316AEF30050C2CA /* 99-umbrella.png */; };
 		357A0A5B1316B0F30050C2CA /* MostViewedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0A5A1316B0F30050C2CA /* MostViewedViewController.m */; };
-		357A0AA91316B3C50050C2CA /* MostViewedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357A0AA81316B3C50050C2CA /* MostViewedView.xib */; };
 		357A0B411316D7F70050C2CA /* VideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0B401316D7F70050C2CA /* VideoTableCell.m */; };
-		357A0BB51316DF970050C2CA /* VideoTableCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357A0BB41316DF970050C2CA /* VideoTableCell.xib */; };
 		357A0C851316E9F10050C2CA /* VideoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0C841316E9F10050C2CA /* VideoObject.m */; };
 		357A0CEF1316F17A0050C2CA /* JsonRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0CEE1316F17A0050C2CA /* JsonRequest.m */; };
 		357A10481317031F0050C2CA /* NSObject+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10371317031F0050C2CA /* NSObject+JSON.m */; };
@@ -234,21 +227,26 @@
 		357A10501317031F0050C2CA /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10471317031F0050C2CA /* SBJsonWriter.m */; };
 		357A10D013170A150050C2CA /* VideoListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10CF13170A150050C2CA /* VideoListRequest.m */; };
 		357A120513171B2A0050C2CA /* VideoListResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A120413171B2A0050C2CA /* VideoListResponse.m */; };
-		357A1440131742890050C2CA /* PlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357A143F131742890050C2CA /* PlayerView.xib */; };
 		357A14441317446E0050C2CA /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A14431317446E0050C2CA /* PlayerViewController.m */; };
-		357A16D81317F9BA0050C2CA /* LoginView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357A16D71317F9BA0050C2CA /* LoginView.xib */; };
 		357A16DE1317FC180050C2CA /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A16DD1317FC180050C2CA /* LoginViewController.m */; };
 		357A16E51317FDE60050C2CA /* LinkDeviceRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A16E41317FDE60050C2CA /* LinkDeviceRequest.m */; };
 		357A16E81317FE240050C2CA /* LinkDeviceResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A16E71317FE240050C2CA /* LinkDeviceResponse.m */; };
 		357A192E131821A50050C2CA /* UserDataFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A192D131821A50050C2CA /* UserDataFile.m */; };
 		357A1952131824690050C2CA /* PListFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A1951131824690050C2CA /* PListFile.m */; };
-		357A1A8213182EE60050C2CA /* UserData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 357A1A8113182EE60050C2CA /* UserData.plist */; };
-		357A1C1B1318515C0050C2CA /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A1C1A1318515C0050C2CA /* MainViewController.m */; };
 		357A1E37131878EC0050C2CA /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A1E36131878EC0050C2CA /* UserObject.m */; };
 		357A20201318A22E0050C2CA /* kikin_logo_bottom_right.gif in Resources */ = {isa = PBXBuildFile; fileRef = 357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */; };
 		357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A20C6131BFA4C0050C2CA /* kikin_logo.png */; };
 		357A21E4131C07B70050C2CA /* DeleteVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */; };
 		357A21E7131C08A60050C2CA /* DeleteVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */; };
+		3591028A1365D1EC0000A814 /* Callback.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102891365D1EC0000A814 /* Callback.m */; };
+		359102A91365D2BE0000A814 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102A81365D2BE0000A814 /* Logger.m */; };
+		359102AC1365D2C50000A814 /* ConsoleLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102AB1365D2C50000A814 /* ConsoleLogger.m */; };
+		359103071365E6E20000A814 /* DefaultResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 359103061365E6E20000A814 /* DefaultResponse.m */; };
+		359108FC13661F670000A814 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 359108FB13661F670000A814 /* AppIcon.png */; };
+		3591FF7C136220F40000A814 /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF74136220F40000A814 /* Facebook.m */; };
+		3591FF7D136220F40000A814 /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF77136220F40000A814 /* FBDialog.m */; };
+		3591FF7E136220F40000A814 /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF79136220F40000A814 /* FBLoginDialog.m */; };
+		3591FF7F136220F40000A814 /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF7B136220F40000A814 /* FBRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -266,17 +264,10 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* KikinVideoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KikinVideoAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KikinVideoAppDelegate.m; sourceTree = "<group>"; };
-		1D6058910D05DD3D006BFB54 /* KikinVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KikinVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* kikin video.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "kikin video.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		28216C950DB411BC00E5133A /* FirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
-		28216C960DB411BC00E5133A /* FirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
-		282CCBFD0DB6C98000C4EA27 /* SecondView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SecondView.xib; sourceTree = "<group>"; };
-		284F763F10B34E8A00D7BA5B /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		284F764010B34E8A00D7BA5B /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		28A0AB4B0D9B1048005BE974 /* KikinVideo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KikinVideo_Prefix.pch; sourceTree = "<group>"; };
-		28AD73870D9D96C1002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
-		28D4B067107A5DE70093E739 /* FirstView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FirstView.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		357A08C91316AEF30050C2CA /* 01-refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "01-refresh.png"; sourceTree = "<group>"; };
 		357A08CA1316AEF30050C2CA /* 02-redo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "02-redo.png"; sourceTree = "<group>"; };
@@ -480,10 +471,8 @@
 		357A09901316AEF30050C2CA /* 99-umbrella.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "99-umbrella.png"; sourceTree = "<group>"; };
 		357A0A591316B0F30050C2CA /* MostViewedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MostViewedViewController.h; sourceTree = "<group>"; };
 		357A0A5A1316B0F30050C2CA /* MostViewedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MostViewedViewController.m; sourceTree = "<group>"; };
-		357A0AA81316B3C50050C2CA /* MostViewedView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MostViewedView.xib; sourceTree = "<group>"; };
 		357A0B3F1316D7F70050C2CA /* VideoTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTableCell.h; sourceTree = "<group>"; };
 		357A0B401316D7F70050C2CA /* VideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTableCell.m; sourceTree = "<group>"; };
-		357A0BB41316DF970050C2CA /* VideoTableCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VideoTableCell.xib; sourceTree = "<group>"; };
 		357A0C831316E9F10050C2CA /* VideoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoObject.h; sourceTree = "<group>"; };
 		357A0C841316E9F10050C2CA /* VideoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoObject.m; sourceTree = "<group>"; };
 		357A0CED1316F17A0050C2CA /* JsonRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonRequest.h; sourceTree = "<group>"; };
@@ -511,10 +500,8 @@
 		357A10CF13170A150050C2CA /* VideoListRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoListRequest.m; sourceTree = "<group>"; };
 		357A120313171B2A0050C2CA /* VideoListResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoListResponse.h; sourceTree = "<group>"; };
 		357A120413171B2A0050C2CA /* VideoListResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoListResponse.m; sourceTree = "<group>"; };
-		357A143F131742890050C2CA /* PlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerView.xib; sourceTree = "<group>"; };
 		357A14421317446E0050C2CA /* PlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerViewController.h; sourceTree = "<group>"; };
 		357A14431317446E0050C2CA /* PlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerViewController.m; sourceTree = "<group>"; };
-		357A16D71317F9BA0050C2CA /* LoginView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginView.xib; sourceTree = "<group>"; };
 		357A16DC1317FC180050C2CA /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		357A16DD1317FC180050C2CA /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		357A16E31317FDE60050C2CA /* LinkDeviceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkDeviceRequest.h; sourceTree = "<group>"; };
@@ -525,9 +512,6 @@
 		357A192D131821A50050C2CA /* UserDataFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataFile.m; sourceTree = "<group>"; };
 		357A1950131824690050C2CA /* PListFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PListFile.h; sourceTree = "<group>"; };
 		357A1951131824690050C2CA /* PListFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListFile.m; sourceTree = "<group>"; };
-		357A1A8113182EE60050C2CA /* UserData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserData.plist; sourceTree = "<group>"; };
-		357A1C191318515C0050C2CA /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
-		357A1C1A1318515C0050C2CA /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		357A1E35131878EC0050C2CA /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
 		357A1E36131878EC0050C2CA /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserObject.m; sourceTree = "<group>"; };
 		357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = kikin_logo_bottom_right.gif; sourceTree = "<group>"; };
@@ -536,6 +520,26 @@
 		357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoRequest.m; sourceTree = "<group>"; };
 		357A21E5131C08A60050C2CA /* DeleteVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteVideoResponse.h; sourceTree = "<group>"; };
 		357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoResponse.m; sourceTree = "<group>"; };
+		359102881365D1EC0000A814 /* Callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callback.h; sourceTree = "<group>"; };
+		359102891365D1EC0000A814 /* Callback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Callback.m; sourceTree = "<group>"; };
+		359102A71365D2BE0000A814 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		359102A81365D2BE0000A814 /* Logger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logger.m; sourceTree = "<group>"; };
+		359102AA1365D2C50000A814 /* ConsoleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleLogger.h; sourceTree = "<group>"; };
+		359102AB1365D2C50000A814 /* ConsoleLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleLogger.m; sourceTree = "<group>"; };
+		359102AD1365D2CB0000A814 /* GoogleAnalyticsLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalyticsLogger.h; sourceTree = "<group>"; };
+		359102AE1365D2CB0000A814 /* GoogleAnalyticsLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAnalyticsLogger.m; sourceTree = "<group>"; };
+		359103051365E6E20000A814 /* DefaultResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultResponse.h; sourceTree = "<group>"; };
+		359103061365E6E20000A814 /* DefaultResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultResponse.m; sourceTree = "<group>"; };
+		359108FB13661F670000A814 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon.png; sourceTree = "<group>"; };
+		3591FF73136220F40000A814 /* Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Facebook.h; sourceTree = "<group>"; };
+		3591FF74136220F40000A814 /* Facebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Facebook.m; sourceTree = "<group>"; };
+		3591FF75136220F40000A814 /* FBConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBConnect.h; sourceTree = "<group>"; };
+		3591FF76136220F40000A814 /* FBDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBDialog.h; sourceTree = "<group>"; };
+		3591FF77136220F40000A814 /* FBDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBDialog.m; sourceTree = "<group>"; };
+		3591FF78136220F40000A814 /* FBLoginDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBLoginDialog.h; sourceTree = "<group>"; };
+		3591FF79136220F40000A814 /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginDialog.m; sourceTree = "<group>"; };
+		3591FF7A136220F40000A814 /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRequest.h; sourceTree = "<group>"; };
+		3591FF7B136220F40000A814 /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* KikinVideo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "KikinVideo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -556,6 +560,9 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				3591040A1365F0CE0000A814 /* cell */,
+				359102A51365D2B00000A814 /* logger */,
+				359102851365D1E50000A814 /* utils */,
 				357A194B131823E10050C2CA /* files */,
 				357A16DB1317FBFA0050C2CA /* controllers */,
 				357A120113171A400050C2CA /* responses */,
@@ -564,14 +571,6 @@
 				357A0C861316E9F60050C2CA /* objects */,
 				1D3623240D0F684500981E51 /* KikinVideoAppDelegate.h */,
 				1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */,
-				28216C950DB411BC00E5133A /* FirstViewController.h */,
-				28216C960DB411BC00E5133A /* FirstViewController.m */,
-				284F763F10B34E8A00D7BA5B /* SecondViewController.h */,
-				284F764010B34E8A00D7BA5B /* SecondViewController.m */,
-				357A0B3F1316D7F70050C2CA /* VideoTableCell.h */,
-				357A0B401316D7F70050C2CA /* VideoTableCell.m */,
-				357A1C191318515C0050C2CA /* MainViewController.h */,
-				357A1C1A1318515C0050C2CA /* MainViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -579,7 +578,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* KikinVideo.app */,
+				1D6058910D05DD3D006BFB54 /* kikin video.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -610,15 +609,7 @@
 			children = (
 				357A201A1318A2230050C2CA /* images */,
 				357A08C81316AEF30050C2CA /* icons */,
-				28D4B067107A5DE70093E739 /* FirstView.xib */,
-				282CCBFD0DB6C98000C4EA27 /* SecondView.xib */,
-				28AD73870D9D96C1002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* KikinVideo-Info.plist */,
-				357A0AA81316B3C50050C2CA /* MostViewedView.xib */,
-				357A0BB41316DF970050C2CA /* VideoTableCell.xib */,
-				357A143F131742890050C2CA /* PlayerView.xib */,
-				357A16D71317F9BA0050C2CA /* LoginView.xib */,
-				357A1A8113182EE60050C2CA /* UserData.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -636,6 +627,7 @@
 		357A08C81316AEF30050C2CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				359108FB13661F670000A814 /* AppIcon.png */,
 				357A08C91316AEF30050C2CA /* 01-refresh.png */,
 				357A08CA1316AEF30050C2CA /* 02-redo.png */,
 				357A08CB1316AEF30050C2CA /* 03-loopback.png */,
@@ -869,6 +861,7 @@
 		357A1032131702DB0050C2CA /* libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3591FD5B136218AF0000A814 /* facebook */,
 				357A1033131702F40050C2CA /* json */,
 			);
 			name = libraries;
@@ -909,6 +902,8 @@
 				357A16E71317FE240050C2CA /* LinkDeviceResponse.m */,
 				357A21E5131C08A60050C2CA /* DeleteVideoResponse.h */,
 				357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */,
+				359103051365E6E20000A814 /* DefaultResponse.h */,
+				359103061365E6E20000A814 /* DefaultResponse.m */,
 			);
 			name = responses;
 			sourceTree = "<group>";
@@ -946,6 +941,53 @@
 			name = images;
 			sourceTree = "<group>";
 		};
+		359102851365D1E50000A814 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				359102881365D1EC0000A814 /* Callback.h */,
+				359102891365D1EC0000A814 /* Callback.m */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		359102A51365D2B00000A814 /* logger */ = {
+			isa = PBXGroup;
+			children = (
+				359102AD1365D2CB0000A814 /* GoogleAnalyticsLogger.h */,
+				359102AE1365D2CB0000A814 /* GoogleAnalyticsLogger.m */,
+				359102AA1365D2C50000A814 /* ConsoleLogger.h */,
+				359102AB1365D2C50000A814 /* ConsoleLogger.m */,
+				359102A71365D2BE0000A814 /* Logger.h */,
+				359102A81365D2BE0000A814 /* Logger.m */,
+			);
+			name = logger;
+			sourceTree = "<group>";
+		};
+		3591040A1365F0CE0000A814 /* cell */ = {
+			isa = PBXGroup;
+			children = (
+				357A0B3F1316D7F70050C2CA /* VideoTableCell.h */,
+				357A0B401316D7F70050C2CA /* VideoTableCell.m */,
+			);
+			name = cell;
+			sourceTree = "<group>";
+		};
+		3591FD5B136218AF0000A814 /* facebook */ = {
+			isa = PBXGroup;
+			children = (
+				3591FF73136220F40000A814 /* Facebook.h */,
+				3591FF74136220F40000A814 /* Facebook.m */,
+				3591FF75136220F40000A814 /* FBConnect.h */,
+				3591FF76136220F40000A814 /* FBDialog.h */,
+				3591FF77136220F40000A814 /* FBDialog.m */,
+				3591FF78136220F40000A814 /* FBLoginDialog.h */,
+				3591FF79136220F40000A814 /* FBLoginDialog.m */,
+				3591FF7A136220F40000A814 /* FBRequest.h */,
+				3591FF7B136220F40000A814 /* FBRequest.m */,
+			);
+			name = facebook;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -964,7 +1006,7 @@
 			);
 			name = KikinVideo;
 			productName = KikinVideo;
-			productReference = 1D6058910D05DD3D006BFB54 /* KikinVideo.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* kikin video.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -996,9 +1038,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */,
-				282CCBFE0DB6C98000C4EA27 /* SecondView.xib in Resources */,
-				28D4B068107A5DE70093E739 /* FirstView.xib in Resources */,
 				357A09911316AEF30050C2CA /* 01-refresh.png in Resources */,
 				357A09921316AEF30050C2CA /* 02-redo.png in Resources */,
 				357A09931316AEF30050C2CA /* 03-loopback.png in Resources */,
@@ -1199,13 +1238,9 @@
 				357A0A561316AEF30050C2CA /* 97-puzzle.png in Resources */,
 				357A0A571316AEF30050C2CA /* 98-palette.png in Resources */,
 				357A0A581316AEF30050C2CA /* 99-umbrella.png in Resources */,
-				357A0AA91316B3C50050C2CA /* MostViewedView.xib in Resources */,
-				357A0BB51316DF970050C2CA /* VideoTableCell.xib in Resources */,
-				357A1440131742890050C2CA /* PlayerView.xib in Resources */,
-				357A16D81317F9BA0050C2CA /* LoginView.xib in Resources */,
-				357A1A8213182EE60050C2CA /* UserData.plist in Resources */,
 				357A20201318A22E0050C2CA /* kikin_logo_bottom_right.gif in Resources */,
 				357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */,
+				359108FC13661F670000A814 /* AppIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,8 +1253,6 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* KikinVideoAppDelegate.m in Sources */,
-				28216C970DB411BC00E5133A /* FirstViewController.m in Sources */,
-				284F764110B34E8A00D7BA5B /* SecondViewController.m in Sources */,
 				357A0A5B1316B0F30050C2CA /* MostViewedViewController.m in Sources */,
 				357A0B411316D7F70050C2CA /* VideoTableCell.m in Sources */,
 				357A0C851316E9F10050C2CA /* VideoObject.m in Sources */,
@@ -1241,10 +1274,17 @@
 				357A16E81317FE240050C2CA /* LinkDeviceResponse.m in Sources */,
 				357A192E131821A50050C2CA /* UserDataFile.m in Sources */,
 				357A1952131824690050C2CA /* PListFile.m in Sources */,
-				357A1C1B1318515C0050C2CA /* MainViewController.m in Sources */,
 				357A1E37131878EC0050C2CA /* UserObject.m in Sources */,
 				357A21E4131C07B70050C2CA /* DeleteVideoRequest.m in Sources */,
 				357A21E7131C08A60050C2CA /* DeleteVideoResponse.m in Sources */,
+				3591FF7C136220F40000A814 /* Facebook.m in Sources */,
+				3591FF7D136220F40000A814 /* FBDialog.m in Sources */,
+				3591FF7E136220F40000A814 /* FBLoginDialog.m in Sources */,
+				3591FF7F136220F40000A814 /* FBRequest.m in Sources */,
+				3591028A1365D1EC0000A814 /* Callback.m in Sources */,
+				359102A91365D2BE0000A814 /* Logger.m in Sources */,
+				359102AC1365D2C50000A814 /* ConsoleLogger.m in Sources */,
+				359103071365E6E20000A814 /* DefaultResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1255,16 +1295,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = KikinVideo;
+				PRODUCT_NAME = "kikin video";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 			};
 			name = Debug;
 		};
@@ -1273,17 +1319,16 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../../Downloads/JSON v2.3.2 (iOS)/build/Release\"",
-					"\"$(SRCROOT)/../../../Downloads/JSON v3.0beta1 (iOS)/build/Debug\"",
-					"\"$(SRCROOT)/../../../Downloads/JSON v2.3.2 (iOS) 2/build/Release\"",
-					"\"$(SRCROOT)/../../../Library/SDKs\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
-				PRODUCT_NAME = KikinVideo;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				PRODUCT_NAME = "kikin video";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1294,9 +1339,11 @@
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
+				PRODUCT_NAME = "kikin video";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -1308,10 +1355,12 @@
 				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PREBINDING = NO;
+				PRODUCT_NAME = "kikin video";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};

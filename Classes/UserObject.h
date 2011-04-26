@@ -10,19 +10,15 @@
 #import "UserDataFile.h"
 
 @interface UserObject : NSObject {
-	
 	UserDataFile * userDataFile;
-	NSString* userId;
-	
+	NSString* sessionId;
 }
 
 - (id) init;
-- (NSString*) userId;
-- (void) setUserId: (NSString*)value;
+- (NSString*) sessionId;
+- (void) setSessionId: (NSString*)_sessionId;
 
 + (UserObject*) instance;
 + (UserObject*) getUser;
-
-@property(nonatomic,assign) UserDataFile* userDataFile;
 
 @end

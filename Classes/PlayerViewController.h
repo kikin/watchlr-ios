@@ -10,16 +10,12 @@
 #import "VideoObject.h"
 
 @interface PlayerViewController : UIViewController {
-	IBOutlet UINavigationBar* navigationBar;
-	IBOutlet UIWebView* webView;
-	IBOutlet UIBarButtonItem *backButton;
+	UINavigationBar* navigationBar;
+	UIWebView* webView;
+	UIBarButtonItem* backButton;
 }
 
 - (void) setVideo: (VideoObject*)videoObject;
-- (IBAction)goToPreviousView;
-
-//@property(nonatomic,copy)UINavigationBar* navigationBar;
-//@property(nonatomic,copy) UIWebView* webView;
-//@property(nonatomic,copy)UIBarButtonItem *backButton;
+- (void) onClickBackButton;
 
 @end

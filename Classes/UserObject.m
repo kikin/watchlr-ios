@@ -13,36 +13,31 @@ static UserObject* userInstance = nil;
 
 @implementation UserObject
 
-@synthesize userDataFile;
-
-- (id) init
-{
-	self = [super init];
-	if (self != nil) {
-		self.userDataFile = [[UserDataFile alloc] init];
-		self.userId = userDataFile.userId;
-		[userDataFile retain];
+- (id) init {
+	if (self = [super init]) {
+		userDataFile = [[UserDataFile alloc] init];
+		sessionId = [userDataFile.userId retain];
+		LOG_DEBUG(@"sessionId = %@", sessionId);
 	}
 	return self;
 }
 
-- (void) dealloc
-{
+- (void) dealloc {
 	[userDataFile release];
+	[sessionId release];
 	[super dealloc];
 }
 
-
-- (NSString*) userId {
-	return userId;
+- (NSString*) sessionId {
+	return sessionId;
 }
 
-- (void) setUserId: (NSString*)value {
-	[userId autorelease];
-	userId = [value retain];
+- (void) setSessionId: (NSString*)_sessionId {
+	if (sessionId) [sessionId release];
+	sessionId = [_sessionId retain];
 	
 	// save to the file too
-	userDataFile.userId = userId;
+	userDataFile.userId = sessionId;
 	[userDataFile save];
 }
 
@@ -52,7 +47,7 @@ static UserObject* userInstance = nil;
 
 + (UserObject*) getUser {
 	if (userInstance == nil) {
-		userInstance = [[[UserObject alloc] init] retain];
+		userInstance = [[UserObject alloc] init];
 	}
 	return userInstance;
 }

@@ -13,8 +13,6 @@
 	NSString* fileName;
 }
 
-@property(nonatomic, copy) NSString* fileName;
-
 - (id) init: (NSString*)file;
 - (NSDictionary*) load;
 - (void) save: (NSDictionary*)pList;

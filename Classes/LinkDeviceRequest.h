@@ -11,9 +11,9 @@
 #import "LinkDeviceResponse.h"
 
 @interface LinkDeviceRequest : JsonRequest {
-
+	
 }
 
-- (void) doLinkDeviceRequest:(NSString*)token;
+- (void) doLinkDeviceRequest:(NSString*)facebookId;
 
 @end

@@ -1,27 +1,38 @@
 //
-//  VideoListRequest.m
-//  KikinVideo
+//  JsonRequest.m
+//  KikinIos
 //
-//  Created by ludovic cabre on 2/24/11.
+//  Created by ludovic cabre on 4/1/11.
 //  Copyright 2011 kikin. All rights reserved.
 //
 
 #import "JsonRequest.h"
+#import "Logger.h"
 
 @implementation JsonRequest
 
-@synthesize successHandlerSelector, successHandlerObject, errorHandlerSelector, errorHandlerObject;
+@synthesize errorCallback, successCallback;
 
 - (id) init {
-	self = [super init];
-	if (self) {
-		responseData = [[NSMutableData data] retain];
+	if (self = [super init]) {
+		// initialize
+		connectionLock = [[NSLock alloc] init];
 	}
 	return self;
 }
 
+- (void) releaseConnection {
+	[urlConnection release], urlConnection = nil;
+	[responseData release], responseData = nil;
+}
+
 - (void) dealloc {
-	[responseData release];
+	[self releaseConnection];
+	
+	[connectionLock release], connectionLock = nil;
+	[errorCallback release], errorCallback = nil;
+	[successCallback release], successCallback = nil;
+	
 	[super dealloc];
 }
 
@@ -35,7 +46,7 @@
 		NSString* stringKey = [NSString stringWithFormat: @"%@", key];
 		
 		// urlencode the value
-		NSString* encodedValue = [stringValue stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+		NSString* encodedValue = (NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)stringValue, NULL, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8);
 		
 		// add to the list
 		NSString* part = [NSString stringWithFormat: @"%@=%@", stringKey, encodedValue];
@@ -44,83 +55,91 @@
 	return [parts componentsJoinedByString: @"&"];
 }
 
-- (void) doGetRequest: (NSString *)url params:(NSDictionary*)params {
-	if (urlRequest != nil) @throw [NSException
-								   exceptionWithName:@"JsonRequest"
-								   reason:@"JsonRequest does not support two request at the same time"
-								   userInfo:nil];
+- (bool) isRequesting {
+	return urlConnection != nil;
+}
+
+- (void) cancelRequest {
+	[connectionLock lock];
+	if (urlConnection != nil) {
+		[urlConnection cancel];
+		[self releaseConnection];
+	}
+	[connectionLock unlock];
+}
+
+- (void) doGetRequest: (NSString *)url params:(NSMutableDictionary*)params {
+	if (urlConnection != nil) @throw [NSException
+									  exceptionWithName:@"JsonRequest"
+									  reason:@"JsonRequest does not support two request at the same time"
+									  userInfo:nil];
 	
-	NSString* finalUrl = [url copy]; 
+	[connectionLock lock];
+	
+	// create final url with parameters
+	NSString* finalUrl = [url copy];
 	if (params != nil && params.count > 0) {
 		finalUrl = [[finalUrl stringByAppendingString:@"?"] stringByAppendingString: [self encodeParameters:params]];
 	}
 	
-	NSLog(@"JsonRequest GET request URL: %@", finalUrl);
+	LOG_INFO(@"request url: %@", finalUrl);
 	
-	urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:finalUrl]];
-	[[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
+	// create the data storage
+	responseData = [[NSMutableData alloc] init];
+	
+	// do the request
+	NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:finalUrl]];
+	urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
+	[urlRequest release];
+	
+	[connectionLock unlock];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-	// erase any previous data
-	[responseData setLength:0];
+	
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	// add to our current data
-	[responseData appendData:data];
-}
-
-- (void) setErrorCallback: (id)object callback:(SEL)callback {
-	// save callback
-	errorHandlerObject = object;
-	errorHandlerSelector = callback;
-}
-
-- (void) setSuccessCallback: (id)object callback:(SEL)callback {
-	// save callback
-	successHandlerObject = object;
-	successHandlerSelector = callback;
+	[connectionLock lock];
+	if (responseData != nil) {
+		// add to our current data
+		[responseData appendData:data];
+	}
+	[connectionLock unlock];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	// put to nil so a request can be done again
-	urlRequest = nil;
-	
+	[connectionLock lock];
+	[self releaseConnection];
 	[self onRequestFailed: [error description]];
-	//[self onRequestFailed:[error description]];
+	[connectionLock unlock];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	[connectionLock lock];
+	
 	// get string from received data
-	NSString *receivedString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+	NSString* receivedString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 	if (receivedString == nil) {
 		[self onRequestFailed: @"could not convert response to text"];
+		
 	} else {
 		// parse received data
 		SBJsonParser* parser = [SBJsonParser new];
-		NSDictionary* response = [parser objectWithString:receivedString];
+		id response = [parser objectWithString:receivedString];
 		if (response == nil) {
 			[self onRequestFailed: @"could not parse the server response"];
 		} else {
-			// parsing successful check request status
-			bool success = [[response objectForKey:@"success"] boolValue];
-			if (success) {
-				// everything is perfect
-				id result = [response objectForKey:@"result"];
-				[self onRequestSuccess:result];
-			} else {
-				// server saying there was an error
-				id errorMessage = [response objectForKey:@"error"];
-				[self onRequestFailed: [NSString stringWithFormat: @"server returned an error %@", errorMessage]];
-			}
+			LOG_DEBUG(@"%@", receivedString);
+			[self onRequestSuccess:response];
 		}
 		[parser release];
 	}
-	[connection release];
+	[receivedString release];
 	
-	// put to nil so a request can be done again
-	urlRequest = nil;
+	[self releaseConnection];
+	[connectionLock unlock];
 }
+
 
 @end

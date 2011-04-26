@@ -17,17 +17,17 @@
 	NSString*	videoUrl;
 	NSString*	imageUrl;
 	long		timestamp;
-	bool		viewed;
+	bool		watched;
 }
 
-@property(nonatomic) int videoId;
-@property(nonatomic,copy) NSString* title;
-@property(nonatomic,copy) NSString* description;
-@property(nonatomic,copy) NSString* videoUrl;
-@property(nonatomic,copy) NSString* embedUrl;
-@property(nonatomic,copy) NSString* imageUrl;
-@property(nonatomic) long timestamp;
-@property(nonatomic) bool viewed;
+@property()			int videoId;
+@property(retain)	NSString* title;
+@property(retain)	NSString* description;
+@property(retain)	NSString* videoUrl;
+@property(retain)	NSString* embedUrl;
+@property(retain)	NSString* imageUrl;
+@property()			long timestamp;
+@property()			bool viewed;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 

@@ -1,5 +1,5 @@
 //
-//  LinkDeviceRequest.m
+//  DeleteVideoResponse.m
 //  KikinVideo
 //
 //  Created by ludovic cabre on 2/25/11.
@@ -15,12 +15,12 @@
 
 - (void) doDeleteVideoRequest:(VideoObject*)video {
 	// get current userId
-	NSString* userId = [UserObject getUser].userId;
+	NSString* sessionId = [UserObject getUser].sessionId;
 	self.videoObject = video;
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-	[params setObject:userId forKey:@"user_id"];
+	[params setObject:sessionId forKey:@"user_id"];
 	[params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
 	
 	// do request	
@@ -30,11 +30,12 @@
 - (void) onRequestSuccess: (id)jsonObject {
 	DeleteVideoResponse* response = [[DeleteVideoResponse alloc] initWithResponse:jsonObject];
 	response.videoObject = self.videoObject;
-	[successHandlerObject performSelector:successHandlerSelector withObject:response];
+	[successCallback execute:response];
+	[response release];
 }
 
 - (void) onRequestFailed: (NSString*)errorMessage {
-	[errorHandlerObject performSelector:errorHandlerSelector withObject:errorMessage];
+	[errorCallback execute:errorMessage];
 }
 
 @end

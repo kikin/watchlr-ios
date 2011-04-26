@@ -13,51 +13,105 @@
 
 @implementation LoginViewController
 
-@synthesize window, userObject, loginView;
-
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization.
-    }
-    return self;
-}
-*/
-
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
+	// create the view
+	UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	self.view = view;
+	[view release];
+	
+	// add the kikin logo in the middle
+	logoImage = [[UIImageView alloc] init];
+	logoImage.frame = CGRectMake((view.frame.size.width-350)/2, (view.frame.size.height-350)/2, 350, 350);
+	logoImage.image = [UIImage imageNamed:@"kikin_logo.png"];
+	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+	[view addSubview:logoImage];
+	
+	// add the rounded rect view over the logo
+	loginBgView = [[UIView alloc] init];
+	loginBgView.frame = CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-200)/2, 500, 200);
+	loginBgView.backgroundColor = [UIColor colorWithRed:215.0/255.0 green:235.0/255.0 blue:255.0/255.0 alpha:1.0];
+	loginBgView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+	loginBgView.layer.cornerRadius = 18.0f;
+	loginBgView.layer.borderWidth = 1.0f;
+	loginBgView.layer.opacity = 0.8f;
+	[view addSubview:loginBgView];
+	
+	// create the title lable inside
+	titleLabel = [[UILabel alloc] init];
+	titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
+	titleLabel.frame = CGRectMake(0, 10, loginBgView.frame.size.width, 35);
+	titleLabel.text = @"kikin video";
+	titleLabel.textAlignment = UITextAlignmentCenter;
+	titleLabel.backgroundColor = [UIColor clearColor];
+	titleLabel.font = [UIFont boldSystemFontOfSize:28.0];
+	[loginBgView addSubview:titleLabel];
+	
+	// create the description
+	descriptionLabel = [[UILabel alloc] init];
+	descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
+	descriptionLabel.frame = CGRectMake(30, 50, loginBgView.frame.size.width-60, 70);
+	descriptionLabel.text = @"Access kikin video from your iPad by login on facebook. Go to http://video.kikin.com for more information.";
+	descriptionLabel.textAlignment = UITextAlignmentCenter;
+	descriptionLabel.backgroundColor = [UIColor clearColor];
+	descriptionLabel.numberOfLines = 3;
+	descriptionLabel.font = [UIFont systemFontOfSize:18.0];
+	[loginBgView addSubview:descriptionLabel];
+	
+	// create the facebook login button inside
+	loginButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
+	loginButton.frame = CGRectMake((loginBgView.frame.size.width-200)/2, loginBgView.frame.size.height-50, 200, 35);
+	loginButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+	[loginButton addTarget:self action:@selector(onClickConnectButton:) forControlEvents:UIControlEventTouchUpInside];
+	[loginButton setTitle:@"Connect with Facebook" forState:UIControlStateNormal];
+	[loginBgView addSubview:loginButton];
+	
+	// create the facebook object for connection
+	facebook = [[Facebook alloc] initWithAppId:@"142118469191927"];
+	
+	// look if the user is already loggedIn
+	UserObject* user = [UserObject getUser];
+	if (user.sessionId != nil) {
+		// go the the main view
+		[self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.5];
+	}
 }
-*/
+
+- (void) onClickConnectButton: (UIButton*)sender {
+	facebook.sessionDelegate = self;
+	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
+}
 
 - (void) goToMainView:(bool)animated {
 	MostViewedViewController* mostViewedViewController = [[MostViewedViewController alloc] initWithNibName:@"MostViewedView" bundle:nil];
 	[self presentModalViewController:mostViewedViewController animated:animated];
+	
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void) viewDidLoad {
-    [super viewDidLoad];
-	
-	[loginView.layer setCornerRadius:18.0f];
-	[loginView.layer setBorderWidth:1.0f];
-	[loginView.layer setOpacity:0.8f];
-	
-	// load our user data
-	userObject = [UserObject getUser];
-	if (userObject.userId != nil) {
-		
-		// go the the main view
-		[self performSelector:@selector(goToMainView:) withObject: false afterDelay:0.01];
+- (void) fbDidLogin {
+	// we need the user id in order to connect him with the server
+	[facebook requestWithGraphPath:@"me" andDelegate:self];
+}
+
+- (void)request:(FBRequest *)request didFailWithError:(NSError *)error {
+	LOG_ERROR(@"failed to executed /me request to get the user id: %@", error);
+}
+
+- (void)request:(FBRequest *)request didLoad:(id)result {
+	// get the user id
+	NSDictionary* data = result;
+	NSString* facebookId = [data objectForKey:@"id"];
+	if (facebookId != nil) {
+		// link this device with the server using this id
+		[self doLinkDeviceRequest:facebookId];
 	}
 }
 
 - (void) onLinkRequestSuccess: (LinkDeviceResponse*)response {
-	if (response.userId != nil) {
+	if (response.sessionId != nil) {
 		// change our userId (automatically savec)
-		userObject.userId = response.userId;
+		UserObject* userObject = [UserObject getUser];
+		userObject.sessionId = response.sessionId;
 		
 		// go the the main view
 		[self goToMainView:true];
@@ -65,41 +119,32 @@
 }
 
 - (void) onLinkRequestFailed: (NSString*)errorMessage {
-	NSLog(@"-- onLinkRequestFailed %@", errorMessage);
+	LOG_ERROR(@"failed to link the device: %@", errorMessage);
 }
 
-- (IBAction) tryConnecting {
+- (void) doLinkDeviceRequest: (NSString*)accessToken {
 	LinkDeviceRequest* request = [[LinkDeviceRequest alloc] init];
-	[request setErrorCallback:self callback:@selector(onLinkRequestFailed:)];
-	[request setSuccessCallback:self callback:@selector(onLinkRequestSuccess:)];
-	[request doLinkDeviceRequest:textField.text];
+	request.successCallback = [Callback create:self selector:@selector(onLinkRequestSuccess:)];
+	request.errorCallback = [Callback create:self selector:@selector(onLinkRequestFailed:)];
+	[request doLinkDeviceRequest:accessToken];
 }
-
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Overriden to allow any orientation.
     return YES;
 }
 
-
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc. that aren't in use.
 }
-
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
-
 
 - (void)dealloc {
     [super dealloc];
 }
-
 
 @end

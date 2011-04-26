@@ -8,27 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoObject.h"
+#import "Callback.h"
 
 @interface VideoTableCell : UITableViewCell {
 	VideoObject* videoObject;
-	IBOutlet UILabel *titleLabel;
-	IBOutlet UILabel *descriptionLabel;
-	IBOutlet UIImageView *videoImageView;
-	
-	id deleteHandlerObject;
-	SEL deleteHandlerSelector;
+	UILabel* titleLabel;
+	UILabel* descriptionLabel;
+	UIImageView* videoImageView;
+	Callback* deleteCallback;
 }
 
-@property(nonatomic,copy) VideoObject* videoObject;
-@property(nonatomic,retain) UILabel *titleLabel;
-@property(nonatomic,retain) UILabel *descriptionLabel;
-@property(nonatomic,retain) UIImageView *videoImageView;
-
-@property(nonatomic,copy) id deleteHandlerObject;
-@property(nonatomic) SEL deleteHandlerSelector;
+@property(retain) Callback* deleteCallback;
 
 - (IBAction) onClickDelete;
-- (void)setDeleteCallback: (id)instance callback:(SEL)callback;
 - (void)setVideoObject: (VideoObject*)video;
 
 @end

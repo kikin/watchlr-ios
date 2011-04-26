@@ -11,13 +11,9 @@
 
 @implementation PListFile
 
-@synthesize fileName;
-
-- (id) init: (NSString*)name
-{
-	self = [super init];
-	if (self != nil) {
-		fileName = [[name copy] retain];
+- (id) init: (NSString*)name {
+	if (self = [super init]) {
+		fileName = [name retain];
 	}
 	return self;
 }
@@ -27,12 +23,12 @@
 	NSString *error;
 	NSPropertyListFormat format;
 	
-	NSString* localizedPath = [self getPath]; //[[NSBundle mainBundle] pathForResource:[self getPath] ofType:@"plist"];
+	NSString* localizedPath = [self getPath];
 	NSData* plistData = [NSData dataWithContentsOfFile:localizedPath];
 	if (plistData != nil) {
 		plist = [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:NSPropertyListImmutable format:&format errorDescription:&error];  
 		if (!plist) {
-			NSLog(@"Error reading plist from file '%s', error = '%s'", [localizedPath UTF8String], [error UTF8String]);
+			LOG_ERROR(@"failed to read plist from file '%@', error = '%@'", localizedPath, error);
 			[error release];
 		}
 	}
@@ -43,26 +39,32 @@
 - (NSString*) getPath {
 	NSArray* path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES);
 	NSString* documentsDirectory = [path objectAtIndex:0];
-	NSString* ret = [documentsDirectory stringByAppendingPathComponent: [self.fileName stringByAppendingString: @".plist"]];
+	NSString* ret = [documentsDirectory stringByAppendingPathComponent: [fileName stringByAppendingString: @".plist"]];
 	return ret;
 }
 
 - (void) save: (NSDictionary*)pList {
 	NSError* error2;
 	NSString *error;
-	NSString* localizedPath = [self getPath]; //[[NSBundle mainBundle] pathForResource:[self getPath] ofType:@"plist"];  
-	NSData* xmlData = [NSPropertyListSerialization dataFromPropertyList:pList format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];  
-	if (xmlData) {  
-		NSLog(@"xml=%@", [NSString stringWithUTF8String: [xmlData bytes]]);
+	NSString* localizedPath = [self getPath];
+	NSData* xmlData = [NSPropertyListSerialization dataFromPropertyList:pList format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];
+	if (xmlData) {
+		LOG_DEBUG(@"xml=%@", [NSString stringWithUTF8String: [xmlData bytes]]);
 		BOOL success = [xmlData writeToFile:localizedPath options:NSDataWritingAtomic error:&error2];  
 		if (success == NO) {
-			NSLog(@"Error writing plist to file '%s', error = '%s'", [localizedPath UTF8String], [error2 localizedDescription]);  
-			[error2 release];  
+			LOG_ERROR(@"Error writing plist to file '%@', error = '%@'", localizedPath, error2);
+			[error2 release];
 		}
 	} else {
-		NSLog(@"Error writing plist to file '%s', error = '%s'", [localizedPath UTF8String], [error UTF8String]);  
+		LOG_ERROR(@"failed to write plist to file '%@', error = '%@'", localizedPath, error);  
 		[error release];  
 	}
 }
+
+- (void) dealloc {
+	[fileName release];
+	[super dealloc];
+}
+
 
 @end

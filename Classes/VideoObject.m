@@ -16,15 +16,16 @@
 - (id) initFromDictionnary: (NSDictionary*)data {
 	// get data from this video
 	self.videoId = [[data objectForKey:@"id"] intValue];
-	self.title = [data objectForKey:@"title"];
-	self.description = [data objectForKey:@"description"];
+	self.title = [data objectForKey:@"title"] != [NSNull null] ? [data objectForKey:@"title"] : nil;
+	self.description = [data objectForKey:@"description"] != [NSNull null] ? [data objectForKey:@"description"] : nil;
 	self.videoUrl = [data objectForKey:@"url"];
 	self.timestamp = [[data objectForKey:@"timestamp"] longValue];
-	self.viewed = [[data objectForKey:@"viewed"] boolValue];
+	self.viewed = [[data objectForKey:@"watched"] boolValue];
 	self.imageUrl = [data objectForKey:@"thumbnail_url"];
 	
 	// set default values
-	if (self.description == [NSNull null]) self.description = @"";
+	if (title == nil) self.title = @"No title";
+	if (description == nil) self.description = @"";
 	
 	NSRegularExpression* regex = [[NSRegularExpression alloc] initWithPattern:@"v=([^&]+)" options:NSRegularExpressionCaseInsensitive error:nil];
 	NSArray* matches = [regex matchesInString:videoUrl options:0 range:NSMakeRange(0, [videoUrl length])];
@@ -41,10 +42,20 @@
 		youtubeId = [videoUrl substringFromIndex:lastIndex];
 	}
 		
-	self.imageUrl = [[[@"http://i1.ytimg.com/vi/" stringByAppendingString: youtubeId] stringByAppendingString:@"/hqdefault.jpg"] retain];
-	self.embedUrl = [[@"http://www.youtube.com/embed/" stringByAppendingString: youtubeId] retain];
+	self.imageUrl = [NSString stringWithFormat:@"http://i1.ytimg.com/vi/%@/hqdefault.jpg", youtubeId];
+	self.embedUrl = [@"http://www.youtube.com/embed/" stringByAppendingString: youtubeId];
 	
 	return self;
 }
+
+- (void) dealloc {
+	self.title = nil;
+	self.description = nil;
+	self.videoUrl = nil;
+	self.embedUrl = nil;
+	self.imageUrl = nil;
+	[super dealloc];
+}
+
 
 @end

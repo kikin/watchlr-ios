@@ -10,25 +10,39 @@
 
 @implementation PlayerViewController
 
-//@synthesize navigationBar, webView, backButton;
-//@synthesize navigationBar, webView, backButton;
-
- // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-/*
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization.
-    }
-    return self;
-}
-*/
-
-/*
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
+	// create the view
+	UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	self.view = view;
+	[view release];
+	
+	// create the toolbar
+	navigationBar = [[UINavigationBar alloc] init];
+	navigationBar.frame = CGRectMake(0, 0, view.frame.size.width, 42);
+	navigationBar.topItem.title = @"Loading video..";
+	navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	[view addSubview:navigationBar];
+	
+	// create the back button
+	backButton = [[UIBarButtonItem alloc] init];
+	backButton.title = @"Back";
+	backButton.style = UIBarButtonItemStyleBordered;
+	backButton.action = @selector(onClickBackButton);
+	
+	// add the button to the navigation bar
+	UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:@"Title"];
+	item.leftBarButtonItem = backButton;
+	[navigationBar pushNavigationItem:item animated:FALSE];
+	[item release];
+	
+	// create the video table
+	webView = [[UIWebView alloc] init];
+	webView.frame = CGRectMake(0, 42, view.frame.size.width, view.frame.size.height-42);
+	webView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	[view addSubview:webView];
 }
-*/
 
 - (void) setVideo: (VideoObject*)videoObject {
 	// change title
@@ -40,48 +54,34 @@
 	[webView loadRequest:requestObj];	
 }
 
-- (IBAction)goToPreviousView {
+- (void) onClickBackButton {
 	[webView loadHTMLString:@"<html><body></body></html>" baseURL:nil];
 	[self dismissModalViewControllerAnimated:TRUE];
 }
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	
-	// prevent scrolling in the browser
-	for (id subview in webView.subviews) {
-		if ([[subview class] isSubclassOfClass: [UIScrollView class]]) {
-			((UIScrollView *)subview).bounces = NO;
-		}
-	}
 }
-
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Overriden to allow any orientation.
     return YES;
 }
 
-
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc. that aren't in use.
 }
-
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
-
 
 - (void)dealloc {
+	[navigationBar release];
+	[webView release];
+	[backButton release];
     [super dealloc];
 }
-
 
 @end

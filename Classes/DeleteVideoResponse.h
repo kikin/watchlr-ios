@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "VideoObject.h"
+#import "DefaultResponse.h"
 
-
-@interface DeleteVideoResponse : NSObject {
+@interface DeleteVideoResponse : DefaultResponse {
 	VideoObject* videoObject;
 }
 
-- (id) initWithResponse: (id)jsonObject;
+- (id) initWithResponse: (NSDictionary*)jsonObject;
 
 @property(nonatomic,assign) VideoObject* videoObject;
 

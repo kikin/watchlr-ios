@@ -16,6 +16,6 @@
 - (void) load;
 - (void) save;
 
-@property(nonatomic, copy) NSString* userId;
+@property(retain) NSString* userId;
 
 @end

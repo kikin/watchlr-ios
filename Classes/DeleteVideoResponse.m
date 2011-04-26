@@ -12,7 +12,10 @@
 
 @synthesize videoObject;
 
-- (id) initWithResponse: (id)jsonObject {
+- (id) initWithResponse: (NSDictionary*)jsonObject {
+	if (self = [super initWithResponse:jsonObject]) {
+		// nothing else to do
+	}
 	return self;
 }
 

@@ -8,15 +8,25 @@
 
 #import "LinkDeviceResponse.h"
 
-
 @implementation LinkDeviceResponse
 
-@synthesize userId;
-
-- (id) initWithResponse: (id)jsonObject {
-	// get data
-	userId = jsonObject;
+- (id) initWithResponse: (NSDictionary*)jsonObject {
+	if (self = [super initWithResponse:jsonObject]) {
+		if (success) {
+			// get data
+			sessionId = [[jsonObject objectForKey:@"result"] retain];
+		}
+	}
 	return self;
+}
+
+- (NSString*) sessionId {
+	return sessionId;
+}
+
+- (void) dealloc {
+	[sessionId release];
+	[super dealloc];
 }
 
 @end

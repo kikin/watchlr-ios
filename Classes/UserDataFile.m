@@ -13,35 +13,33 @@
 @synthesize userId;
 
 - (id) init {
-	self = [super init:@"UserData"];
-	if (self) {
+	if (self = [super init:@"UserData"]) {
 		[self load];
 	}
 	return self;
 }
 
-- (void) dealloc
-{
+- (void) dealloc {
 	[userId release];
 	[super dealloc];
 }
-
 
 - (void) load {
 	// load data and fill up this object
 	NSDictionary* fileData = [super load];
 	if (fileData != nil) {
-		userId = [[[fileData objectForKey:@"userId"] copy] retain];
+		self.userId = [fileData objectForKey:@"userId"];
 	}
 }
 
 - (void) save {
 	// create dictionnary and save it
 	NSMutableDictionary* fileData = [[NSMutableDictionary alloc] init];
-	if (self.userId != nil) {
-		[fileData setObject: [self.userId copy] forKey: @"userId"];
+	if (userId != nil) {
+		[fileData setObject:userId forKey: @"userId"];
 	}
 	[super save:fileData];
+	[fileData release];
 }
 
 @end

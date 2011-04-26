@@ -1,5 +1,5 @@
 //
-//  LinkDeviceRequest.h
+//  DeleteVideoResponse.h
 //  KikinVideo
 //
 //  Created by ludovic cabre on 2/25/11.

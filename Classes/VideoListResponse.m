@@ -11,30 +11,49 @@
 
 @implementation VideoListResponse
 
-@synthesize count, start, videos;
-
-- (id) initWithResponse: (id)jsonObject {
-	// cast our data to what it *should* be
-	NSDictionary* response = jsonObject;
-	
-	// get count/start
-	count = [[response objectForKey:@"count"] intValue];
-	start = [[response objectForKey:@"start"] intValue];
-	
-	// get all the videos
-	if (count > 0) {
-		NSArray* videosArr = [response objectForKey:@"videos"];
-		
-		videos = [NSMutableArray arrayWithCapacity:videosArr.count];
-		for (NSDictionary* videoDic in videosArr) {
-			// create video from dictionnary
-			VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] retain];
-			[videos addObject:videoObject];
+- (id) initWithResponse: (NSDictionary*)jsonObject {
+	if (self = [super initWithResponse:jsonObject]) {
+		if (success) {
+			// get the result in the thing
+			NSDictionary* response = [jsonObject objectForKey:@"result"];
+			
+			// get count/start
+			count = [[response objectForKey:@"count"] intValue];
+			start = [[response objectForKey:@"start"] intValue];
+			
+			// get all the videos
+			if (count > 0) {
+				NSArray* videosArr = [response objectForKey:@"videos"];
+				
+				// create our video array
+				videos = [[NSMutableArray alloc] init];
+				for (NSDictionary* videoDic in videosArr) {
+					// create video from dictionnary
+					VideoObject* videoObject = [[VideoObject alloc] initFromDictionnary:videoDic];
+					[videos addObject:videoObject];
+					[videoObject release];
+				}
+			}
 		}
-		[videos retain];
 	}
-	
 	return self;
+}
+
+- (int) count {
+	return count;
+}
+
+- (int) start {
+	return start;
+}
+
+- (NSArray*) videos {
+	return videos;
+}
+
+- (void) dealloc {
+	[videos release];
+	[super dealloc];
 }
 
 @end

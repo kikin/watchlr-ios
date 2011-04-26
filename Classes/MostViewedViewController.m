@@ -7,46 +7,106 @@
 //
 
 #import "MostViewedViewController.h"
-#import "VideoListRequest.h"
+#import "LoginViewController.h"
 #import "UserObject.h"
-#import "DeleteVideoRequest.h"
 
 @implementation MostViewedViewController
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-	[super viewDidLoad];
+// Implement loadView to create a view hierarchy programmatically, without using a nib.
+- (void)loadView {
+	// create the view
+	UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	self.view = view;
+	[view release];
+	
+	// create the toolbar
+	topToolbar = [[UIToolbar alloc] init];
+	topToolbar.frame = CGRectMake(0, 0, view.frame.size.width, 42);
+	topToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	[view addSubview:topToolbar];
+	
+	NSMutableArray* buttons = [[NSMutableArray alloc] initWithCapacity:3];
+	
+	// create the disconnect button
+	disconnectButton = [[UIBarButtonItem alloc] init];
+	disconnectButton.title = @"Disconnect";
+	disconnectButton.style = UIBarButtonItemStyleBordered;
+	disconnectButton.action = @selector(onClickDisctonnect);
+	[buttons addObject:disconnectButton];
+	
+	// create a spacer
+	UIBarButtonItem* spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	[buttons addObject:spacer];
+	[spacer release];
+	
+	// create the refresh button
+	refreshButton = [[UIBarButtonItem alloc] init];
+	refreshButton.title = @"Refresh list";
+	refreshButton.style = UIBarButtonItemStyleBordered;
+	refreshButton.action = @selector(onClickRefresh);
+	[buttons addObject:refreshButton];
+	
+	// add the buttons to the bar
+	[topToolbar setItems:buttons];
+	[buttons release];
+	
+	// create the video table
+	videosTable = [[UITableView alloc] init];
+	videosTable.frame = CGRectMake(0, 42, view.frame.size.width, view.frame.size.height-42);
+	videosTable.delegate = self;
+	videosTable.dataSource = self;
+	videosTable.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	[view addSubview:videosTable];
+	
+	// request video lsit
 	[self doVideoListRequest];
 }
 
 - (void)doVideoListRequest {
 	// get the list of videos
-	VideoListRequest* request = [[VideoListRequest alloc] init];
-	[request setErrorCallback:self callback:@selector(onListRequestFailed:)];
-	[request setSuccessCallback:self callback:@selector(onListRequestSuccess:)];
-	[request doGetVideoListRequest];	
+	if (videoListRequest == nil) {
+		videoListRequest = [[VideoListRequest alloc] init];
+		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
+		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
+	}
+	if ([videoListRequest isRequesting]) {
+		[videoListRequest cancelRequest];
+	}
+	[videoListRequest doGetVideoListRequest];	
 }
 
-- (IBAction) onClickRefresh {
+- (void) onClickRefresh {
 	[self doVideoListRequest];
 }
 
-- (IBAction) onClickDisctonnect {
+- (void) onClickDisctonnect {
 	// erase userId
 	UserObject* userObject = [UserObject getUser];
-	userObject.userId = nil;
+	userObject.sessionId = nil;
 	
+	//LoginViewController* loginViewController = [[LoginViewController alloc] init];
+	//[UIView transitionFromView:self.view toView:loginViewController.view duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft completion:^(BOOL finished){
+	//	if (finished) {
+	//	}
+	//}];
+
 	[self dismissModalViewControllerAnimated:TRUE];
 }
 
 - (void) onListRequestSuccess: (VideoListResponse*)response {
-	NSLog(@"-- onListRequestSuccess");
-	videoListResponse = response;
-	[listTableView reloadData];
+	// save response and get videos
+	videoListResponse = [response retain];
+	videos = [[NSMutableArray arrayWithArray:[response videos]] retain];
+	
+	// refresh the table
+	[videosTable reloadData];
+	
+	LOG_DEBUG(@"list request success");
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
-	NSLog(@"-- onLinkRequestFailed %@", errorMessage);
+	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
 // Override to allow orientations other than the default portrait orientation.
@@ -57,21 +117,26 @@
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 - (void)viewDidUnload {
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+	
 }
 
-
 - (void)dealloc {
+	[videos release];
+	[videoListRequest release];
+	[videoListResponse release];
+	[disconnectButton release];
+	[refreshButton release];
+	[videosTable release];
+	[topToolbar release];
     [super dealloc];
 }
 
-#pragma mark Table view methods
+// --------------------------------------------------------------------------------
+// TableView delegates/datasource
+// --------------------------------------------------------------------------------
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -79,11 +144,9 @@
 
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	if (videoListResponse != nil) {
-		NSLog(@"nb videos: %ld", ([[videoListResponse videos] count]));
-		return [[videoListResponse videos] count];
+	if (videos != nil) {
+		return [videos count];
 	} else {
-		NSLog(@"nb videos: 0 (response not yet there)");
 		return 0;
 	}
 }
@@ -92,62 +155,94 @@
     return 150; 
 }
 
-- (void)onClickDeleteVideo:(VideoObject*)video {
-	DeleteVideoRequest* request = [[DeleteVideoRequest alloc] init];
-	[request setErrorCallback:self callback:@selector(onDeleteRequestFailed:)];
-	[request setSuccessCallback:self callback:@selector(onDeleteRequestSuccess:)];
-	[request doDeleteVideoRequest:video];
-}
-
 - (void) onDeleteRequestSuccess: (DeleteVideoResponse*)response {
-	VideoObject* videoObject = response.videoObject;
-	
-	NSUInteger idx = [[videoListResponse videos] indexOfObject:videoObject];
-	
-	[[videoListResponse videos] removeObjectAtIndex:idx];
-	
-	[listTableView beginUpdates];
-	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-	[listTableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-					 withRowAnimation:UITableViewRowAnimationFade];
-	[listTableView endUpdates];	
-
-	//[self doVideoListRequest];
+	if (response.success) {
+		VideoObject* videoObject = response.videoObject;
+		
+		NSUInteger idx = [videos indexOfObject:videoObject];
+		[videos removeObjectAtIndex:idx];
+		
+		[videosTable beginUpdates];
+		NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+		[videosTable deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+						   withRowAnimation:UITableViewRowAnimationFade];
+		[videosTable endUpdates];	
+	}
+	LOG_DEBUG(@"success deleting video");
 }
 
 - (void) onDeleteRequestFailed: (NSString*)errorMessage {
-	NSLog(@"-- onDeleteRequestFailed %@", errorMessage);
+	LOG_DEBUG(@"failed to delete video: %@", errorMessage);
 }
 
-// Customize the appearance of table view cells.
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+	return @"Remove from queue";
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath {
+	return UITableViewCellEditingStyleDelete;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+	if (deleteVideoRequest == nil) {
+		// create a delete request if not already done
+		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
+		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
+		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
+	}
+	
+	// get the video item
+	if (indexPath.row < videos.count) {
+		VideoObject* video = [videos objectAtIndex:indexPath.row];
+		
+		// cancel any current request
+		if ([deleteVideoRequest isRequesting]) {
+			[deleteVideoRequest cancelRequest];
+		}
+		
+		// do the request
+		[deleteVideoRequest doDeleteVideoRequest:video];
+	}
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+	return YES;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"VideoTableCell";
 	
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	// try to reuse an id
+    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        // Create a temporary UIViewController to instantiate the custom cell.
-        UIViewController *temporaryController = [[UIViewController alloc] initWithNibName:CellIdentifier bundle:nil];
-        // Grab a pointer to the custom cell.
-        cell = (VideoTableCell *)temporaryController.view;
-		[((VideoTableCell*)cell) setDeleteCallback:self callback:@selector(onClickDeleteVideo:)];
-		
-        // Release the temporary UIViewController.
-        [temporaryController release];
+        // Create the cell
+        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
+		cell.deleteCallback = [Callback create:self selector:@selector(onClickDeleteVideo:)];
     }
 	
-	// Change data for the cell
-	VideoObject* videoObject = [[videoListResponse videos] objectAtIndex:[indexPath row]];
-	[((VideoTableCell*)cell) setVideoObject: videoObject];
+	if (indexPath.row < videos.count) {
+		// Update data for the cell
+		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
+		[cell setVideoObject: videoObject];
+	}
 	
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	// unselect row
+	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+	
 	// play the selected video
-	VideoObject* videoObject = [[videoListResponse videos] objectAtIndex:[indexPath row]];
-	playerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-	[self presentModalViewController:playerViewController animated:YES];
-	[playerViewController setVideo:videoObject];
+	if (indexPath.row < videos.count) {
+		// Update data for the cell
+		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
+		PlayerViewController* playerViewController = [[PlayerViewController alloc] init];
+		playerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+		[self presentModalViewController:playerViewController animated:YES];
+		[playerViewController setVideo:videoObject];
+		[playerViewController release];
+	}
 }
 
 
