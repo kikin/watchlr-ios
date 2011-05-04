@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JsonRequest.h"
+#import <CommonIos/JsonRequest.h>
 #import "DeleteVideoResponse.h"
 #import "VideoObject.h"
 
@@ -16,6 +16,7 @@
 }
 
 - (void) doDeleteVideoRequest:(VideoObject*)video;
+- (id) processReceivedString: (NSString*)receivedString;
 
 @property(nonatomic,assign) VideoObject* videoObject;
 

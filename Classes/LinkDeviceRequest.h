@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JsonRequest.h"
+#import <CommonIos/JsonRequest.h>
 #import "LinkDeviceResponse.h"
 
 @interface LinkDeviceRequest : JsonRequest {
@@ -15,5 +15,6 @@
 }
 
 - (void) doLinkDeviceRequest:(NSString*)facebookId;
+- (id) processReceivedString: (NSString*)receivedString;
 
 @end

@@ -54,6 +54,7 @@
 	// create the video table
 	videosTable = [[UITableView alloc] init];
 	videosTable.frame = CGRectMake(0, 42, view.frame.size.width, view.frame.size.height-42);
+	videosTable.rowHeight = DeviceUtils.isIphone ? 100 : 150;
 	videosTable.delegate = self;
 	videosTable.dataSource = self;
 	videosTable.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -109,9 +110,8 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
-// Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
+	return YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -149,10 +149,6 @@
 	} else {
 		return 0;
 	}
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 150; 
 }
 
 - (void) onDeleteRequestSuccess: (DeleteVideoResponse*)response {

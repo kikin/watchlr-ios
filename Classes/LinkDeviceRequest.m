@@ -17,17 +17,17 @@
 	[params setObject:facebookId forKey:@"id"];
 	
 	// do request	
-	[self doGetRequest:@"http://video.kikin.com/api/fb_swap" params:params];
+	[self doGetRequest:@"https://video.kikin.com/api/fb_swap" params:params];
 }
 
-- (void) onRequestSuccess: (id)jsonObject {
+- (id) processReceivedString: (NSString*)receivedString {
+	// let the base parse the json
+	id jsonObject = [super processReceivedString:receivedString];
+	
+	// create the response
 	LinkDeviceResponse* response = [[LinkDeviceResponse alloc] initWithResponse:jsonObject];
-	[successCallback execute:response];
-	[response release];
-}
-
-- (void) onRequestFailed: (NSString*)errorMessage {
-	[errorCallback execute:errorMessage];
+	
+	return response;
 }
 
 @end

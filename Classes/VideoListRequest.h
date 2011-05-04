@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JsonRequest.h"
+#import <CommonIos/JsonRequest.h>
 #import "VideoListResponse.h"
 
 @interface VideoListRequest : JsonRequest
 
 - (void) doGetVideoListRequest;
+- (id) processReceivedString: (NSString*)receivedString;
 
 @end

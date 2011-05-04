@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoObject.h"
-#import "Callback.h"
+#import <CommonIos/Callback.h>
 
 @interface VideoTableCell : UITableViewCell {
 	VideoObject* videoObject;

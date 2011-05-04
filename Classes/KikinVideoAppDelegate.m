@@ -8,8 +8,8 @@
 
 #import "KikinVideoAppDelegate.h"
 #import "LoginViewController.h"
-#import <libkern/OSMemoryNotification.h>
 #import "UserObject.h"
+#import <CommonIos/DeviceUtils.h>
 #import "MostViewedViewController.h"
 
 @implementation KikinVideoAppDelegate
@@ -33,13 +33,18 @@
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+	LoginViewController* loginViewController = (LoginViewController*)viewController;
+    return [loginViewController.facebook handleOpenURL:url]; 
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application {
 	// track the stop time
 	if (startDate != nil) {
 		NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
-		LOG_EVENT(@"eventStopApp", LOGGER_LOCATION_APP, [NSString stringWithFormat:@"%ld", (int)time]);
+		LOG_EVENT(@"eventStopApp", EVENT_LOCATION_APPLICATION, [NSString stringWithFormat:@"%ld", (int)time]);
 	} else {
-		LOG_EVENT(@"eventStopApp", LOGGER_LOCATION_APP, @"no_date");
+		LOG_EVENT(@"eventStopApp", EVENT_LOCATION_APPLICATION, @"no_date");
 	}
 }
 
@@ -49,7 +54,7 @@
 	startDate = [[NSDate alloc] init];
 	
 	// track that
-	LOG_EVENT(@"eventStartApp", LOGGER_LOCATION_APP);
+	LOG_EVENT(@"eventStartApp", EVENT_LOCATION_APPLICATION);
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -57,13 +62,11 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-#if !TARGET_IPHONE_SIMULATOR
 	// track if the application receive fatal memory issues
-	int level = OSMemoryNotificationCurrentLevel();
+	int level = [DeviceUtils currentMemoryLevel];
 	if (level > OSMemoryNotificationLevelWarning) {
 		LOG_ERROR(@"memory warning level %ld", level);
 	}
-#endif
 }
 
 - (void)dealloc {

@@ -39,7 +39,8 @@
 	
 	// create the title lable inside
 	titleLabel = [[UILabel alloc] init];
-	titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
+	titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	//titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
 	titleLabel.frame = CGRectMake(0, 10, loginBgView.frame.size.width, 35);
 	titleLabel.text = @"kikin video";
 	titleLabel.textAlignment = UITextAlignmentCenter;
@@ -49,7 +50,7 @@
 	
 	// create the description
 	descriptionLabel = [[UILabel alloc] init];
-	descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
+	descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;	
 	descriptionLabel.frame = CGRectMake(30, 50, loginBgView.frame.size.width-60, 70);
 	descriptionLabel.text = @"Access kikin video from your iPad by login on facebook. Go to http://video.kikin.com for more information.";
 	descriptionLabel.textAlignment = UITextAlignmentCenter;
@@ -66,6 +67,12 @@
 	[loginButton setTitle:@"Connect with Facebook" forState:UIControlStateNormal];
 	[loginBgView addSubview:loginButton];
 	
+	// some changes for iPhone/iPod version
+	if (DeviceUtils.isIphone) {
+		loginBgView.frame = CGRectMake((view.frame.size.width-300)/2, (view.frame.size.height-250)/2, 300, 250);
+		descriptionLabel.numberOfLines = 4;
+	}
+	
 	// create the facebook object for connection
 	facebook = [[Facebook alloc] initWithAppId:@"142118469191927"];
 	
@@ -81,6 +88,10 @@
 	facebook.sessionDelegate = self;
 	[facebook removeAllCookies];
 	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
+}
+
+- (Facebook*) facebook {
+	return facebook;
 }
 
 - (void) goToMainView:(bool)animated {
@@ -131,8 +142,11 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Overriden to allow any orientation.
-    return YES;
+	//if (DeviceUtils.isIphone) {
+	//	return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+	//} else {
+		return YES;
+	//}
 }
 
 - (void)didReceiveMemoryWarning {

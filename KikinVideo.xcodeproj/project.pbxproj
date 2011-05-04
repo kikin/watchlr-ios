@@ -215,16 +215,6 @@
 		357A0A5B1316B0F30050C2CA /* MostViewedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0A5A1316B0F30050C2CA /* MostViewedViewController.m */; };
 		357A0B411316D7F70050C2CA /* VideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0B401316D7F70050C2CA /* VideoTableCell.m */; };
 		357A0C851316E9F10050C2CA /* VideoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0C841316E9F10050C2CA /* VideoObject.m */; };
-		357A0CEF1316F17A0050C2CA /* JsonRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A0CEE1316F17A0050C2CA /* JsonRequest.m */; };
-		357A10481317031F0050C2CA /* NSObject+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10371317031F0050C2CA /* NSObject+JSON.m */; };
-		357A10491317031F0050C2CA /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10391317031F0050C2CA /* SBJsonParser.m */; };
-		357A104A1317031F0050C2CA /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A103B1317031F0050C2CA /* SBJsonStreamParser.m */; };
-		357A104B1317031F0050C2CA /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A103D1317031F0050C2CA /* SBJsonStreamParserAdapter.m */; };
-		357A104C1317031F0050C2CA /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A103F1317031F0050C2CA /* SBJsonStreamParserState.m */; };
-		357A104D1317031F0050C2CA /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10411317031F0050C2CA /* SBJsonStreamWriter.m */; };
-		357A104E1317031F0050C2CA /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10431317031F0050C2CA /* SBJsonStreamWriterState.m */; };
-		357A104F1317031F0050C2CA /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10451317031F0050C2CA /* SBJsonTokeniser.m */; };
-		357A10501317031F0050C2CA /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10471317031F0050C2CA /* SBJsonWriter.m */; };
 		357A10D013170A150050C2CA /* VideoListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A10CF13170A150050C2CA /* VideoListRequest.m */; };
 		357A120513171B2A0050C2CA /* VideoListResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A120413171B2A0050C2CA /* VideoListResponse.m */; };
 		357A14441317446E0050C2CA /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A14431317446E0050C2CA /* PlayerViewController.m */; };
@@ -238,15 +228,11 @@
 		357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A20C6131BFA4C0050C2CA /* kikin_logo.png */; };
 		357A21E4131C07B70050C2CA /* DeleteVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */; };
 		357A21E7131C08A60050C2CA /* DeleteVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */; };
-		3591028A1365D1EC0000A814 /* Callback.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102891365D1EC0000A814 /* Callback.m */; };
-		359102A91365D2BE0000A814 /* Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102A81365D2BE0000A814 /* Logger.m */; };
-		359102AC1365D2C50000A814 /* ConsoleLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 359102AB1365D2C50000A814 /* ConsoleLogger.m */; };
 		359103071365E6E20000A814 /* DefaultResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 359103061365E6E20000A814 /* DefaultResponse.m */; };
 		359108FC13661F670000A814 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 359108FB13661F670000A814 /* AppIcon.png */; };
-		3591FF7C136220F40000A814 /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF74136220F40000A814 /* Facebook.m */; };
-		3591FF7D136220F40000A814 /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF77136220F40000A814 /* FBDialog.m */; };
-		3591FF7E136220F40000A814 /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF79136220F40000A814 /* FBLoginDialog.m */; };
-		3591FF7F136220F40000A814 /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3591FF7B136220F40000A814 /* FBRequest.m */; };
+		359965C0137052DB002E7EF1 /* CommonIos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 359965BF137052DB002E7EF1 /* CommonIos.framework */; };
+		3599670F1370705E002E7EF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3599670E1370705E002E7EF1 /* libsqlite3.dylib */; };
+		3599671313707072002E7EF1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3599671213707072002E7EF1 /* CFNetwork.framework */; };
 		35CDF20F1367483D006CF279 /* NoImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 35CDF20E1367483D006CF279 /* NoImage.png */; };
 /* End PBXBuildFile section */
 
@@ -476,27 +462,6 @@
 		357A0B401316D7F70050C2CA /* VideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTableCell.m; sourceTree = "<group>"; };
 		357A0C831316E9F10050C2CA /* VideoObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoObject.h; sourceTree = "<group>"; };
 		357A0C841316E9F10050C2CA /* VideoObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoObject.m; sourceTree = "<group>"; };
-		357A0CED1316F17A0050C2CA /* JsonRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonRequest.h; sourceTree = "<group>"; };
-		357A0CEE1316F17A0050C2CA /* JsonRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonRequest.m; sourceTree = "<group>"; };
-		357A10351317031E0050C2CA /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
-		357A10361317031E0050C2CA /* NSObject+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+JSON.h"; sourceTree = "<group>"; };
-		357A10371317031F0050C2CA /* NSObject+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+JSON.m"; sourceTree = "<group>"; };
-		357A10381317031F0050C2CA /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
-		357A10391317031F0050C2CA /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
-		357A103A1317031F0050C2CA /* SBJsonStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParser.h; sourceTree = "<group>"; };
-		357A103B1317031F0050C2CA /* SBJsonStreamParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParser.m; sourceTree = "<group>"; };
-		357A103C1317031F0050C2CA /* SBJsonStreamParserAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParserAdapter.h; sourceTree = "<group>"; };
-		357A103D1317031F0050C2CA /* SBJsonStreamParserAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParserAdapter.m; sourceTree = "<group>"; };
-		357A103E1317031F0050C2CA /* SBJsonStreamParserState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParserState.h; sourceTree = "<group>"; };
-		357A103F1317031F0050C2CA /* SBJsonStreamParserState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParserState.m; sourceTree = "<group>"; };
-		357A10401317031F0050C2CA /* SBJsonStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamWriter.h; sourceTree = "<group>"; };
-		357A10411317031F0050C2CA /* SBJsonStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamWriter.m; sourceTree = "<group>"; };
-		357A10421317031F0050C2CA /* SBJsonStreamWriterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamWriterState.h; sourceTree = "<group>"; };
-		357A10431317031F0050C2CA /* SBJsonStreamWriterState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamWriterState.m; sourceTree = "<group>"; };
-		357A10441317031F0050C2CA /* SBJsonTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonTokeniser.h; sourceTree = "<group>"; };
-		357A10451317031F0050C2CA /* SBJsonTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonTokeniser.m; sourceTree = "<group>"; };
-		357A10461317031F0050C2CA /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
-		357A10471317031F0050C2CA /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
 		357A10CE13170A150050C2CA /* VideoListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoListRequest.h; sourceTree = "<group>"; };
 		357A10CF13170A150050C2CA /* VideoListRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoListRequest.m; sourceTree = "<group>"; };
 		357A120313171B2A0050C2CA /* VideoListResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoListResponse.h; sourceTree = "<group>"; };
@@ -521,26 +486,13 @@
 		357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoRequest.m; sourceTree = "<group>"; };
 		357A21E5131C08A60050C2CA /* DeleteVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteVideoResponse.h; sourceTree = "<group>"; };
 		357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoResponse.m; sourceTree = "<group>"; };
-		359102881365D1EC0000A814 /* Callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callback.h; sourceTree = "<group>"; };
-		359102891365D1EC0000A814 /* Callback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Callback.m; sourceTree = "<group>"; };
-		359102A71365D2BE0000A814 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
-		359102A81365D2BE0000A814 /* Logger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Logger.m; sourceTree = "<group>"; };
-		359102AA1365D2C50000A814 /* ConsoleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleLogger.h; sourceTree = "<group>"; };
-		359102AB1365D2C50000A814 /* ConsoleLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConsoleLogger.m; sourceTree = "<group>"; };
-		359102AD1365D2CB0000A814 /* GoogleAnalyticsLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalyticsLogger.h; sourceTree = "<group>"; };
-		359102AE1365D2CB0000A814 /* GoogleAnalyticsLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAnalyticsLogger.m; sourceTree = "<group>"; };
 		359103051365E6E20000A814 /* DefaultResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultResponse.h; sourceTree = "<group>"; };
 		359103061365E6E20000A814 /* DefaultResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultResponse.m; sourceTree = "<group>"; };
 		359108FB13661F670000A814 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon.png; sourceTree = "<group>"; };
-		3591FF73136220F40000A814 /* Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Facebook.h; sourceTree = "<group>"; };
-		3591FF74136220F40000A814 /* Facebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Facebook.m; sourceTree = "<group>"; };
-		3591FF75136220F40000A814 /* FBConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBConnect.h; sourceTree = "<group>"; };
-		3591FF76136220F40000A814 /* FBDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBDialog.h; sourceTree = "<group>"; };
-		3591FF77136220F40000A814 /* FBDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBDialog.m; sourceTree = "<group>"; };
-		3591FF78136220F40000A814 /* FBLoginDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBLoginDialog.h; sourceTree = "<group>"; };
-		3591FF79136220F40000A814 /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginDialog.m; sourceTree = "<group>"; };
-		3591FF7A136220F40000A814 /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRequest.h; sourceTree = "<group>"; };
-		3591FF7B136220F40000A814 /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
+		359965BF137052DB002E7EF1 /* CommonIos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CommonIos.framework; path = /Users/ludoviccabre/Library/Frameworks/CommonIos.framework; sourceTree = "<absolute>"; };
+		3599670E1370705E002E7EF1 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		3599671213707072002E7EF1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		3599677F13708227002E7EF1 /* EventsLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsLocation.h; sourceTree = "<group>"; };
 		35CDF20E1367483D006CF279 /* NoImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoImage.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* KikinVideo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "KikinVideo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -553,6 +505,9 @@
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
+				359965C0137052DB002E7EF1 /* CommonIos.framework in Frameworks */,
+				3599670F1370705E002E7EF1 /* libsqlite3.dylib in Frameworks */,
+				3599671313707072002E7EF1 /* CFNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,12 +518,10 @@
 			isa = PBXGroup;
 			children = (
 				3591040A1365F0CE0000A814 /* cell */,
-				359102A51365D2B00000A814 /* logger */,
 				359102851365D1E50000A814 /* utils */,
 				357A194B131823E10050C2CA /* files */,
 				357A16DB1317FBFA0050C2CA /* controllers */,
 				357A120113171A400050C2CA /* responses */,
-				357A1032131702DB0050C2CA /* libraries */,
 				357A0CEC1316F1560050C2CA /* requests */,
 				357A0C861316E9F60050C2CA /* objects */,
 				1D3623240D0F684500981E51 /* KikinVideoAppDelegate.h */,
@@ -593,6 +546,8 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				3599670E1370705E002E7EF1 /* libsqlite3.dylib */,
+				3599671213707072002E7EF1 /* CFNetwork.framework */,
 			);
 			name = KikinVideo;
 			sourceTree = "<group>";
@@ -619,6 +574,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				359965BF137052DB002E7EF1 /* CommonIos.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765070DF74369002DB57D /* CoreGraphics.framework */,
@@ -848,8 +804,6 @@
 		357A0CEC1316F1560050C2CA /* requests */ = {
 			isa = PBXGroup;
 			children = (
-				357A0CED1316F17A0050C2CA /* JsonRequest.h */,
-				357A0CEE1316F17A0050C2CA /* JsonRequest.m */,
 				357A10CE13170A150050C2CA /* VideoListRequest.h */,
 				357A10CF13170A150050C2CA /* VideoListRequest.m */,
 				357A16E31317FDE60050C2CA /* LinkDeviceRequest.h */,
@@ -858,41 +812,6 @@
 				357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */,
 			);
 			name = requests;
-			sourceTree = "<group>";
-		};
-		357A1032131702DB0050C2CA /* libraries */ = {
-			isa = PBXGroup;
-			children = (
-				3591FD5B136218AF0000A814 /* facebook */,
-				357A1033131702F40050C2CA /* json */,
-			);
-			name = libraries;
-			sourceTree = "<group>";
-		};
-		357A1033131702F40050C2CA /* json */ = {
-			isa = PBXGroup;
-			children = (
-				357A10351317031E0050C2CA /* JSON.h */,
-				357A10361317031E0050C2CA /* NSObject+JSON.h */,
-				357A10371317031F0050C2CA /* NSObject+JSON.m */,
-				357A10381317031F0050C2CA /* SBJsonParser.h */,
-				357A10391317031F0050C2CA /* SBJsonParser.m */,
-				357A103A1317031F0050C2CA /* SBJsonStreamParser.h */,
-				357A103B1317031F0050C2CA /* SBJsonStreamParser.m */,
-				357A103C1317031F0050C2CA /* SBJsonStreamParserAdapter.h */,
-				357A103D1317031F0050C2CA /* SBJsonStreamParserAdapter.m */,
-				357A103E1317031F0050C2CA /* SBJsonStreamParserState.h */,
-				357A103F1317031F0050C2CA /* SBJsonStreamParserState.m */,
-				357A10401317031F0050C2CA /* SBJsonStreamWriter.h */,
-				357A10411317031F0050C2CA /* SBJsonStreamWriter.m */,
-				357A10421317031F0050C2CA /* SBJsonStreamWriterState.h */,
-				357A10431317031F0050C2CA /* SBJsonStreamWriterState.m */,
-				357A10441317031F0050C2CA /* SBJsonTokeniser.h */,
-				357A10451317031F0050C2CA /* SBJsonTokeniser.m */,
-				357A10461317031F0050C2CA /* SBJsonWriter.h */,
-				357A10471317031F0050C2CA /* SBJsonWriter.m */,
-			);
-			name = json;
 			sourceTree = "<group>";
 		};
 		357A120113171A400050C2CA /* responses */ = {
@@ -947,8 +866,7 @@
 		359102851365D1E50000A814 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				359102881365D1EC0000A814 /* Callback.h */,
-				359102891365D1EC0000A814 /* Callback.m */,
+				359102A51365D2B00000A814 /* logger */,
 			);
 			name = utils;
 			sourceTree = "<group>";
@@ -956,12 +874,7 @@
 		359102A51365D2B00000A814 /* logger */ = {
 			isa = PBXGroup;
 			children = (
-				359102AD1365D2CB0000A814 /* GoogleAnalyticsLogger.h */,
-				359102AE1365D2CB0000A814 /* GoogleAnalyticsLogger.m */,
-				359102AA1365D2C50000A814 /* ConsoleLogger.h */,
-				359102AB1365D2C50000A814 /* ConsoleLogger.m */,
-				359102A71365D2BE0000A814 /* Logger.h */,
-				359102A81365D2BE0000A814 /* Logger.m */,
+				3599677F13708227002E7EF1 /* EventsLocation.h */,
 			);
 			name = logger;
 			sourceTree = "<group>";
@@ -973,22 +886,6 @@
 				357A0B401316D7F70050C2CA /* VideoTableCell.m */,
 			);
 			name = cell;
-			sourceTree = "<group>";
-		};
-		3591FD5B136218AF0000A814 /* facebook */ = {
-			isa = PBXGroup;
-			children = (
-				3591FF73136220F40000A814 /* Facebook.h */,
-				3591FF74136220F40000A814 /* Facebook.m */,
-				3591FF75136220F40000A814 /* FBConnect.h */,
-				3591FF76136220F40000A814 /* FBDialog.h */,
-				3591FF77136220F40000A814 /* FBDialog.m */,
-				3591FF78136220F40000A814 /* FBLoginDialog.h */,
-				3591FF79136220F40000A814 /* FBLoginDialog.m */,
-				3591FF7A136220F40000A814 /* FBRequest.h */,
-				3591FF7B136220F40000A814 /* FBRequest.m */,
-			);
-			name = facebook;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1260,16 +1157,6 @@
 				357A0A5B1316B0F30050C2CA /* MostViewedViewController.m in Sources */,
 				357A0B411316D7F70050C2CA /* VideoTableCell.m in Sources */,
 				357A0C851316E9F10050C2CA /* VideoObject.m in Sources */,
-				357A0CEF1316F17A0050C2CA /* JsonRequest.m in Sources */,
-				357A10481317031F0050C2CA /* NSObject+JSON.m in Sources */,
-				357A10491317031F0050C2CA /* SBJsonParser.m in Sources */,
-				357A104A1317031F0050C2CA /* SBJsonStreamParser.m in Sources */,
-				357A104B1317031F0050C2CA /* SBJsonStreamParserAdapter.m in Sources */,
-				357A104C1317031F0050C2CA /* SBJsonStreamParserState.m in Sources */,
-				357A104D1317031F0050C2CA /* SBJsonStreamWriter.m in Sources */,
-				357A104E1317031F0050C2CA /* SBJsonStreamWriterState.m in Sources */,
-				357A104F1317031F0050C2CA /* SBJsonTokeniser.m in Sources */,
-				357A10501317031F0050C2CA /* SBJsonWriter.m in Sources */,
 				357A10D013170A150050C2CA /* VideoListRequest.m in Sources */,
 				357A120513171B2A0050C2CA /* VideoListResponse.m in Sources */,
 				357A14441317446E0050C2CA /* PlayerViewController.m in Sources */,
@@ -1281,13 +1168,6 @@
 				357A1E37131878EC0050C2CA /* UserObject.m in Sources */,
 				357A21E4131C07B70050C2CA /* DeleteVideoRequest.m in Sources */,
 				357A21E7131C08A60050C2CA /* DeleteVideoResponse.m in Sources */,
-				3591FF7C136220F40000A814 /* Facebook.m in Sources */,
-				3591FF7D136220F40000A814 /* FBDialog.m in Sources */,
-				3591FF7E136220F40000A814 /* FBLoginDialog.m in Sources */,
-				3591FF7F136220F40000A814 /* FBRequest.m in Sources */,
-				3591028A1365D1EC0000A814 /* Callback.m in Sources */,
-				359102A91365D2BE0000A814 /* Logger.m in Sources */,
-				359102AC1365D2C50000A814 /* ConsoleLogger.m in Sources */,
 				359103071365E6E20000A814 /* DefaultResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1301,7 +1181,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Frameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1323,7 +1206,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../Library/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
 				HEADER_SEARCH_PATHS = "";
@@ -1349,7 +1235,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = "kikin video";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1366,7 +1252,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = "kikin video";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

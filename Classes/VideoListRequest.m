@@ -15,23 +15,24 @@
 - (void) doGetVideoListRequest {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
+	LOG_DEBUG(@"sessionId = %@", sessionId);
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"user_id"];
 	
 	// do request
-	[self doGetRequest:@"http://video.kikin.com/api/list" params:params];
+	[self doGetRequest:@"https://video.kikin.com/api/list" params:params];
 }
 
-- (void) onRequestSuccess: (id)jsonObject {
+- (id) processReceivedString: (NSString*)receivedString {
+	// let the base parse the json
+	id jsonObject = [super processReceivedString:receivedString];
+	
+	// create the response
 	VideoListResponse* response = [[VideoListResponse alloc] initWithResponse:jsonObject];
-	[successCallback execute:response];
-	[response release];
-}
-
-- (void) onRequestFailed: (NSString*)errorMessage {
-	[errorCallback execute:errorMessage];
+	
+	return response;
 }
 
 @end

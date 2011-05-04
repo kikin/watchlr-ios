@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CommonIos/FBConnect.h>
 #import "UserObject.h"
-#import "FBConnect.h"
 
 @interface LoginViewController : UIViewController <FBSessionDelegate, FBRequestDelegate> {
 	Facebook* facebook;
@@ -19,6 +19,7 @@
 	UIImageView* logoImage;
 }
 
+- (Facebook*) facebook;
 - (void) goToMainView:(bool)animated;
 - (void) doLinkDeviceRequest: (NSString*)accessToken;
 - (void) onLinkRequestSuccess: (id)jsonObject;

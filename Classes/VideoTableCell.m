@@ -17,7 +17,6 @@
 		// create the title
 		titleLabel = [[UILabel alloc] init];
 		titleLabel.backgroundColor = [UIColor clearColor];
-		titleLabel.frame = CGRectMake(180, 12, self.frame.size.width-20, 20);
 		titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		titleLabel.font = [UIFont boldSystemFontOfSize:18];
 		titleLabel.text = @"title";
@@ -26,17 +25,27 @@
 		// create the description
 		descriptionLabel = [[UILabel alloc] init];
 		descriptionLabel.backgroundColor = [UIColor clearColor];
-		descriptionLabel.frame = CGRectMake(180, 35, self.frame.size.width-190, 55);
 		descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		descriptionLabel.font = [UIFont systemFontOfSize:15];
-		descriptionLabel.numberOfLines = 5;
 		descriptionLabel.text = @"description";
 		[self addSubview:descriptionLabel];
 		
 		// create the image
 		videoImageView = [[UIImageView alloc] init];
-		videoImageView.frame = CGRectMake(10, 10, 160, 120);
 		[self addSubview:videoImageView];
+		
+		// set size/positions
+		if (DeviceUtils.isIphone) {
+			videoImageView.frame = CGRectMake(10, 10, 106, 80);
+			titleLabel.frame = CGRectMake(126, 12, self.frame.size.width-136, 20);
+			descriptionLabel.frame = CGRectMake(126, 35, self.frame.size.width-136, 60);
+			descriptionLabel.numberOfLines = 3;
+		} else {
+			videoImageView.frame = CGRectMake(10, 10, 160, 120);
+			titleLabel.frame = CGRectMake(180, 12, self.frame.size.width-190, 20);
+			descriptionLabel.frame = CGRectMake(180, 35, self.frame.size.width-190, 100);
+			descriptionLabel.numberOfLines = 5;
+		}
 	}
     return self;
 }
@@ -65,10 +74,15 @@
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+	int normalWidth = DeviceUtils.isIphone ? 136 : 190,
+		buttonWidth = 160;
+	
+	// create new frame
 	CGRect newFrame = descriptionLabel.frame;
-	newFrame.size.width = editing ? self.frame.size.width-350 : self.frame.size.width-190;
+	newFrame.size.width = editing ? self.frame.size.width-normalWidth-buttonWidth : self.frame.size.width-normalWidth;
 	
 	if (animated) {
+		// do the animation
 		[UIView beginAnimations:@"ResizeDescription" context:nil];
 		{
 			[UIView setAnimationDuration:0.25];
@@ -76,6 +90,7 @@
 		}
 		[UIView commitAnimations];
 	} else {
+		// directly update the size
 		descriptionLabel.frame = newFrame;
 	}
 	
@@ -83,9 +98,13 @@
 }
 
 - (void) fixHeightOfDescription {
-	CGSize maximumSize = CGSizeMake(self.editing ? self.frame.size.width-350 : self.frame.size.width-190, 100);
+	int normalWidth = DeviceUtils.isIphone ? 136 : 190,
+		normalHeight = DeviceUtils.isIphone ? 60 : 100,
+		buttonWidth = 160;
+	
+	CGSize maximumSize = CGSizeMake(self.editing ? self.frame.size.width-normalWidth-buttonWidth : self.frame.size.width-normalWidth, normalHeight);
 	CGSize dateStringSize = [descriptionLabel.text sizeWithFont:descriptionLabel.font constrainedToSize:maximumSize lineBreakMode:descriptionLabel.lineBreakMode];
-	CGRect newFrame = CGRectMake(180, 35, self.frame.size.width-190, dateStringSize.height);
+	CGRect newFrame = CGRectMake(descriptionLabel.frame.origin.x, descriptionLabel.frame.origin.y, self.frame.size.width-normalWidth, dateStringSize.height);
 	descriptionLabel.frame = newFrame;
 }
 
@@ -99,7 +118,7 @@
 	if (video.description != nil) {
 		NSString* description = [video.description stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		descriptionLabel.text = description;
-		[self fixHeightOfDescription];
+		[self performSelectorOnMainThread:@selector(fixHeightOfDescription) withObject:nil waitUntilDone:NO];
 		//descriptionLabel.backgroundColor = [UIColor yellowColor];
 	}
 	
