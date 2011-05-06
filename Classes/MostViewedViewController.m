@@ -96,14 +96,18 @@
 }
 
 - (void) onListRequestSuccess: (VideoListResponse*)response {
-	// save response and get videos
-	videoListResponse = [response retain];
-	videos = [[NSMutableArray arrayWithArray:[response videos]] retain];
-	
-	// refresh the table
-	[videosTable reloadData];
-	
-	LOG_DEBUG(@"list request success");
+	if (response.success) {
+		// save response and get videos
+		videoListResponse = [response retain];
+		videos = [[NSMutableArray arrayWithArray:[response videos]] retain];
+		
+		// refresh the table
+		[videosTable reloadData];
+		
+		LOG_DEBUG(@"list request success");
+	} else {
+		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
+	}
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
@@ -162,13 +166,28 @@
 		NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
 		[videosTable deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
 						   withRowAnimation:UITableViewRowAnimationFade];
-		[videosTable endUpdates];	
+		[videosTable endUpdates];
+	} else {
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to delete this video: %@", response.errorMessage];
+		
+		// show error message
+		UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to delete" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		[alertView show];
+		[alertView release];
+		
+		LOG_ERROR(@"request success but failed to delete video: %@", response.errorMessage);
 	}
-	LOG_DEBUG(@"success deleting video");
 }
 
-- (void) onDeleteRequestFailed: (NSString*)errorMessage {
-	LOG_DEBUG(@"failed to delete video: %@", errorMessage);
+- (void) onDeleteRequestFailed: (NSString*)errorMessage {		
+	NSString* errorString = [NSString stringWithFormat:@"We failed to delete this video: %@", errorMessage];
+	
+	// show error message
+	UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to delete" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	[alertView show];
+	[alertView release];
+	
+	LOG_ERROR(@"failed to delete video: %@", errorMessage);
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {

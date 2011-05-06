@@ -41,7 +41,7 @@
 		errorLabel.textAlignment = UITextAlignmentCenter;
 		errorLabel.backgroundColor = [UIColor clearColor];
 		errorLabel.numberOfLines = 3;
-		errorLabel.font = [UIFont boldSystemFontOfSize:18.0];
+		errorLabel.font = [UIFont systemFontOfSize:18.0];
 		[self addSubview:errorLabel];
 		
 		okButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
