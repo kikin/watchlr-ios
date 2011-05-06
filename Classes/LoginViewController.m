@@ -92,6 +92,8 @@
 - (void) goToMainView:(bool)animated {
 	MostViewedViewController* mostViewedViewController = [[MostViewedViewController alloc] initWithNibName:@"MostViewedView" bundle:nil];
 	[self presentModalViewController:mostViewedViewController animated:animated];
+	
+	[self showView:connectMainView];
 }
 
 - (void) fbDidNotLogin:(BOOL)cancelled {

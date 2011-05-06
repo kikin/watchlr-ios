@@ -36,6 +36,7 @@
 	
 	// create the response
 	DeleteVideoResponse* response = [[[DeleteVideoResponse alloc] initWithResponse:jsonObject] autorelease];
+	response.videoObject = videoObject;
 	
 	return response;
 }

@@ -11,11 +11,11 @@
 #import "DefaultResponse.h"
 
 @interface DeleteVideoResponse : DefaultResponse {
-	VideoObject* videoObject;
+
 }
 
 - (id) initWithResponse: (NSDictionary*)jsonObject;
 
-@property(nonatomic,assign) VideoObject* videoObject;
+@property(retain) VideoObject* videoObject;
 
 @end

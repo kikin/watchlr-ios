@@ -19,4 +19,10 @@
 	return self;
 }
 
+- (void) dealloc {
+	[videoObject release];
+	[super dealloc];
+}
+
+
 @end

@@ -12,12 +12,12 @@
 #import "VideoObject.h"
 
 @interface DeleteVideoRequest : JsonRequest {
-	VideoObject* videoObject;
+
 }
 
 - (void) doDeleteVideoRequest:(VideoObject*)video;
 - (id) processReceivedString: (NSString*)receivedString;
 
-@property(nonatomic,assign) VideoObject* videoObject;
+@property(retain) VideoObject* videoObject;
 
 @end

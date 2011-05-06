@@ -174,6 +174,7 @@
 		VideoObject* videoObject = response.videoObject;
 		
 		NSUInteger idx = [videos indexOfObject:videoObject];
+		LOG_DEBUG(@"delete idx = %ld %ld", idx, videoObject);
 		[videos removeObjectAtIndex:idx];
 		
 		[videosTable beginUpdates];
@@ -228,6 +229,8 @@
 		if ([deleteVideoRequest isRequesting]) {
 			[deleteVideoRequest cancelRequest];
 		}
+		
+		LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
 		
 		// do the request
 		[deleteVideoRequest doDeleteVideoRequest:video];
