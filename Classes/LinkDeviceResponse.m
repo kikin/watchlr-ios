@@ -14,7 +14,7 @@
 	if (self = [super initWithResponse:jsonObject]) {
 		if (success) {
 			// get data
-			sessionId = [[[jsonObject objectForKey:@"result"] objectForKey:@"user_id"] retain];
+			sessionId = [[[jsonObject objectForKey:@"result"] objectForKey:@"session_id"] retain];
 			
 			LOG_DEBUG(@"sessionId = %@", sessionId);
 		}

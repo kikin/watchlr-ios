@@ -20,7 +20,7 @@
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-	[params setObject:sessionId forKey:@"user_id"];
+	[params setObject:sessionId forKey:@"session_id"];
 	[params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
 	
 	// do request	

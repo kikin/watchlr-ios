@@ -19,7 +19,7 @@
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-	[params setObject:sessionId forKey:@"user_id"];
+	[params setObject:sessionId forKey:@"session_id"];
 	
 	// do request
 	[self doGetRequest:@"https://video.kikin.com/api/list" params:params];

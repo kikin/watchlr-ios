@@ -17,7 +17,7 @@
 	[params setObject:facebookId forKey:@"id"];
 	
 	// do request	
-	[self doGetRequest:@"https://video.kikin.com/api/fb_swap" params:params];
+	[self doGetRequest:@"https://video.kikin.com/api/auth/fb_swap" params:params];
 	
 	// release memory
 	[params release];
