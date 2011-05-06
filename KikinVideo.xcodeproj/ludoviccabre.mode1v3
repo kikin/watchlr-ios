@@ -285,14 +285,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>42</integer>
-									<integer>36</integer>
+									<integer>24</integer>
+									<integer>20</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 3}, {245, 874}}</string>
+							<string>{{0, 0}, {245, 874}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -311,7 +311,7 @@
 							<real>245</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>472 125 1233 933 0 0 1920 1058 </string>
+						<string>224 125 1233 933 0 0 1920 1058 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,7 +329,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>DeleteVideoRequest.m</string>
+								<string>MostViewedViewController.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -337,11 +337,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DeleteVideoRequest.m</string>
+										<string>MostViewedViewController.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>3559B7CF137458D200D6D892</string>
+										<string>3559B7ED13745B5000D6D892</string>
 										<key>history</key>
 										<array>
 											<string>357A0BF51316E4B60050C2CA</string>
@@ -392,15 +392,12 @@
 											<string>3559B62A1374449000D6D892</string>
 											<string>3559B66C1374478C00D6D892</string>
 											<string>3559B72313744F5700D6D892</string>
-											<string>3559B73F1374513F00D6D892</string>
 											<string>3559B7641374533000D6D892</string>
 											<string>3559B775137453D600D6D892</string>
 											<string>3559B776137453D600D6D892</string>
 											<string>3559B777137453D600D6D892</string>
-											<string>3559B780137454AA00D6D892</string>
 											<string>3559B781137454AA00D6D892</string>
 											<string>3559B782137454AA00D6D892</string>
-											<string>3559B78E137455E300D6D892</string>
 											<string>3559B78F137455E300D6D892</string>
 											<string>3559B790137455E300D6D892</string>
 											<string>3559B7BF1374587200D6D892</string>
@@ -411,7 +408,10 @@
 											<string>3559B7CC137458D200D6D892</string>
 											<string>3559B7CD137458D200D6D892</string>
 											<string>3559B7CE137458D200D6D892</string>
-											<string>3559B7C11374587200D6D892</string>
+											<string>3559B7D913745AB800D6D892</string>
+											<string>3559B7DA13745AB800D6D892</string>
+											<string>3559B7DB13745AB800D6D892</string>
+											<string>3559B780137454AA00D6D892</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -425,7 +425,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {966, 656}}</string>
 								<key>RubberWindowFrame</key>
-								<string>472 125 1233 933 0 0 1920 1058 </string>
+								<string>224 125 1233 933 0 0 1920 1058 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -445,7 +445,7 @@
 								<key>Frame</key>
 								<string>{{0, 661}, {966, 231}}</string>
 								<key>RubberWindowFrame</key>
-								<string>472 125 1233 933 0 0 1920 1058 </string>
+								<string>224 125 1233 933 0 0 1920 1058 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -609,17 +609,17 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>3559B7D0137458D200D6D892</string>
+		<string>3559B7E413745B2A00D6D892</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>3559B53413743C2600D6D892</string>
 		<string>3559B53513743C2600D6D892</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>357A08651316AC1E0050C2CA</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/ludoviccabre/Documents/workspace/KikinVideo/KikinVideo.xcodeproj</string>
+		<string>1C78EAAD065D492600B07095</string>
 	</array>
 	<key>WindowString</key>
-	<string>472 125 1233 933 0 0 1920 1058 </string>
+	<string>224 125 1233 933 0 0 1920 1058 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

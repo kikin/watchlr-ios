@@ -106,11 +106,25 @@
 		
 		LOG_DEBUG(@"list request success");
 	} else {
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
+		
+		// show error message
+		UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to retrieve videos" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		[alertView show];
+		[alertView release];		
+		
 		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
 	}
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
+	NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", errorMessage];
+	
+	// show error message
+	UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to retrieve videos" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	[alertView show];
+	[alertView release];		
+	
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
