@@ -25,6 +25,9 @@
 	
 	// do request	
 	[self doGetRequest:@"https://video.kikin.com/api/delete" params:params];
+	
+	// release memory
+	[params release];
 }
 
 - (id) processReceivedString: (NSString*)receivedString {
@@ -32,7 +35,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	DeleteVideoResponse* response = [[DeleteVideoResponse alloc] initWithResponse:jsonObject];
+	DeleteVideoResponse* response = [[[DeleteVideoResponse alloc] initWithResponse:jsonObject] autorelease];
 	
 	return response;
 }

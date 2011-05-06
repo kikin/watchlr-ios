@@ -18,6 +18,9 @@
 	
 	// do request	
 	[self doGetRequest:@"https://video.kikin.com/api/fb_swap" params:params];
+	
+	// release memory
+	[params release];
 }
 
 - (id) processReceivedString: (NSString*)receivedString {
@@ -25,7 +28,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	LinkDeviceResponse* response = [[LinkDeviceResponse alloc] initWithResponse:jsonObject];
+	LinkDeviceResponse* response = [[[LinkDeviceResponse alloc] initWithResponse:jsonObject] autorelease];
 	
 	return response;
 }

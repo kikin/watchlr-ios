@@ -27,50 +27,27 @@
 	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
 	[view addSubview:logoImage];
 	
-	// add the rounded rect view over the logo
-	loginBgView = [[UIView alloc] init];
-	loginBgView.frame = CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-200)/2, 500, 200);
-	loginBgView.backgroundColor = [UIColor colorWithRed:215.0/255.0 green:235.0/255.0 blue:255.0/255.0 alpha:1.0];
-	loginBgView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-	loginBgView.layer.cornerRadius = 18.0f;
-	loginBgView.layer.borderWidth = 1.0f;
-	loginBgView.layer.opacity = 0.8f;
-	[view addSubview:loginBgView];
+	// create the connect view
+	connectMainView = [[ConnectMainView alloc] initWithFrame:CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-200)/2, 500, 200)];
+	connectMainView.hidden = YES;
+	connectMainView.clickConnectCallback = [Callback create:self selector:@selector(onClickConnectButton:)];
+	[view addSubview:connectMainView];
 	
-	// create the title lable inside
-	titleLabel = [[UILabel alloc] init];
-	titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	//titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
-	titleLabel.frame = CGRectMake(0, 10, loginBgView.frame.size.width, 35);
-	titleLabel.text = @"kikin video";
-	titleLabel.textAlignment = UITextAlignmentCenter;
-	titleLabel.backgroundColor = [UIColor clearColor];
-	titleLabel.font = [UIFont boldSystemFontOfSize:28.0];
-	[loginBgView addSubview:titleLabel];
+	// create the loading view
+	loadingMainView = [[LoadingMainView alloc] initWithFrame:CGRectMake((view.frame.size.width-300)/2, (view.frame.size.height-55)/2, 300, 55)];
+	loadingMainView.hidden = NO;
+	[view addSubview:loadingMainView];
 	
-	// create the description
-	descriptionLabel = [[UILabel alloc] init];
-	descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;	
-	descriptionLabel.frame = CGRectMake(30, 50, loginBgView.frame.size.width-60, 70);
-	descriptionLabel.text = @"Access kikin video from your iPad by login on facebook. Go to http://video.kikin.com for more information.";
-	descriptionLabel.textAlignment = UITextAlignmentCenter;
-	descriptionLabel.backgroundColor = [UIColor clearColor];
-	descriptionLabel.numberOfLines = 3;
-	descriptionLabel.font = [UIFont systemFontOfSize:18.0];
-	[loginBgView addSubview:descriptionLabel];
-	
-	// create the facebook login button inside
-	loginButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-	loginButton.frame = CGRectMake((loginBgView.frame.size.width-200)/2, loginBgView.frame.size.height-50, 200, 35);
-	loginButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-	[loginButton addTarget:self action:@selector(onClickConnectButton:) forControlEvents:UIControlEventTouchUpInside];
-	[loginButton setTitle:@"Connect with Facebook" forState:UIControlStateNormal];
-	[loginBgView addSubview:loginButton];
+	// create the error view
+	errorMainView = [[ErrorMainView alloc] initWithFrame:CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-200)/2, 500, 200)];
+	errorMainView.hidden = YES;
+	errorMainView.clickOkCallback = [Callback create:self selector:@selector(onClickOkErrorButton:)];
+	[view addSubview:errorMainView];
 	
 	// some changes for iPhone/iPod version
 	if (DeviceUtils.isIphone) {
-		loginBgView.frame = CGRectMake((view.frame.size.width-300)/2, (view.frame.size.height-250)/2, 300, 250);
-		descriptionLabel.numberOfLines = 4;
+		connectMainView.frame = CGRectMake((view.frame.size.width-300)/2, (view.frame.size.height-250)/2, 300, 250);
+		errorMainView.frame = CGRectMake((view.frame.size.width-300)/2, (view.frame.size.height-200)/2, 300, 200);
 	}
 	
 	// create the facebook object for connection
@@ -81,10 +58,28 @@
 	if (user.sessionId != nil) {
 		// go the the main view
 		[self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.5];
+	} else {
+		[self showView:connectMainView];
 	}
 }
 
-- (void) onClickConnectButton: (UIButton*)sender {
+- (void) showView: (UIView*)view {
+	loadingMainView.hidden = YES;
+	connectMainView.hidden = YES;
+	errorMainView.hidden = YES;
+	view.hidden = NO;
+}
+
+- (void) onClickOkErrorButton: (id)sender {
+	// show connect view
+	[self showView:connectMainView];
+}
+
+- (void) onClickConnectButton: (id)sender {
+	// show loading
+	[self showView:loadingMainView];
+	
+	// start facebook connect
 	facebook.sessionDelegate = self;
 	[facebook removeAllCookies];
 	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
@@ -97,7 +92,11 @@
 - (void) goToMainView:(bool)animated {
 	MostViewedViewController* mostViewedViewController = [[MostViewedViewController alloc] initWithNibName:@"MostViewedView" bundle:nil];
 	[self presentModalViewController:mostViewedViewController animated:animated];
-	
+}
+
+- (void) fbDidNotLogin:(BOOL)cancelled {
+	// show connect view
+	[self showView:connectMainView];
 }
 
 - (void) fbDidLogin {
@@ -106,6 +105,9 @@
 }
 
 - (void)request:(FBRequest *)request didFailWithError:(NSError *)error {
+	[errorMainView setErrorMessage: @"Facebook failed to give us the credentials to connect you."];
+	[self showView:errorMainView];
+	
 	LOG_ERROR(@"failed to executed /me request to get the user id: %@", error);
 }
 
@@ -120,17 +122,34 @@
 }
 
 - (void) onLinkRequestSuccess: (LinkDeviceResponse*)response {
-	if (response.sessionId != nil) {
-		// change our userId (automatically savec)
-		UserObject* userObject = [UserObject getUser];
-		userObject.sessionId = response.sessionId;
+	if (response.success) {
+		if (response.sessionId != nil) {
+			// change our userId (automatically savec)
+			UserObject* userObject = [UserObject getUser];
+			userObject.sessionId = response.sessionId;
+			
+			// go the the main view
+			[self goToMainView:YES];
+		} else {
+			NSString* errorMessage = @"We failed to connect with the kikin servers: Missing sessionId";
+			[errorMainView setErrorMessage:errorMessage];
+			[self showView:errorMainView];
+			
+			LOG_ERROR(@"failed to connect: missing sessionId");
+		}
+	} else {
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to connect with the kikin servers: %@.", response.errorMessage];
+		[errorMainView setErrorMessage:errorMessage];
+		[self showView:errorMainView];
 		
-		// go the the main view
-		[self goToMainView:true];
+		LOG_ERROR(@"failed to connect: %@", response.errorMessage);
 	}
 }
 
 - (void) onLinkRequestFailed: (NSString*)errorMessage {
+	[errorMainView setErrorMessage:@"We failed to connect with the kikin servers: Bad response."];
+	[self showView:errorMainView];
+	
 	LOG_ERROR(@"failed to link the device: %@", errorMessage);
 }
 
@@ -142,11 +161,7 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	//if (DeviceUtils.isIphone) {
-	//	return UIInterfaceOrientationIsLandscape(interfaceOrientation);
-	//} else {
-		return YES;
-	//}
+	return YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -159,6 +174,9 @@
 }
 
 - (void)dealloc {
+	[connectMainView release];
+	[errorMainView release];
+	[loadingMainView release];
     [super dealloc];
 }
 

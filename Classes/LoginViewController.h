@@ -9,17 +9,20 @@
 #import <UIKit/UIKit.h>
 #import <CommonIos/FBConnect.h>
 #import "UserObject.h"
+#import "LoadingMainView.h"
+#import "ErrorMainView.h"
+#import "ConnectMainView.h"
 
 @interface LoginViewController : UIViewController <FBSessionDelegate, FBRequestDelegate> {
 	Facebook* facebook;
-	UILabel* titleLabel;
-	UILabel* descriptionLabel;
-	UIButton* loginButton;
-	UIView* loginBgView;
+	ErrorMainView* errorMainView;
+	LoadingMainView* loadingMainView;
+	ConnectMainView* connectMainView;
 	UIImageView* logoImage;
 }
 
 - (Facebook*) facebook;
+- (void) showView: (UIView*)view;
 - (void) goToMainView:(bool)animated;
 - (void) doLinkDeviceRequest: (NSString*)accessToken;
 - (void) onLinkRequestSuccess: (id)jsonObject;

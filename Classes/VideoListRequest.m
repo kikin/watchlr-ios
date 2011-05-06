@@ -23,6 +23,9 @@
 	
 	// do request
 	[self doGetRequest:@"https://video.kikin.com/api/list" params:params];
+	
+	// release memory
+	[params release];
 }
 
 - (id) processReceivedString: (NSString*)receivedString {
@@ -30,7 +33,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	VideoListResponse* response = [[VideoListResponse alloc] initWithResponse:jsonObject];
+	VideoListResponse* response = [[[VideoListResponse alloc] initWithResponse:jsonObject] autorelease];
 	
 	return response;
 }
