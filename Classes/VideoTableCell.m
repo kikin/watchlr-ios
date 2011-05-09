@@ -65,7 +65,10 @@
 	if (data != nil) {
 		UIImage* img = [[UIImage alloc] initWithData:data];
 		if (img != nil) {
-			[videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+			// make sure the thread was not killed
+			if (![[NSThread currentThread] isCancelled]) {
+				[videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+			}
 			[img release];
 		}
 	}
@@ -124,8 +127,13 @@
 	
 	// update image
 	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
-	NSThread* myThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.imageUrl];
-	[myThread start];
+	
+	if (imageThread && ![imageThread isFinished]) {
+		[imageThread cancel];
+		[imageThread release];
+	}
+	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.imageUrl];
+	[imageThread start];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -133,6 +141,7 @@
 }
 
 - (void)dealloc {
+	[imageThread release];
 	[titleLabel release];
 	[descriptionLabel release];
 	[videoImageView release];

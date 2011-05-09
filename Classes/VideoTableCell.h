@@ -16,6 +16,7 @@
 	UILabel* descriptionLabel;
 	UIImageView* videoImageView;
 	Callback* deleteCallback;
+	NSThread* imageThread;
 }
 
 @property(retain) Callback* deleteCallback;

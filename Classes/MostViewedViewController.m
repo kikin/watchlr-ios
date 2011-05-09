@@ -60,6 +60,9 @@
 	videosTable.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	[view addSubview:videosTable];
 	
+	// get the event when the app comes back
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onApplicationBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+	
 	// request video lsit
 	[self doVideoListRequest];
 }
@@ -78,6 +81,10 @@
 }
 
 - (void) onClickRefresh {
+	[self doVideoListRequest];
+}
+
+- (void) onApplicationBecomeActive: (NSNotification*)notification {
 	[self doVideoListRequest];
 }
 
@@ -142,6 +149,10 @@
 }
 
 - (void)dealloc {
+	// stop observing events
+	[[NSNotificationCenter defaultCenter] removeObserver:self];	
+
+	// release memory
 	[videos release];
 	[videoListRequest release];
 	[videoListResponse release];
@@ -149,6 +160,7 @@
 	[refreshButton release];
 	[videosTable release];
 	[topToolbar release];
+	
     [super dealloc];
 }
 
