@@ -11,7 +11,9 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		26E05E1E139EDA73004E95AD /* libCommonIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E05E1D139EDA73004E95AD /* libCommonIos.a */; };
+		2664FD4B139EEBE500B145A7 /* libCommonIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2664FD4A139EEBE500B145A7 /* libCommonIos.a */; };
+		2664FD55139F0D2100B145A7 /* ThumnailObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2664FD54139F0D2100B145A7 /* ThumnailObject.m */; };
+		2664FD58139F0DF100B145A7 /* SourceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2664FD57139F0DF100B145A7 /* SourceObject.m */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 		3559B5001374379900D6D892 /* LoadingMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3559B4FF1374379900D6D892 /* LoadingMainView.m */; };
 		3559B6141374432700D6D892 /* ErrorMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3559B6131374432700D6D892 /* ErrorMainView.m */; };
@@ -256,7 +258,11 @@
 		1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KikinVideoAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* kikin video.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "kikin video.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		26E05E1D139EDA73004E95AD /* libCommonIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCommonIos.a; path = CommonIos/lib/libCommonIos.a; sourceTree = "<group>"; };
+		2664FD4A139EEBE500B145A7 /* libCommonIos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCommonIos.a; path = CommonIos/lib/libCommonIos.a; sourceTree = "<group>"; };
+		2664FD53139F0C6700B145A7 /* ThumbnailObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailObject.h; sourceTree = "<group>"; };
+		2664FD54139F0D2100B145A7 /* ThumnailObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumnailObject.m; sourceTree = "<group>"; };
+		2664FD56139F0DF100B145A7 /* SourceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceObject.h; sourceTree = "<group>"; };
+		2664FD57139F0DF100B145A7 /* SourceObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SourceObject.m; sourceTree = "<group>"; };
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		28A0AB4B0D9B1048005BE974 /* KikinVideo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KikinVideo_Prefix.pch; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -511,7 +517,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26E05E1E139EDA73004E95AD /* libCommonIos.a in Frameworks */,
+				2664FD4B139EEBE500B145A7 /* libCommonIos.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -551,11 +557,14 @@
 		29B97314FDCFA39411CA2CEA /* KikinVideo */ = {
 			isa = PBXGroup;
 			children = (
+				2664FD4A139EEBE500B145A7 /* libCommonIos.a */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				3599670E1370705E002E7EF1 /* libsqlite3.dylib */,
+				3599671213707072002E7EF1 /* CFNetwork.framework */,
 			);
 			name = KikinVideo;
 			sourceTree = "<group>";
@@ -582,9 +591,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3599670E1370705E002E7EF1 /* libsqlite3.dylib */,
-				26E05E1D139EDA73004E95AD /* libCommonIos.a */,
-				3599671213707072002E7EF1 /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765070DF74369002DB57D /* CoreGraphics.framework */,
@@ -824,10 +830,14 @@
 		357A0C861316E9F60050C2CA /* objects */ = {
 			isa = PBXGroup;
 			children = (
+				2664FD56139F0DF100B145A7 /* SourceObject.h */,
+				2664FD57139F0DF100B145A7 /* SourceObject.m */,
+				2664FD54139F0D2100B145A7 /* ThumnailObject.m */,
 				357A0C831316E9F10050C2CA /* VideoObject.h */,
 				357A0C841316E9F10050C2CA /* VideoObject.m */,
 				357A1E35131878EC0050C2CA /* UserObject.h */,
 				357A1E36131878EC0050C2CA /* UserObject.m */,
+				2664FD53139F0C6700B145A7 /* ThumbnailObject.h */,
 			);
 			name = objects;
 			sourceTree = "<group>";
@@ -1203,6 +1213,8 @@
 				3559B5001374379900D6D892 /* LoadingMainView.m in Sources */,
 				3559B6141374432700D6D892 /* ErrorMainView.m in Sources */,
 				3559B657137445FA00D6D892 /* ConnectMainView.m in Sources */,
+				2664FD55139F0D2100B145A7 /* ThumnailObject.m in Sources */,
+				2664FD58139F0DF100B145A7 /* SourceObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1215,15 +1227,15 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"~/Library/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1241,13 +1253,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"~/Library/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
