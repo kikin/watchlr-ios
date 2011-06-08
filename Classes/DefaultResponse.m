@@ -11,7 +11,7 @@
 @implementation DefaultResponse
 
 - (id) initWithResponse: (NSDictionary*)jsonObject {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		success = [[jsonObject objectForKey:@"success"] boolValue];
 		if (!success) {
 			errorMessage = [[jsonObject objectForKey:@"error"] retain];

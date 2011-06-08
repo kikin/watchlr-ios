@@ -17,7 +17,11 @@
 	[params setObject:facebookId forKey:@"id"];
 	
 	// do request	
-	[self doGetRequest:@"https://video.kikin.com/api/auth/fb_swap" params:params];
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://dev-video.kikin.com/api/auth/swap/"];
+    requestUrl = [requestUrl stringByAppendingString:facebookId];
+    
+    
+    [self doGetRequest:requestUrl params:nil];
 	
 	// release memory
 	[params release];

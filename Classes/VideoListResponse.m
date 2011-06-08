@@ -12,7 +12,7 @@
 @implementation VideoListResponse
 
 - (id) initWithResponse: (NSDictionary*)jsonObject {
-	if (self = [super initWithResponse:jsonObject]) {
+	if ((self = [super initWithResponse:jsonObject])) {
 		if (success) {
 			// get the result in the thing
 			NSDictionary* response = [jsonObject objectForKey:@"result"];

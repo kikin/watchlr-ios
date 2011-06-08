@@ -20,9 +20,10 @@
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
+    [params setObject:@"html5" forKey:@"type"];
 	
 	// do request
-	[self doGetRequest:@"https://video.kikin.com/api/list" params:params];
+	[self doGetRequest:@"http://dev-video.kikin.com/api/list" params:params];
 	
 	// release memory
 	[params release];

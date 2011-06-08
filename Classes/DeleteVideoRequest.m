@@ -24,7 +24,7 @@
 	[params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
 	
 	// do request	
-	[self doGetRequest:@"https://video.kikin.com/api/delete" params:params];
+	[self doGetRequest:@"http://dev-video.kikin.com/api/remove" params:params];
 	
 	// release memory
 	[params release];

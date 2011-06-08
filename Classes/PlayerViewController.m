@@ -49,9 +49,28 @@
 	navigationBar.topItem.title = [@"Playing: " stringByAppendingString:videoObject.title];
 	
 	// load video in browser
-	NSURL* url = [NSURL URLWithString:videoObject.embedUrl];
-	NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
-	[webView loadRequest:requestObj];	
+	// NSURL* url = [NSURL URLWithString:videoObject.embedUrl];
+    // NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    
+	// [webView loadRequest:requestObj];	
+    // Load HTML5 video
+    NSString* javasciptString = [NSString stringWithString:@"function onPageLoad() { try { var vid = document.getElementsByTagName('video'); if (vid && vid.length == 1) { vid = vid[0]; function onVideoLoaded(e) { alert(e.target); e.target.currentTime=30/*"];
+    javasciptString = [javasciptString stringByAppendingFormat:@"%f", videoObject.seek];
+    javasciptString = [javasciptString stringByAppendingString:@"*/; vid.play(); }; vid.addEventListener('loadedmetadata', onVideoLoaded, false); } else { var iframe = document.getElementsByTagName('iframe'); if(iframe && iframe.length == 1) {var vidElem = iframe[0]; vidElem = vidElem.contentWindow.document.getElementsByTagName('video'); var vidElem = vidElem.item(); /*alert(vidElem.currentTime); var str = ''; for (var i in vidElem) { str += i + ': ' + vidElem[i] + '\\r\\n'; }; alert(str);*/ } } } catch (err) { alert(err); } }; window.onload = onPageLoad;"];
+    LOG_DEBUG(@"javascript = %@", javasciptString);
+    
+    NSString* htmlString = [[[[[NSString stringWithString:@"<html><body>"] stringByAppendingString:videoObject.htmlCode] stringByAppendingString:@"<script type='text/javascript'>"] stringByAppendingString:javasciptString ] stringByAppendingString:@"</script></body></html>"];
+    LOG_DEBUG(@"htmlcode = %@", htmlString);
+    [webView setMediaPlaybackRequiresUserAction:NO];
+    [webView setAllowsInlineMediaPlayback:YES];
+    [webView loadHTMLString:htmlString baseURL:nil];
+    
+    
+    // Excecute javascript to play the video.
+    // if (videoObject.htmlCode 
+    // javasciptString = [webView stringByEvaluatingJavaScriptFromString:javasciptString];
+    // javasciptString = [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+    // LOG_DEBUG(@"javascript result = %@", javasciptString);
 }
 
 - (void) onClickBackButton {

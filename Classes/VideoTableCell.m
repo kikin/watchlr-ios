@@ -7,13 +7,14 @@
 //
 
 #import "VideoTableCell.h"
+#import "ThumbnailObject.h"
 
 @implementation VideoTableCell
 
 @synthesize deleteCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-	if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
 		// create the title
 		titleLabel = [[UILabel alloc] init];
 		titleLabel.backgroundColor = [UIColor clearColor];
@@ -57,21 +58,28 @@
 	}
 }
 
-- (void) loadImage: (NSString*)imageUrl {
+- (void) loadImage: (NSDictionary*)thumbnail {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-	NSURL* url = [NSURL URLWithString:imageUrl];
-	NSData* data = [NSData dataWithContentsOfURL:url];
-	if (data != nil) {
-		UIImage* img = [[UIImage alloc] initWithData:data];
-		if (img != nil) {
-			// make sure the thread was not killed
-			if (![[NSThread currentThread] isCancelled]) {
-				[videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
-			}
-			[img release];
-		}
-	}
+    if (thumbnail != nil) {
+        ThumbnailObject* thumbnailObject = [[ThumbnailObject alloc] initFromDictionnary:thumbnail];
+        if (thumbnailObject.thumbnailUrl != nil) {
+            NSURL* url = [NSURL URLWithString:thumbnailObject.thumbnailUrl];
+            NSData* data = [NSData dataWithContentsOfURL:url];
+            if (data != nil) {
+                UIImage* img = [[UIImage alloc] initWithData:data];
+                if (img != nil) {
+                    // make sure the thread was not killed
+                    if (![[NSThread currentThread] isCancelled]) {
+                        [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+                    }
+                    [img release];
+                }
+            }
+        }
+        [thumbnailObject release];
+    }
+	
 	
 	[pool release];
 }
@@ -132,7 +140,7 @@
 		[imageThread cancel];
 		[imageThread release];
 	}
-	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.imageUrl];
+	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.thumbnail];
 	[imageThread start];
 }
 

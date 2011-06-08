@@ -10,24 +10,32 @@
 
 
 @interface VideoObject : NSObject {
-	int			videoId;
-	NSString*	title;
-	NSString*	description;
-	NSString*	embedUrl;
-	NSString*	videoUrl;
-	NSString*	imageUrl;
-	long		timestamp;
-	bool		watched;
+	int             videoId;
+    int             likes;
+	NSString*       title;
+	NSString*       description;
+	NSString*       embedUrl;
+	NSString*       videoUrl;
+	NSDictionary*	thumbnail;
+    NSDictionary*	videoSource;
+    NSString*       htmlCode;
+    bool            liked;
+    bool            saved;
+    double          seek;
 }
 
 @property()			int videoId;
+@property()			int likes;
 @property(retain)	NSString* title;
 @property(retain)	NSString* description;
 @property(retain)	NSString* videoUrl;
 @property(retain)	NSString* embedUrl;
-@property(retain)	NSString* imageUrl;
-@property()			long timestamp;
-@property()			bool viewed;
+@property(retain)	NSDictionary* thumbnail;
+@property(retain)	NSDictionary* videoSource;
+@property(retain)	NSString* htmlCode;
+@property()			bool liked;
+@property()			bool saved;
+@property()         double seek;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 

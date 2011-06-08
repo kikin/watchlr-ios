@@ -11,7 +11,7 @@
 @implementation LinkDeviceResponse
 
 - (id) initWithResponse: (NSDictionary*)jsonObject {
-	if (self = [super initWithResponse:jsonObject]) {
+	if ((self = [super initWithResponse:jsonObject])) {
 		if (success) {
 			// get data
 			sessionId = [[[jsonObject objectForKey:@"result"] objectForKey:@"session_id"] retain];

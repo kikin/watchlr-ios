@@ -10,7 +10,7 @@
 
 @implementation VideoObject
 
-@synthesize videoId, title, description, imageUrl, videoUrl, timestamp, viewed, embedUrl;
+@synthesize videoId, title, description, thumbnail, videoUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek;
 
 - (id) initFromDictionnary: (NSDictionary*)data {
 	// get data from this video
@@ -18,15 +18,21 @@
 	self.title = [data objectForKey:@"title"] != [NSNull null] ? [data objectForKey:@"title"] : nil;
 	self.description = [data objectForKey:@"description"] != [NSNull null] ? [data objectForKey:@"description"] : nil;
 	self.videoUrl = [data objectForKey:@"url"];
-	self.timestamp = [[data objectForKey:@"timestamp"] longValue];
-	self.viewed = [[data objectForKey:@"watched"] boolValue];
-	self.imageUrl = [data objectForKey:@"thumbnail_url"];
+	self.thumbnail = [data objectForKey:@"thumbnail"] != [NSNull null] ? [data objectForKey:@"thumbnail"] : nil;
+    self.htmlCode = [data objectForKey:@"html"];
+    self.videoSource = [data objectForKey:@"source"] != [NSNull null] ? [data objectForKey:@"source"] : nil;
+    self.liked = [[data objectForKey:@"liked"] boolValue];
+    self.likes = [[data objectForKey:@"likes"] intValue];
+    self.saved = [[data objectForKey:@"saved"] boolValue];
+    self.seek = [[data objectForKey:@"seek"] doubleValue];
+    
+    LOG_DEBUG(@"HTML code received=%@", self.htmlCode);
 	
 	// set default values
 	if (title == nil) self.title = @"No title";
 	if (description == nil) self.description = @"";
 	
-	NSRegularExpression* regex = [[NSRegularExpression alloc] initWithPattern:@"v=([^&]+)" options:NSRegularExpressionCaseInsensitive error:nil];
+	/*NSRegularExpression* regex = [[NSRegularExpression alloc] initWithPattern:@"v=([^&]+)" options:NSRegularExpressionCaseInsensitive error:nil];
 	NSArray* matches = [regex matchesInString:videoUrl options:0 range:NSMakeRange(0, [videoUrl length])];
 	[regex release];
 	
@@ -42,7 +48,7 @@
 	}
 		
 	self.imageUrl = [NSString stringWithFormat:@"http://i1.ytimg.com/vi/%@/hqdefault.jpg", youtubeId];
-	self.embedUrl = [@"http://www.youtube.com/embed/" stringByAppendingString: youtubeId];
+	self.embedUrl = [@"http://www.youtube.com/embed/" stringByAppendingString: youtubeId];*/
 	
 	return self;
 }
@@ -52,7 +58,9 @@
 	self.description = nil;
 	self.videoUrl = nil;
 	self.embedUrl = nil;
-	self.imageUrl = nil;
+	self.thumbnail = nil;
+    self.htmlCode = nil;
+    self.videoSource = nil;
 	[super dealloc];
 }
 
