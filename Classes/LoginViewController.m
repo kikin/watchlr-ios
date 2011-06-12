@@ -8,7 +8,8 @@
 
 #import "LoginViewController.h"
 #import "LinkDeviceRequest.h"
-#import "MostViewedViewController.h"
+#import "SavedVideosViewController.h"
+#import "LikedVideosViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation LoginViewController
@@ -90,8 +91,19 @@
 }
 
 - (void) goToMainView:(bool)animated {
-	MostViewedViewController* mostViewedViewController = [[MostViewedViewController alloc] initWithNibName:@"MostViewedView" bundle:nil];
-	[self presentModalViewController:mostViewedViewController animated:animated];
+    UITabBarController* tabBarController = [[UITabBarController alloc] init];
+    SavedVideosViewController* savedVideosViewController = [[SavedVideosViewController alloc] initWithNibName:@"SavedVideosView" bundle:nil];
+    LikedVideosViewController* likedVideosViewController = [[LikedVideosViewController alloc] initWithNibName:@"LikedVideosView" bundle:nil];
+    NSArray* controllers = [NSArray arrayWithObjects:savedVideosViewController, likedVideosViewController, nil]; 
+    
+    [tabBarController setViewControllers:controllers animated:YES];
+    [tabBarController setSelectedIndex:[[NSNumber numberWithInt:1] unsignedIntegerValue]];
+    [tabBarController setSelectedIndex:[[NSNumber numberWithInt:0] unsignedIntegerValue]];
+    
+    [self presentModalViewController:tabBarController animated:animated];
+    [savedVideosViewController release];
+    [likedVideosViewController release];
+    [tabBarController release];
 	
 	[self showView:connectMainView];
 }

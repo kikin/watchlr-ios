@@ -13,8 +13,10 @@ static UserObject* userInstance = nil;
 
 @implementation UserObject
 
+@synthesize userImage, userName, userEmail, pushVideosToFacebook;
+
 - (id) init {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		userDataFile = [[UserDataFile alloc] init];
 		sessionId = [userDataFile.userId retain];
 		LOG_DEBUG(@"sessionId = %@", sessionId);

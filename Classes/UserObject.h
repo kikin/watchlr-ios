@@ -7,11 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "UserDataFile.h"
 
 @interface UserObject : NSObject {
 	UserDataFile * userDataFile;
 	NSString* sessionId;
+    UIImage* userImage;
+    NSString* userName;
+    NSString* userEmail;
+    bool pushVideosToFacebook;
 }
 
 - (id) init;
@@ -20,5 +25,10 @@
 
 + (UserObject*) instance;
 + (UserObject*) getUser;
+
+@property(retain) UIImage* userImage;
+@property(retain) NSString* userName;
+@property(retain) NSString* userEmail;
+@property         bool pushVideosToFacebook;
 
 @end

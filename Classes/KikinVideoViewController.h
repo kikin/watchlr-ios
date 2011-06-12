@@ -7,25 +7,25 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "VideoTableCell.h"
-#import "VideoListResponse.h"
 #import "PlayerViewController.h"
-#import "VideoListRequest.h"
 #import "DeleteVideoRequest.h"
 
-@interface MostViewedViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
-	VideoListRequest* videoListRequest;
-	VideoListResponse* videoListResponse;
+@interface KikinVideoToolBar : UIToolbar {
+    UIImageView* kikinLogo;
+}
+@end
+
+@interface KikinVideoViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
 	DeleteVideoRequest* deleteVideoRequest;
 	UITableView* videosTable;
 	UIBarButtonItem* disconnectButton;
 	UIBarButtonItem* refreshButton;
-	UIToolbar* topToolbar;
+	KikinVideoToolBar* topToolbar;
 	NSMutableArray* videos;
 }
 
-- (void)doVideoListRequest;
 - (void) onClickDisctonnect;
 - (void) onClickRefresh;
+- (void) playVideo:(VideoObject*)videoObject;
 
 @end

@@ -19,6 +19,8 @@
 				errorMessage = @"No error message found";
 			}
 		}
+        
+        // int errorCode = [[jsonObject objectForKey:@"code"] intValue];
 	}
 	return self;
 }

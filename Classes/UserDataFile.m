@@ -13,7 +13,7 @@
 @synthesize userId;
 
 - (id) init {
-	if (self = [super init:@"UserData"]) {
+	if ((self = [super init:@"UserData"])) {
 		[self load];
 	}
 	return self;

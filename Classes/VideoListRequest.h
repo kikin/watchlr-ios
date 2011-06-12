@@ -12,7 +12,7 @@
 
 @interface VideoListRequest : JsonRequest
 
-- (void) doGetVideoListRequest;
+- (void) doGetVideoListRequest:(BOOL)likedVideosOnly;
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

@@ -17,12 +17,15 @@
 	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	self.view = view;
 	[view release];
+    
+    // self.wantsFullScreenLayout = YES;
 	
 	// create the toolbar
 	navigationBar = [[UINavigationBar alloc] init];
 	navigationBar.frame = CGRectMake(0, 0, view.frame.size.width, 42);
 	navigationBar.topItem.title = @"Loading video..";
 	navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    navigationBar.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
 	[view addSubview:navigationBar];
 	
 	// create the back button
@@ -41,12 +44,14 @@
 	webView = [[UIWebView alloc] init];
 	webView.frame = CGRectMake(0, 42, view.frame.size.width, view.frame.size.height-42);
 	webView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    webView.delegate = self;
 	[view addSubview:webView];
+    [view bringSubviewToFront:webView];
 }
 
 - (void) setVideo: (VideoObject*)videoObject {
 	// change title
-	navigationBar.topItem.title = [@"Playing: " stringByAppendingString:videoObject.title];
+	navigationBar.topItem.title = videoObject.title;
 	
 	// load video in browser
 	// NSURL* url = [NSURL URLWithString:videoObject.embedUrl];
@@ -54,23 +59,37 @@
     
 	// [webView loadRequest:requestObj];	
     // Load HTML5 video
-    NSString* javasciptString = [NSString stringWithString:@"function onPageLoad() { try { var vid = document.getElementsByTagName('video'); if (vid && vid.length == 1) { vid = vid[0]; function onVideoLoaded(e) { alert(e.target); e.target.currentTime=30/*"];
+    NSString* javasciptString = [NSString stringWithString:@"function onPageLoad() { try { var vid = document.getElementsByTagName('video'); if (vid && vid.length == 1) { vid = vid[0]; vid.kkMetaDataLoaded = false; function onDurationChange(e) { try { if (e.target.duration > 30 && e.target.kkMetaDataLoaded) { /*e.target.currentTime=30*//*"];
     javasciptString = [javasciptString stringByAppendingFormat:@"%f", videoObject.seek];
-    javasciptString = [javasciptString stringByAppendingString:@"*/; vid.play(); }; vid.addEventListener('loadedmetadata', onVideoLoaded, false); } else { var iframe = document.getElementsByTagName('iframe'); if(iframe && iframe.length == 1) {var vidElem = iframe[0]; vidElem = vidElem.contentWindow.document.getElementsByTagName('video'); var vidElem = vidElem.item(); /*alert(vidElem.currentTime); var str = ''; for (var i in vidElem) { str += i + ': ' + vidElem[i] + '\\r\\n'; }; alert(str);*/ } } } catch (err) { alert(err); } }; window.onload = onPageLoad;"];
+    javasciptString = [javasciptString stringByAppendingString:@"*/; e.target.play(); } } catch (e) { alert('Duration Change:' + e); } }; function onMetadataLoaded(e) { try { e.target.kkMetaDataLoaded = true; var dur = e.target.duration; if (dur > 60) { alert(dur); e.target.focus(); if(e.target.controller) { var controller = e.target.controller; controller.currentTime=30; } else { e.target.currentTime=30; } e.target.kkMetaDataLoaded = false; e.target.play(); } } catch (er) { alert('Meta data loded:' + er); } }; vid.addEventListener('durationchange', onDurationChange, false); vid.addEventListener('canplay', onMetadataLoaded, false); vid.load(); } } catch (err) { alert('Page load:' + err); } }; window.onload = onPageLoad;"];
     LOG_DEBUG(@"javascript = %@", javasciptString);
     
-    NSString* htmlString = [[[[[NSString stringWithString:@"<html><body>"] stringByAppendingString:videoObject.htmlCode] stringByAppendingString:@"<script type='text/javascript'>"] stringByAppendingString:javasciptString ] stringByAppendingString:@"</script></body></html>"];
+    NSRegularExpression* regex = [[NSRegularExpression alloc] initWithPattern:@"youtube" options:NSRegularExpressionCaseInsensitive error:nil];
+	NSArray* matches = [regex matchesInString:videoObject.htmlCode options:0 range:NSMakeRange(0, [videoObject.htmlCode length])];
+	[regex release];
+    NSString* htmlCode = [NSString stringWithString:videoObject.htmlCode];
+    if (matches != nil && [matches count] > 0) {
+        htmlCode = /*[*/[htmlCode stringByReplacingOccurrencesOfString:@"autoplay=1" withString:@"autoplay=1&start=30"]/* stringByAppendingFormat:@"%f", videoObject.seek]*/;
+    } else {
+        htmlCode = /*[*/[htmlCode stringByReplacingOccurrencesOfString:@"controls" withString:@"controls"]/* stringByAppendingFormat:@"%f", videoObject.seek]*/;
+    }
+    
+    NSString* htmlString = [[[[[NSString stringWithString:@"<html><head><meta name='viewport' content='width=device-width' /></head><body>"] stringByAppendingString:htmlCode] stringByAppendingString:@"<script type='text/javascript'>"] stringByAppendingString:javasciptString ] stringByAppendingString:@"</script></body></html>"];
     LOG_DEBUG(@"htmlcode = %@", htmlString);
     [webView setMediaPlaybackRequiresUserAction:NO];
     [webView setAllowsInlineMediaPlayback:YES];
-    [webView loadHTMLString:htmlString baseURL:nil];
     
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];
+    [webView loadHTMLString:htmlString baseURL:baseURL];
+    [webView becomeFirstResponder];
+    // [baseURL release];
     
     // Excecute javascript to play the video.
     // if (videoObject.htmlCode 
     // javasciptString = [webView stringByEvaluatingJavaScriptFromString:javasciptString];
-    // javasciptString = [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
-    // LOG_DEBUG(@"javascript result = %@", javasciptString);
+    // javasciptString = [webView stringByEvaluatingJavaScriptFromString:@"document.childNodes.length"];
+    LOG_DEBUG(@"javascript result = %@", javasciptString);
 }
 
 - (void) onClickBackButton {
@@ -96,11 +115,33 @@
     [super viewDidUnload];
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    LOG_DEBUG(@"failed to load page. Reason:%@", [error localizedDescription]);
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)uiWebView {
+    for (UIView *view in [uiWebView subviews]) {
+        // Verify the subview is a UIScrollView
+        if([view isKindOfClass:[UIScrollView class]]) {
+            // Cast in UIScroolView and Zoom
+            LOG_DEBUG(@"SubView is a scroll view : true");
+        } else {
+            LOG_DEBUG(@"SubView is a scroll view : false");
+        }
+        // LOG_DEBUG(@"View: %@", [view ])
+    }
+    
+    LOG_DEBUG(@"Number of subviews %d", [[uiWebView subviews] count]);
+}
+
 - (void)dealloc {
+    webView.delegate = nil;
 	[navigationBar release];
 	[webView release];
 	[backButton release];
     [super dealloc];
 }
+
+
 
 @end

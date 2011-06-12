@@ -10,23 +10,16 @@
 #import "LoginViewController.h"
 #import "UserObject.h"
 #import <CommonIos/DeviceUtils.h>
-#import "MostViewedViewController.h"
+
 
 @implementation KikinVideoAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
 	// create the main window
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	window.backgroundColor = [UIColor whiteColor];
+	window.backgroundColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
 	
-	//UserObject* user = [UserObject getUser];
-	//if (user.sessionId != nil) {
-	//	// create the list view
-	//	viewController = [[MostViewedViewController alloc] init];
-	//} else {
-		// create the login view
-		viewController = [[LoginViewController alloc] init];
-	//}
+	viewController = [[LoginViewController alloc] init];
 	window.rootViewController = viewController;
 	[window makeKeyAndVisible];
 	

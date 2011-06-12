@@ -8,19 +8,31 @@
 
 #import "VideoTableCell.h"
 #import "ThumbnailObject.h"
+#import "SourceObject.h"
+#import "LikeVideoResponse.h"
 
 @implementation VideoTableCell
 
-@synthesize deleteCallback;
+@synthesize playVideoCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
-		// create the title
+		// Auto resize the views
+        self.contentView.autoresizesSubviews = YES;
+        
+        // create the image
+		videoImageView = [[UIImageView alloc] init];
+		playButtonImage = [[UIImageView alloc] init];
+		[self addSubview:playButtonImage];
+        [self addSubview:videoImageView];
+        
+        // create the title
 		titleLabel = [[UILabel alloc] init];
 		titleLabel.backgroundColor = [UIColor clearColor];
 		titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		titleLabel.font = [UIFont boldSystemFontOfSize:18];
 		titleLabel.text = @"title";
+        titleLabel.numberOfLines = 1;
 		[self addSubview:titleLabel];
 		
 		// create the description
@@ -29,44 +41,78 @@
 		descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		descriptionLabel.font = [UIFont systemFontOfSize:15];
 		descriptionLabel.text = @"description";
+        descriptionLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
+        descriptionLabel.textAlignment = UITextAlignmentLeft;
+        descriptionLabel.baselineAdjustment = UIBaselineAdjustmentNone;
 		[self addSubview:descriptionLabel];
+        
+        // create the number of likes label
+		likesLabel = [[UILabel alloc] init];
+		likesLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		likesLabel.font = [UIFont boldSystemFontOfSize:30];
+        likesLabel.text = [[NSNumber numberWithInt:1] stringValue];
+        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+        likesLabel.textAlignment = UITextAlignmentRight;
+        likesLabel.numberOfLines = 1;
+		[self addSubview:likesLabel];
+        
+        // Create the favicon image
+        faviconImageView = [[UIImageView alloc] init];
+        faviconImageView.autoresizingMask = UIViewAutoresizingNone;
+		[self addSubview:faviconImageView];
+        faviconImageView.hidden = YES;
+        
+        // Create the source label
+        sourceLabel = [[UILabel alloc] init];
+		sourceLabel.backgroundColor = [UIColor clearColor];
+		sourceLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		sourceLabel.font = [UIFont systemFontOfSize:12];
+		sourceLabel.text = @"source";
+        sourceLabel.numberOfLines = 1;
+		[self addSubview:sourceLabel];
+        sourceLabel.hidden = YES;
 		
-		// create the image
-		videoImageView = [[UIImageView alloc] init];
-		[self addSubview:videoImageView];
-		
-		// set size/positions
+		// create the like button
+        likeImageView = [[UIImageView alloc] init];
+        likeImageView.autoresizingMask = UIViewAutoresizingNone;
+		[self addSubview:likeImageView];
+        
+        // set size/positions
 		if (DeviceUtils.isIphone) {
 			videoImageView.frame = CGRectMake(10, 10, 106, 80);
 			titleLabel.frame = CGRectMake(126, 12, self.frame.size.width-136, 20);
-			descriptionLabel.frame = CGRectMake(126, 35, self.frame.size.width-136, 60);
+            descriptionLabel.frame = CGRectMake(126, 35, self.frame.size.width-136, 60);
 			descriptionLabel.numberOfLines = 3;
 		} else {
 			videoImageView.frame = CGRectMake(10, 10, 160, 120);
-			titleLabel.frame = CGRectMake(180, 12, self.frame.size.width-190, 20);
-			descriptionLabel.frame = CGRectMake(180, 35, self.frame.size.width-190, 100);
-			descriptionLabel.numberOfLines = 5;
+            playButtonImage.frame = CGRectMake(50, 50, 50, 50);
+			descriptionLabel.numberOfLines = 3;
 		}
 	}
     return self;
 }
 
-- (IBAction) onClickDelete {
-	if (deleteCallback != nil) {
-		// execute the delete callback
-		[deleteCallback execute:videoObject];
-	}
-}
-
-- (void) loadImage: (NSDictionary*)thumbnail {
+- (void) loadImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-    if (thumbnail != nil) {
-        ThumbnailObject* thumbnailObject = [[ThumbnailObject alloc] initFromDictionnary:thumbnail];
+    if (![[NSThread currentThread] isCancelled]) {
+        // update default thumbnail image
+        [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"default_video_icon.png"] waitUntilDone:YES];
+        
+        // update play button image
+        [playButtonImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"play_button.png"] waitUntilDone:YES];
+        
+        // update like button
+        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:(videoObject.liked ? @"heart_red.png" : @"heart_grey.png")] waitUntilDone:YES];
+    }
+    
+    if (videoObject.thumbnail != nil) {
+        ThumbnailObject* thumbnailObject = [[ThumbnailObject alloc] initFromDictionnary:videoObject.thumbnail];
         if (thumbnailObject.thumbnailUrl != nil) {
             NSURL* url = [NSURL URLWithString:thumbnailObject.thumbnailUrl];
             NSData* data = [NSData dataWithContentsOfURL:url];
             if (data != nil) {
+                // set thumbnail image
                 UIImage* img = [[UIImage alloc] initWithData:data];
                 if (img != nil) {
                     // make sure the thread was not killed
@@ -79,13 +125,41 @@
         }
         [thumbnailObject release];
     }
-	
-	
-	[pool release];
+    
+    [self bringSubviewToFront:playButtonImage];
+    
+    if (videoObject.videoSource != nil) {
+        SourceObject* sourceObject = [[SourceObject alloc] initFromDictionnary:videoObject.videoSource];
+        if (sourceObject.favicon != nil) {
+            NSURL* url = [NSURL URLWithString:sourceObject.favicon];
+            NSData* data = [NSData dataWithContentsOfURL:url];
+            if (data != nil) {
+                // set thumbnail image
+                UIImage* img = [[UIImage alloc] initWithData:data];
+                if (img != nil) {
+                    // make sure the thread was not killed
+                    if (![[NSThread currentThread] isCancelled]) {
+                        [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
+                        faviconImageView.hidden = NO;
+                    }
+                    [img release];
+                }
+            }
+        }
+        
+        if (sourceObject.name != nil) {
+            sourceLabel.text = sourceObject.name;
+            sourceLabel.hidden = NO;
+        }
+        
+        [sourceObject release];
+    }
+    
+    [pool release];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-	int normalWidth = DeviceUtils.isIphone ? 136 : 190,
+	/*int normalWidth = DeviceUtils.isIphone ? 136 : 190,
 		buttonWidth = 160;
 	
 	// create new frame
@@ -103,20 +177,32 @@
 	} else {
 		// directly update the size
 		descriptionLabel.frame = newFrame;
-	}
+	}*/
 	
 	[super setEditing:editing animated:animated];
 }
 
-- (void) fixHeightOfDescription {
-	int normalWidth = DeviceUtils.isIphone ? 136 : 190,
-		normalHeight = DeviceUtils.isIphone ? 60 : 100,
-		buttonWidth = 160;
+- (void) fixSize {
+	int titleAndDescriptionLabelWidth = DeviceUtils.isIphone ? 136 : 310;
+	int	faviconAndSourceHeight = DeviceUtils.isIphone ? 60 : 30;
+    int titleHeight = 20;
+    
+    // set the size for title label
+    titleLabel.frame = CGRectMake(180, 12, (self.frame.size.width - titleAndDescriptionLabelWidth), titleHeight);
 	
-	CGSize maximumSize = CGSizeMake(self.editing ? self.frame.size.width-normalWidth-buttonWidth : self.frame.size.width-normalWidth, normalHeight);
-	CGSize dateStringSize = [descriptionLabel.text sizeWithFont:descriptionLabel.font constrainedToSize:maximumSize lineBreakMode:descriptionLabel.lineBreakMode];
-	CGRect newFrame = CGRectMake(descriptionLabel.frame.origin.x, descriptionLabel.frame.origin.y, self.frame.size.width-normalWidth, dateStringSize.height);
-	descriptionLabel.frame = newFrame;
+    descriptionLabel.frame = CGRectMake(180, 20, (self.frame.size.width - titleAndDescriptionLabelWidth), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + 10)));
+    
+    // set the size for likes label
+    likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
+    
+    // set the size for like/unlike button
+    likeImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+    
+    // set the size for favicon image
+    faviconImageView.frame = CGRectMake(180, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+    
+    // set the size for source label
+    sourceLabel.frame = CGRectMake(200, self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (titleAndDescriptionLabelWidth + 20)), 15);
 }
 
 - (void)setVideoObject: (VideoObject*)video {
@@ -129,9 +215,23 @@
 	if (video.description != nil) {
 		NSString* description = [video.description stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		descriptionLabel.text = description;
-		[self performSelectorOnMainThread:@selector(fixHeightOfDescription) withObject:nil waitUntilDone:NO];
+		[self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
 		//descriptionLabel.backgroundColor = [UIColor yellowColor];
 	}
+    
+    if (videoObject.likes > 0) {
+        likesLabel.hidden = NO;
+        likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
+    } else {
+        likesLabel.hidden = YES;
+    }
+    
+    if (videoObject.liked) {
+        likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+    } else {
+        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+    }
+    
 	
 	// update image
 	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
@@ -140,7 +240,7 @@
 		[imageThread cancel];
 		[imageThread release];
 	}
-	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage:) object:video.thumbnail];
+	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage) object:nil];
 	[imageThread start];
 }
 
@@ -148,14 +248,131 @@
     [super setSelected:selected animated:animated];
 }
 
+- (void) layoutSubviews {
+    [super layoutSubviews];
+    [self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
+}
+
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    for (UITouch *myTouch in touches)
+    {
+        CGPoint touchLocation = [myTouch locationInView:self];
+        
+        CGRect thumbnailRect = [videoImageView bounds];
+        thumbnailRect = [videoImageView convertRect:thumbnailRect toView:self];
+        if (CGRectContainsPoint(thumbnailRect, touchLocation)) {
+            if (playVideoCallback != nil) {
+                [playVideoCallback execute:videoObject];
+            }
+        }
+        
+        CGRect likeRect = [likeImageView bounds];
+        likeRect = [likeImageView convertRect:likeRect toView:self];
+        if (CGRectContainsPoint(likeRect, touchLocation)) {
+            if (!videoObject.liked) {
+                if (likeVideoRequest == nil) {
+                    // create a delete request if not already done
+                    likeVideoRequest = [[LikeVideoRequest alloc] init];
+                    likeVideoRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
+                    likeVideoRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
+                }
+                
+                
+                // cancel any current request
+                if ([likeVideoRequest isRequesting]) {
+                    [likeVideoRequest cancelRequest];
+                }
+                    
+                // do the request
+                [likeVideoRequest doLikeVideoRequest:videoObject];
+            } else {
+                if (unlikeVideoRequest == nil) {
+                    // create a delete request if not already done
+                    unlikeVideoRequest = [[UnlikeVideoRequest alloc] init];
+                    unlikeVideoRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
+                    unlikeVideoRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
+                }
+                
+                
+                // cancel any current request
+                if ([unlikeVideoRequest isRequesting]) {
+                    [unlikeVideoRequest cancelRequest];
+                }
+                
+                // do the request
+                [unlikeVideoRequest doUnlikeVideoRequest:videoObject];
+            }
+        }
+    }
+}
+
 - (void)dealloc {
 	[imageThread release];
-	[titleLabel release];
+    [videoImageView release];
+    [playButtonImage release];
+    [titleLabel release];
 	[descriptionLabel release];
-	[videoImageView release];
-	[videoObject release];
+    [faviconImageView release];
+    [sourceLabel release];
+    [likesLabel release];
+	[likeImageView release];
+    [videoObject release];
     [super dealloc];
 }
 
+// ---------------------------------------------------------
+//                  Request Callbacks                       
+// ---------------------------------------------------------
+- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response {
+	if (response.success) {
+		if (![[NSThread currentThread] isCancelled]) {
+            
+            // update like button
+            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_red.png"] waitUntilDone:YES];
+            
+            videoObject.likes += 1;
+            videoObject.liked = true;
+            likesLabel.text = [[NSNumber numberWithInt:(videoObject.likes)] stringValue];
+            likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+            likesLabel.hidden = NO;
+        }
+		
+	} else {
+		LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
+	}
+}
+
+- (void) onLikeVideoRequestFailed: (NSString*)errorMessage {		
+	LOG_ERROR(@"failed to like video: %@", errorMessage);
+}
+
+- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response {
+	if (response.success) {
+		
+		if (![[NSThread currentThread] isCancelled]) {
+            
+            // update like button
+            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_grey.png"] waitUntilDone:YES];
+            
+            videoObject.likes -= 1;
+            videoObject.liked = false;
+            if (videoObject.likes > 0) {
+                likesLabel.text = [[NSNumber numberWithInt:(videoObject.likes)] stringValue];
+                likesLabel.hidden = NO;
+            } else {
+                likesLabel.hidden = YES;
+            }
+            likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+        }
+        
+	} else {
+		LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
+	}
+}
+
+- (void) onUnlikeVideoRequestFailed: (NSString*)errorMessage {		
+	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
+}
 
 @end

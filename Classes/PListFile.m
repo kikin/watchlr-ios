@@ -12,7 +12,7 @@
 @implementation PListFile
 
 - (id) init: (NSString*)name {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		fileName = [name retain];
 	}
 	return self;

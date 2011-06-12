@@ -6,9 +6,9 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "DeleteVideoResponse.h"
+#import "LikeVideoResponse.h"
 
-@implementation DeleteVideoResponse
+@implementation LikeVideoResponse
 
 @synthesize videoObject;
 
@@ -23,6 +23,5 @@
 	[videoObject release];
 	[super dealloc];
 }
-
 
 @end

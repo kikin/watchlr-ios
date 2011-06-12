@@ -7,21 +7,41 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "VideoObject.h"
 #import <CommonIos/Callback.h>
+
+#import "LikeVideoRequest.h"
+#import "UnlikeVideoRequest.h"
+#import "VideoObject.h"
 
 @interface VideoTableCell : UITableViewCell {
 	VideoObject* videoObject;
-	UILabel* titleLabel;
+	
+    UIImageView* videoImageView;
+    UIImageView* playButtonImage;
+    UILabel* titleLabel;
 	UILabel* descriptionLabel;
-	UIImageView* videoImageView;
-	Callback* deleteCallback;
+    UIImageView* faviconImageView;
+    UILabel* sourceLabel;
+	UILabel* likesLabel;
+    UIImageView* likeImageView;
+    
+	Callback* playVideoCallback;
+    
+    LikeVideoRequest* likeVideoRequest;
+    UnlikeVideoRequest* unlikeVideoRequest;
+    
 	NSThread* imageThread;
 }
 
-@property(retain) Callback* deleteCallback;
+@property(retain) Callback* playVideoCallback;
 
-- (IBAction) onClickDelete;
 - (void)setVideoObject: (VideoObject*)video;
+- (void) loadImage;
+
+- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response;
+- (void) onLikeVideoRequestFailed: (NSString*)errorMessage;
+- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response;
+- (void) onUnlikeVideoRequestFailed: (NSString*)errorMessage;
+
 
 @end

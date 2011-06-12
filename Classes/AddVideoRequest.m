@@ -6,14 +6,14 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "DeleteVideoRequest.h"
+#import "AddVideoRequest.h"
 #import "UserObject.h"
 
-@implementation DeleteVideoRequest
+@implementation AddVideoRequest
 
 @synthesize videoObject;
 
-- (void) doDeleteVideoRequest:(VideoObject*)video {
+- (void) doAddVideoRequest:(VideoObject*)video {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	self.videoObject = video;
@@ -23,7 +23,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
     
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://dev-video.kikin.com/api/remove/"];
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://dev-video.kikin.com/api/save/"];
     requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
 	
 	// do request	
@@ -38,7 +38,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	DeleteVideoResponse* response = [[[DeleteVideoResponse alloc] initWithResponse:jsonObject] autorelease];
+	AddVideoResponse* response = [[[AddVideoResponse alloc] initWithResponse:jsonObject] autorelease];
 	response.videoObject = videoObject;
 	
 	return response;

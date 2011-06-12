@@ -12,7 +12,7 @@
 
 @implementation VideoListRequest
 
-- (void) doGetVideoListRequest {
+- (void) doGetVideoListRequest:(BOOL)likedVideosOnly {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	LOG_DEBUG(@"sessionId = %@", sessionId);
@@ -21,6 +21,7 @@
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
     [params setObject:@"html5" forKey:@"type"];
+    [params setObject:(likedVideosOnly ? @"true" : @"false") forKey:@"likes"];
 	
 	// do request
 	[self doGetRequest:@"http://dev-video.kikin.com/api/list" params:params];

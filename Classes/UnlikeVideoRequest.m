@@ -6,14 +6,14 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "DeleteVideoRequest.h"
+#import "UnlikeVideoRequest.h"
 #import "UserObject.h"
 
-@implementation DeleteVideoRequest
+@implementation UnlikeVideoRequest
 
 @synthesize videoObject;
 
-- (void) doDeleteVideoRequest:(VideoObject*)video {
+- (void) doUnlikeVideoRequest:(VideoObject*)video {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	self.videoObject = video;
@@ -21,11 +21,11 @@
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
-	// [params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
-    
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://dev-video.kikin.com/api/remove/"];
-    requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
+	// [params setObject:videoObject.videoUrl forKey:@"url"];
 	
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://dev-video.kikin.com/api/unlike/"];
+    requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
+    
 	// do request	
 	[self doGetRequest:requestUrl params:params];
 	
@@ -38,7 +38,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	DeleteVideoResponse* response = [[[DeleteVideoResponse alloc] initWithResponse:jsonObject] autorelease];
+	UnlikeVideoResponse* response = [[[UnlikeVideoResponse alloc] initWithResponse:jsonObject] autorelease];
 	response.videoObject = videoObject;
 	
 	return response;

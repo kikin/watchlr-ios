@@ -6,9 +6,9 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "DeleteVideoResponse.h"
+#import "AddVideoResponse.h"
 
-@implementation DeleteVideoResponse
+@implementation AddVideoResponse
 
 @synthesize videoObject;
 

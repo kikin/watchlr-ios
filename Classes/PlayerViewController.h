@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "VideoObject.h"
 
-@interface PlayerViewController : UIViewController {
+@interface PlayerViewController : UIViewController<UIWebViewDelegate> {
 	UINavigationBar* navigationBar;
 	UIWebView* webView;
 	UIBarButtonItem* backButton;
