@@ -20,7 +20,7 @@
 			}
 		}
         
-        // int errorCode = [[jsonObject objectForKey:@"code"] intValue];
+        int errorCode = [[jsonObject objectForKey:@"code"] intValue];
 	}
 	return self;
 }

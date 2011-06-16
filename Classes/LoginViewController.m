@@ -99,8 +99,8 @@
     [tabBarController setViewControllers:controllers animated:YES];
     [tabBarController setSelectedIndex:[[NSNumber numberWithInt:1] unsignedIntegerValue]];
     [tabBarController setSelectedIndex:[[NSNumber numberWithInt:0] unsignedIntegerValue]];
-    
-    [self presentModalViewController:tabBarController animated:animated];
+    tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentModalViewController:tabBarController animated:YES];
     [savedVideosViewController release];
     [likedVideosViewController release];
     [tabBarController release];

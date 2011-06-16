@@ -9,23 +9,46 @@
 #import <UIKit/UIKit.h>
 #import "PlayerViewController.h"
 #import "DeleteVideoRequest.h"
+#import "UserProfileView.h"
+#import "UserSettingsView.h"
+#import "RefreshStatusView.h"
 
+/** Cutomized tool bar. */
 @interface KikinVideoToolBar : UIToolbar {
     UIImageView* kikinLogo;
 }
 @end
 
+/** Refresh States. */
+typedef enum {
+    REFRESH_NONE,
+    PULLING_DOWN,
+    RELEASING,
+    REFRESHING,
+    REFRESHED
+} RefreshState;
+
+/** Video List View Controller. */
 @interface KikinVideoViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
 	DeleteVideoRequest* deleteVideoRequest;
 	UITableView* videosTable;
-	UIBarButtonItem* disconnectButton;
-	UIBarButtonItem* refreshButton;
+    UIBarButtonItem* accountButton;
 	KikinVideoToolBar* topToolbar;
-	NSMutableArray* videos;
+	UserProfileView* userProfileView;
+    UserSettingsView* userSettingsView;
+    RefreshStatusView* refreshStatusView;
+    
+    NSMutableArray* videos;
+    RefreshState state;
+    // UIViewController* settingsMenu;
+    
 }
 
-- (void) onClickDisctonnect;
+- (void) onClickAccount;
 - (void) onClickRefresh;
 - (void) playVideo:(VideoObject*)videoObject;
+- (void) showUserProfile;
+- (void) showFeedbackForm;
+- (void) logoutUser;
 
 @end

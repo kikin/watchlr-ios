@@ -9,6 +9,7 @@
 #import "KikinVideoViewController.h"
 #import "LoginViewController.h"
 #import "UserObject.h"
+#import "FeedbackViewController.h"
 
 @implementation KikinVideoToolBar
 
@@ -52,34 +53,20 @@
     [topToolbar insertSubview:kikinLogo atIndex:0];
     [topToolbar setAutoresizesSubviews:YES];
     
-	[self.view addSubview:topToolbar];
-	
 	NSMutableArray* buttons = [[NSMutableArray alloc] initWithCapacity:3];
+    
+    // create a spacer
+    UIBarButtonItem* spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    [buttons addObject:spacer];
+    [spacer release];
 	
 	// create the disconnect button
-	disconnectButton = [[UIBarButtonItem alloc] init];
-	disconnectButton.title = @"Disconnect";
-	disconnectButton.style = UIBarButtonItemStyleBordered;
-	disconnectButton.action = @selector(onClickDisctonnect);
-	[buttons addObject:disconnectButton];
+	accountButton = [[UIBarButtonItem alloc] init];
+	accountButton.title = @"Account";
+	accountButton.style = UIBarButtonItemStyleBordered;
+	accountButton.action = @selector(onClickAccount);
+	[buttons addObject:accountButton];
 	
-	// create the refresh button
-	/*refreshButton = [[UIBarButtonItem alloc] init];
-	refreshButton.title = @"Refresh list";
-	refreshButton.style = UIBarButtonItemStyleBordered;
-	refreshButton.action = @selector(onClickRefresh);
-	[buttons addObject:refreshButton];*/
-	
-     
-    // create a spacer
-    /*UIBarButtonItem* spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    [buttons addObject:spacer];
-    [spacer release]; 
-    
-    UIImageView * kikinLogo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"kikin_logo.png"]];
-    [buttons addObject:kikinLogo];*/
-    
-    
     // add the buttons to the bar
     [topToolbar setItems:buttons];
     [buttons release];
@@ -95,6 +82,30 @@
     videosTable.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     [self.view addSubview:videosTable];
 
+    userProfileView = [[UserProfileView alloc] initWithFrame:CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-210)/2, 500, 210)];
+	userProfileView.hidden = YES;
+    [self.view addSubview:userProfileView];
+    
+    userSettingsView = [[UserSettingsView alloc] initWithFrame:CGRectMake((view.frame.size.width - 210), topToolbar.frame.size.height, 210, 145)];
+	userSettingsView.hidden = YES;
+    userSettingsView.showUserProfileCallback = [Callback create:self selector:@selector(showUserProfile)];
+    userSettingsView.showFeedbackFormCallback = [Callback create:self selector:@selector(showFeedbackForm)];
+    userSettingsView.logoutCallback = [Callback create:self selector:@selector(logoutUser)];
+	[self.view addSubview:userSettingsView];
+    
+    refreshStatusView = [[RefreshStatusView alloc] initWithFrame:CGRectMake(0.0f, topToolbar.frame.size.height, self.view.frame.size.width, 60.0f)];
+    refreshStatusView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self.view addSubview:refreshStatusView];
+    [self.view bringSubviewToFront:refreshStatusView];
+    [refreshStatusView setHidden:YES];
+    state = REFRESH_NONE;
+    
+    [self.view addSubview:topToolbar];
+    [self.view bringSubviewToFront:topToolbar];
+    
+    // settingsMenu = [[UIViewController alloc] init];
+    
+    
     // get the event when the app comes back
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onApplicationBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
@@ -102,27 +113,58 @@
 - (void) playVideo:(VideoObject *)videoObject {
     if (videoObject != nil) {
         PlayerViewController* playerViewController = [[PlayerViewController alloc] init];
-        playerViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        playerViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         [self presentModalViewController:playerViewController animated:YES];
         [playerViewController setVideo:videoObject];
         [playerViewController release];
     }
 }
 
-- (void) onClickDisctonnect {
-	// erase userId
+- (void) showUserProfile {
+    [userProfileView showUserProfile];
+}
+
+- (void) showFeedbackForm {
+    FeedbackViewController* feedbackViewController = [[FeedbackViewController alloc] init];
+    feedbackViewController.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+    [self presentModalViewController:feedbackViewController animated:YES];
+    
+    [feedbackViewController loadFeedbackForm];
+    [feedbackViewController release];
+}
+
+- (void) logoutUser {
+    // erase userId
 	UserObject* userObject = [UserObject getUser];
 	userObject.sessionId = nil;
-
-	[self dismissModalViewControllerAnimated:TRUE];
+    [self dismissModalViewControllerAnimated:TRUE];
 }
 
 - (void) onClickRefresh {
     // Sub class will implement this method
 }
 
+
+- (void) onClickAccount {
+    if (userSettingsView.hidden) {
+        userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, topToolbar.frame.size.height, userSettingsView.frame.size.width, userSettingsView.frame.size.height);
+        [userSettingsView showUserSettings];
+    } else {
+        userSettingsView.hidden = YES;
+    }
+    //[settingsMenu setMenuVisible:YES animated:YES];
+}
+
+- (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    if (!userSettingsView.hidden) {
+        userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, topToolbar.frame.size.height, userSettingsView.frame.size.width, userSettingsView.frame.size.height);
+        // [userSettingsView showUserSettings];
+    }
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -140,11 +182,13 @@
 
 	// release memory
 	[videos release];
-	[disconnectButton release];
-	// [refreshButton release];
+	[accountButton release];
 	[videosTable release];
 	[topToolbar release];
-	
+    [userProfileView release];
+    [userSettingsView release];
+    [refreshStatusView release];
+    
     [super dealloc];
 }
 
@@ -220,11 +264,45 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
 }
 
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView.contentOffset.y < 0 && scrollView.contentOffset.y > -60) {
+        if (refreshStatusView.hidden)
+            refreshStatusView.hidden = NO;
+        
+        if (state != PULLING_DOWN) {
+            state = PULLING_DOWN;
+            [refreshStatusView setRefreshStatus:PULLING_DOWN];
+        }
+        
+        refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, topToolbar.frame.size.height, self.view.frame.size.width, -scrollView.contentOffset.y);
+        
+    } else if (scrollView.contentOffset.y >= 0) {
+        
+        if (!refreshStatusView.hidden) {
+            refreshStatusView.hidden = YES;
+            [refreshStatusView setRefreshStatus:REFRESH_NONE];
+        }
+        
+        state = REFRESH_NONE;
+        
+    } else if (scrollView.contentOffset.y <= -60) {
+        if (state < RELEASING) {
+            state = RELEASING;
+            [refreshStatusView setRefreshStatus:RELEASING];
+        }
+        
+        refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, topToolbar.frame.size.height - 60 - scrollView.contentOffset.y, self.view.frame.size.width, 60);
+    }
+    
+}
+
 - (void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.y <= -65) {
+        state = REFRESHING;
+        [refreshStatusView setRefreshStatus:REFRESHING];
+        scrollView.contentInset = UIEdgeInsetsMake(60.0f, 0.0f, 0.0f, 0.0f);
         [self onClickRefresh];
     }
 }
-
 
 @end

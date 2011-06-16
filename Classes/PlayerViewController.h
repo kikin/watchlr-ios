@@ -8,14 +8,24 @@
 
 #import <UIKit/UIKit.h>
 #import "VideoObject.h"
+#import "SeekVideoRequest.h"
 
-@interface PlayerViewController : UIViewController<UIWebViewDelegate> {
+@interface PlayerViewController : UIViewController<UIWebViewDelegate, UIAlertViewDelegate> {
 	UINavigationBar* navigationBar;
 	UIWebView* webView;
 	UIBarButtonItem* backButton;
+    
+    SeekVideoRequest* seekRequest;
+    VideoObject* video;
+    
+    bool showAlert;
 }
+
+// @property(retain) VideoObject* video;
 
 - (void) setVideo: (VideoObject*)videoObject;
 - (void) onClickBackButton;
+
+- (void) onSwipeGesture: (UIGestureRecognizer*)sender;
 
 @end

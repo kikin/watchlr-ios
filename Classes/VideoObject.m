@@ -17,9 +17,9 @@
 	self.videoId = [[data objectForKey:@"id"] intValue];
 	self.title = [data objectForKey:@"title"] != [NSNull null] ? [data objectForKey:@"title"] : nil;
 	self.description = [data objectForKey:@"description"] != [NSNull null] ? [data objectForKey:@"description"] : nil;
-	self.videoUrl = [data objectForKey:@"url"];
+	self.videoUrl = [data objectForKey:@"url"] != [NSNull null] ? [data objectForKey:@"url"] : nil;
 	self.thumbnail = [data objectForKey:@"thumbnail"] != [NSNull null] ? [data objectForKey:@"thumbnail"] : nil;
-    self.htmlCode = [data objectForKey:@"html"];
+    self.htmlCode = [data objectForKey:@"html"] != [NSNull null] ? [data objectForKey:@"html"] : nil;
     self.videoSource = [data objectForKey:@"source"] != [NSNull null] ? [data objectForKey:@"source"] : nil;
     self.liked = [[data objectForKey:@"liked"] boolValue];
     self.likes = [[data objectForKey:@"likes"] intValue];

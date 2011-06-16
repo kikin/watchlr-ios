@@ -6,26 +6,22 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "DeleteVideoRequest.h"
+#import "GetUserProfileRequest.h"
 #import "UserObject.h"
 
-@implementation DeleteVideoRequest
+@implementation GetUserProfileRequest
 
-@synthesize videoObject;
-
-- (void) doDeleteVideoRequest:(VideoObject*)video {
+- (void) doGetUserProfileRequest {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
-	self.videoObject = video;
 	
-	// build params list
+    // build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
-	// [params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
-    
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://video.kikin.com/api/remove/"];
-    requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
+	// [params setObject:videoObject.videoUrl forKey:@"url"];
 	
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://video.kikin.com/api/auth/profile"];
+    
 	// do request	
 	[self doGetRequest:requestUrl params:params];
 	
@@ -38,8 +34,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	DeleteVideoResponse* response = [[[DeleteVideoResponse alloc] initWithResponse:jsonObject] autorelease];
-	response.videoObject = videoObject;
+	GetUserProfileResponse* response = [[[GetUserProfileResponse alloc] initWithResponse:jsonObject] autorelease];
 	
 	return response;
 }

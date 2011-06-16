@@ -24,7 +24,7 @@
     [params setObject:(likedVideosOnly ? @"true" : @"false") forKey:@"likes"];
 	
 	// do request
-	[self doGetRequest:@"http://dev-video.kikin.com/api/list" params:params];
+	[self doGetRequest:@"http://video.kikin.com/api/list" params:params];
 	
 	// release memory
 	[params release];

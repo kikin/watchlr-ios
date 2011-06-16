@@ -54,6 +54,9 @@
 		
 		// refresh the table
 		[videosTable reloadData];
+        
+        state = REFRESHED;
+        [refreshStatusView setRefreshStatus:REFRESHED];
 		
 		LOG_DEBUG(@"list request success");
 	} else {
@@ -66,10 +69,20 @@
 		
 		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
 	}
+    
+    state = REFRESH_NONE;
+    [refreshStatusView setRefreshStatus:REFRESH_NONE];
+    [refreshStatusView setHidden:YES];
+    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
-	NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", errorMessage];
+	state = REFRESH_NONE;
+    [refreshStatusView setRefreshStatus:REFRESH_NONE];
+    [refreshStatusView setHidden:YES];
+    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", errorMessage];
 	
 	// show error message
 	UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to retrieve videos" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];

@@ -85,7 +85,7 @@
 			descriptionLabel.numberOfLines = 3;
 		} else {
 			videoImageView.frame = CGRectMake(10, 10, 160, 120);
-            playButtonImage.frame = CGRectMake(50, 50, 50, 50);
+            playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
 			descriptionLabel.numberOfLines = 3;
 		}
 	}
