@@ -11,10 +11,13 @@
 @interface DefaultResponse : NSObject {
 	BOOL success;
 	NSString* errorMessage;
+    int errorCode;
 }
 
-- (NSString*) errorMessage;
-- (BOOL) success;
+@property(retain) NSString*errorMessage;
+@property         int errorCode;
+@property         BOOL success;
+
 - (id) initWithResponse: (id)jsonObject;
 
 @end

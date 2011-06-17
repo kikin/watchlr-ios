@@ -25,7 +25,6 @@
         
         // create the profile button
         userProfileButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"My Profile"]];
-        userProfileButton.frame = CGRectMake(frame.size.width - 205, frame.size.height-135, 200, 35);
         [userProfileButton setSegmentedControlStyle:UISegmentedControlStyleBar];
         [userProfileButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
         [userProfileButton setMomentary:YES];
@@ -34,20 +33,27 @@
         
         // create the feedback button
         feedbackButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Feedback"]];
-        feedbackButton.frame = CGRectMake(frame.size.width - 205, frame.size.height-90, 200, 35);
         [feedbackButton setSegmentedControlStyle:UISegmentedControlStyleBar];
         [feedbackButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
         [feedbackButton setMomentary:YES];
         [feedbackButton addTarget:self action:@selector(onClickFeedbackButton:) forControlEvents:UIControlEventValueChanged];
         [self addSubview:feedbackButton];
         
+        // create the logout button
         logoutButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Logout"]];
-        logoutButton.frame = CGRectMake(frame.size.width - 205, frame.size.height-45, 200, 35);
         [logoutButton setSegmentedControlStyle:UISegmentedControlStyleBar];
         [logoutButton setTintColor:[UIColor colorWithRed:0.8 green:0.3 blue:0.3 alpha:1.0]];
         [logoutButton setMomentary:YES];
         [logoutButton addTarget:self action:@selector(onClickLogoutButton:) forControlEvents:UIControlEventValueChanged];
         [self addSubview:logoutButton];
+        
+        // create the cancel button
+        cancelButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Cancel"]];
+        [cancelButton setSegmentedControlStyle:UISegmentedControlStyleBar];
+        [cancelButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
+        [cancelButton setMomentary:YES];
+        [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventValueChanged];
+        [self addSubview:cancelButton];
     }
     return self;
 }
@@ -75,7 +81,23 @@
     }
 }
 
+- (void) onClickCancelButton: (UIButton*) sender {
+    [self setHidden:YES];
+}
+
 -(void) showUserSettings {
+    if (DeviceUtils.isIphone) {
+        userProfileButton.frame = CGRectMake(5, self.frame.size.height-135, self.frame.size.width - 10, 35);
+        feedbackButton.frame = CGRectMake(5, self.frame.size.height-90, self.frame.size.width - 10, 35);
+        logoutButton.frame = CGRectMake(5, self.frame.size.height-180, self.frame.size.width - 10, 35);
+        cancelButton.frame = CGRectMake(5, self.frame.size.height-45, self.frame.size.width - 10, 35);
+    } else {
+        userProfileButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-180, 200, 35);
+        feedbackButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-135, 200, 35);
+        logoutButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-45, 200, 35);
+        cancelButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-90, 200, 35);
+    }
+    
     [self setHidden:NO];
 }
 

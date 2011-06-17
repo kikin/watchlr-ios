@@ -49,8 +49,8 @@
     [view bringSubviewToFront:webView];
     showAlert = true;
     
-    UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeGesture:)];
-    [webView setGestureRecognizers:[NSArray arrayWithObject:swipeGestureRecognizer]];
+    /*UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(onSwipeGesture:)];
+    [webView setGestureRecognizers:[NSArray arrayWithObject:swipeGestureRecognizer]];*/
 }
 
 - (void) setVideo: (VideoObject*)videoObject {
@@ -110,7 +110,7 @@
         "       } "
         "   } catch (err) { } "
         "} "
-        "window.onload = onPageLoad;", 30.0f];
+        "window.onload = onPageLoad;", video.seek];
     LOG_DEBUG(@"javascript = %@", javasciptString);
     
     NSString* htmlCode = video.htmlCode;
@@ -173,8 +173,8 @@
        "window.videoPauseTime =  getVideoPauseTime();               "
     ];
     
-    NSString* videoPauseTime = [webView stringByEvaluatingJavaScriptFromString:javascriptString];
-    videoPauseTime = [webView stringByEvaluatingJavaScriptFromString:@"window.videoPauseTime"];
+    [webView stringByEvaluatingJavaScriptFromString:javascriptString];
+    NSString* videoPauseTime = [webView stringByEvaluatingJavaScriptFromString:@"window.videoPauseTime"];
     if ([videoPauseTime floatValue] > 0) {
         videoPauseTime = [NSString stringWithFormat:@"%.2f", [videoPauseTime floatValue]];
         if (seekRequest == nil) {
@@ -186,6 +186,7 @@
         }
         
         [seekRequest doSeekVideoRequest:video andTime:videoPauseTime];
+        video.seek = [videoPauseTime doubleValue];
     } else {
         LOG_DEBUG(@"Either video ended or we were not able to find the current time of the video.");
     }

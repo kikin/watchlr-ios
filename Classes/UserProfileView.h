@@ -14,7 +14,7 @@
 #import "UserProfileObject.h"
 #import "LoadingMainView.h"
 
-@interface UserProfileView : UIView {
+@interface UserProfileView : UIView<UIAlertViewDelegate> {
     UILabel* nameLabel;
     UIImageView* userProfileImageView;
 	UILabel* userNameLabel;
@@ -47,6 +47,8 @@
 -(void) onSaveUserProfileRequestSuccess: (SaveUserProfileResponse*)response;
 -(void) onSaveUserProfileRequestFailed: (NSString*)errorMessage;
 
-// -(void) textFieldBeginEditing;
+-(void) textFieldWillBeginEditing:(NSNotification*)aNotification;
+-(void) textFieldDidEditing:(NSNotification*)aNotification;
+-(void) textFieldStartEditing:(id)sender;
 
 @end

@@ -30,26 +30,12 @@
 		titleLabel = [[UILabel alloc] init];
 		titleLabel.backgroundColor = [UIColor clearColor];
 		titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		titleLabel.font = [UIFont boldSystemFontOfSize:18];
 		titleLabel.text = @"title";
-        titleLabel.numberOfLines = 1;
 		[self addSubview:titleLabel];
-		
-		// create the description
-		descriptionLabel = [[UILabel alloc] init];
-		descriptionLabel.backgroundColor = [UIColor clearColor];
-		descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		descriptionLabel.font = [UIFont systemFontOfSize:15];
-		descriptionLabel.text = @"description";
-        descriptionLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
-        descriptionLabel.textAlignment = UITextAlignmentLeft;
-        descriptionLabel.baselineAdjustment = UIBaselineAdjustmentNone;
-		[self addSubview:descriptionLabel];
         
         // create the number of likes label
 		likesLabel = [[UILabel alloc] init];
 		likesLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		likesLabel.font = [UIFont boldSystemFontOfSize:30];
         likesLabel.text = [[NSNumber numberWithInt:1] stringValue];
         likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
         likesLabel.textAlignment = UITextAlignmentRight;
@@ -59,6 +45,7 @@
         // Create the favicon image
         faviconImageView = [[UIImageView alloc] init];
         faviconImageView.autoresizingMask = UIViewAutoresizingNone;
+        [faviconImageView setBackgroundColor:[UIColor clearColor]];
 		[self addSubview:faviconImageView];
         faviconImageView.hidden = YES;
         
@@ -80,13 +67,33 @@
         // set size/positions
 		if (DeviceUtils.isIphone) {
 			videoImageView.frame = CGRectMake(10, 10, 106, 80);
-			titleLabel.frame = CGRectMake(126, 12, self.frame.size.width-136, 20);
-            descriptionLabel.frame = CGRectMake(126, 35, self.frame.size.width-136, 60);
-			descriptionLabel.numberOfLines = 3;
+			playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
+            
+            titleLabel.font = [UIFont boldSystemFontOfSize:12];
+            titleLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
+            titleLabel.numberOfLines = 3;
+            
+            likesLabel.font = [UIFont boldSystemFontOfSize:20];
 		} else {
 			videoImageView.frame = CGRectMake(10, 10, 160, 120);
             playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
-			descriptionLabel.numberOfLines = 3;
+            
+            titleLabel.font = [UIFont boldSystemFontOfSize:18];
+            titleLabel.numberOfLines = 1;
+            
+            // create the description
+            descriptionLabel = [[UILabel alloc] init];
+            descriptionLabel.backgroundColor = [UIColor clearColor];
+            descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            descriptionLabel.font = [UIFont systemFontOfSize:15];
+            descriptionLabel.text = @"description";
+            descriptionLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
+            descriptionLabel.textAlignment = UITextAlignmentLeft;
+            descriptionLabel.baselineAdjustment = UIBaselineAdjustmentNone;
+            descriptionLabel.numberOfLines = 3;
+            [self addSubview:descriptionLabel];
+            
+            likesLabel.font = [UIFont boldSystemFontOfSize:30];
 		}
 	}
     return self;
@@ -159,50 +166,57 @@
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-	/*int normalWidth = DeviceUtils.isIphone ? 136 : 190,
-		buttonWidth = 160;
-	
-	// create new frame
-	CGRect newFrame = descriptionLabel.frame;
-	newFrame.size.width = editing ? self.frame.size.width-normalWidth-buttonWidth : self.frame.size.width-normalWidth;
-	
-	if (animated) {
-		// do the animation
-		[UIView beginAnimations:@"ResizeDescription" context:nil];
-		{
-			[UIView setAnimationDuration:0.25];
-			descriptionLabel.frame = newFrame;
-		}
-		[UIView commitAnimations];
-	} else {
-		// directly update the size
-		descriptionLabel.frame = newFrame;
-	}*/
-	
 	[super setEditing:editing animated:animated];
 }
 
 - (void) fixSize {
-	int titleAndDescriptionLabelWidth = DeviceUtils.isIphone ? 136 : 310;
-	int	faviconAndSourceHeight = DeviceUtils.isIphone ? 60 : 30;
-    int titleHeight = 20;
+	if (DeviceUtils.isIphone) {
+        
+        int thumbnailWidth = 125;
+        int	faviconAndSourceHeight = 20;
+        int titleHeight = 50;
+        
+        // set the size for title label
+        titleLabel.frame = CGRectMake(thumbnailWidth, 12, (self.frame.size.width - (thumbnailWidth + 10)), titleHeight);
+        
+        // set the size for likes label
+        likesLabel.frame = CGRectMake((self.frame.size.width - 68), self.frame.size.height - (faviconAndSourceHeight + 10), 35, 20);
+        
+        // set the size for like/unlike button
+        likeImageView.frame = CGRectMake((self.frame.size.width - 30), self.frame.size.height - (faviconAndSourceHeight + 10), 20, 20);
+        
+        // set the size for favicon image
+        faviconImageView.frame = CGRectMake(thumbnailWidth, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+        
+        // set the size for source label
+        sourceLabel.frame = CGRectMake((thumbnailWidth + 20), self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (thumbnailWidth + 20)), 15);
+        
+    } else {
+        
+        int titleAndDescriptionLabelWidth = 310;
+        int	faviconAndSourceHeight = 30;
+        int titleHeight = 20;
+        
+        // set the size for title label
+        titleLabel.frame = CGRectMake(180, 12, (self.frame.size.width - titleAndDescriptionLabelWidth), titleHeight);
+        
+        descriptionLabel.frame = CGRectMake(180, 20, (self.frame.size.width - titleAndDescriptionLabelWidth), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + 10)));
+        
+        // set the size for likes label
+        likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
+        
+        // set the size for like/unlike button
+        likeImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+        
+        // set the size for favicon image
+        faviconImageView.frame = CGRectMake(180, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+        
+        // set the size for source label
+        sourceLabel.frame = CGRectMake(200, self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (titleAndDescriptionLabelWidth + 20)), 15);
+        
+    }
     
-    // set the size for title label
-    titleLabel.frame = CGRectMake(180, 12, (self.frame.size.width - titleAndDescriptionLabelWidth), titleHeight);
-	
-    descriptionLabel.frame = CGRectMake(180, 20, (self.frame.size.width - titleAndDescriptionLabelWidth), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + 10)));
     
-    // set the size for likes label
-    likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
-    
-    // set the size for like/unlike button
-    likeImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
-    
-    // set the size for favicon image
-    faviconImageView.frame = CGRectMake(180, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
-    
-    // set the size for source label
-    sourceLabel.frame = CGRectMake(200, self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (titleAndDescriptionLabelWidth + 20)), 15);
 }
 
 - (void)setVideoObject: (VideoObject*)video {
@@ -214,7 +228,10 @@
 	titleLabel.text = video.title;
 	if (video.description != nil) {
 		NSString* description = [video.description stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		descriptionLabel.text = description;
+		
+        if (!DeviceUtils.isIphone) 
+            descriptionLabel.text = description;
+        
 		[self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
 		//descriptionLabel.backgroundColor = [UIColor yellowColor];
 	}

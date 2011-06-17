@@ -19,7 +19,7 @@
     UITabBarItem* theItem = [[UITabBarItem alloc] initWithTitle:@"Liked" image:anImage tag:0];
     self.tabBarItem = theItem;
     [theItem release];
-    [anImage release];
+    // [anImage release];
 	
 	// request video lsit
 	[self doVideoListRequest];

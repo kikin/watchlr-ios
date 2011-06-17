@@ -10,8 +10,11 @@
 
 @implementation DefaultResponse
 
+@synthesize errorCode, errorMessage, success;
+
 - (id) initWithResponse: (NSDictionary*)jsonObject {
-	if ((self = [super init])) {
+	errorCode = 400;
+    if ((self = [super init])) {
 		success = [[jsonObject objectForKey:@"success"] boolValue];
 		if (!success) {
 			errorMessage = [[jsonObject objectForKey:@"error"] retain];
@@ -20,17 +23,10 @@
 			}
 		}
         
-        int errorCode = [[jsonObject objectForKey:@"code"] intValue];
-	}
+        errorCode = [[jsonObject objectForKey:@"code"] intValue];
+        LOG_DEBUG(@"Error code:%d", errorCode);
+	} 
 	return self;
-}
-
-- (NSString*) errorMessage {
-	return errorMessage;
-}
-
-- (BOOL) success {
-	return success;
 }
 
 - (void) dealloc {

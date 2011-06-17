@@ -172,6 +172,7 @@
 	request.successCallback = [Callback create:self selector:@selector(onLinkRequestSuccess:)];
 	request.errorCallback = [Callback create:self selector:@selector(onLinkRequestFailed:)];
 	[request doLinkDeviceRequest:accessToken];
+    [request release];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

@@ -13,6 +13,7 @@
     UISegmentedControl* userProfileButton;
     UISegmentedControl* feedbackButton;
     UISegmentedControl* logoutButton;
+    UISegmentedControl* cancelButton;
     
     Callback* showUserProfileCallback;
     Callback* showFeedbackFormCallback;

@@ -16,6 +16,8 @@
 		2699392513A99A7900672FD5 /* RefreshStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2699392413A99A7900672FD5 /* RefreshStatusView.m */; };
 		2699392713A9B0E200672FD5 /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 2699392613A9B0E200672FD5 /* whiteArrow.png */; };
 		2699392913A9B63400672FD5 /* whiteArrowUp.png in Resources */ = {isa = PBXBuildFile; fileRef = 2699392813A9B63400672FD5 /* whiteArrowUp.png */; };
+		269B6F6013AADF000019133D /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 269B6F5F13AADEFF0019133D /* Entitlements.plist */; };
+		269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269B6F6413ABB6880019133D /* MediaPlayer.framework */; };
 		26AC58F513A157F200750D2F /* LikeVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58F413A157F200750D2F /* LikeVideoRequest.m */; };
 		26AC58F813A157FE00750D2F /* LikeVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58F713A157FE00750D2F /* LikeVideoResponse.m */; };
 		26AC58FB13A15C5F00750D2F /* AddVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58FA13A15C5F00750D2F /* AddVideoResponse.m */; };
@@ -314,6 +316,8 @@
 		2699392413A99A7900672FD5 /* RefreshStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RefreshStatusView.m; sourceTree = "<group>"; };
 		2699392613A9B0E200672FD5 /* whiteArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrow.png; sourceTree = "<group>"; };
 		2699392813A9B63400672FD5 /* whiteArrowUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrowUp.png; sourceTree = "<group>"; };
+		269B6F5F13AADEFF0019133D /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
+		269B6F6413ABB6880019133D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		26AC58F313A157F200750D2F /* LikeVideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeVideoRequest.h; sourceTree = "<group>"; };
 		26AC58F413A157F200750D2F /* LikeVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikeVideoRequest.m; sourceTree = "<group>"; };
 		26AC58F613A157FE00750D2F /* LikeVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeVideoResponse.h; sourceTree = "<group>"; };
@@ -617,6 +621,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */,
 				26E3FFDD13A4893C00F35642 /* libCommonIos.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -770,8 +775,8 @@
 		2699393413A9B90900672FD5 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				26E3FFFC13A72A1000F35642 /* UserSettingsView.m */,
 				26E3FFE313A6706700F35642 /* UserProfileView.m */,
+				26E3FFFC13A72A1000F35642 /* UserSettingsView.m */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -871,6 +876,7 @@
 		29B97314FDCFA39411CA2CEA /* KikinVideo */ = {
 			isa = PBXGroup;
 			children = (
+				269B6F5F13AADEFF0019133D /* Entitlements.plist */,
 				26E3FFDC13A4893C00F35642 /* libCommonIos.a */,
 				26E3FFCB13A4831E00F35642 /* CommonIos.xcodeproj */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -908,6 +914,7 @@
 				3599671213707072002E7EF1 /* CFNetwork.framework */,
 				288765070DF74369002DB57D /* CoreGraphics.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
+				269B6F6413ABB6880019133D /* MediaPlayer.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -1515,6 +1522,7 @@
 				26E3FFE813A67DA000F35642 /* checkbox.png in Resources */,
 				2699392713A9B0E200672FD5 /* whiteArrow.png in Resources */,
 				2699392913A9B63400672FD5 /* whiteArrowUp.png in Resources */,
+				269B6F6013AADF000019133D /* Entitlements.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1597,6 +1605,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -1621,6 +1630,7 @@
 					"\"$(SRCROOT)\"",
 				);
 				INFOPLIST_FILE = "KikinVideo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
@@ -1631,6 +1641,49 @@
 			};
 			name = Release;
 		};
+		269B6F6113AADF540019133D /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PREBINDING = NO;
+				PRODUCT_NAME = "kikin video";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Ad Hoc";
+		};
+		269B6F6213AADF540019133D /* Ad Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = KikinVideo_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = "KikinVideo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
+				);
+				PRODUCT_NAME = "kikin video";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad Hoc";
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1640,7 +1693,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PREBINDING = NO;
 				PRODUCT_NAME = "kikin video";
 				SDKROOT = iphoneos;
@@ -1657,7 +1710,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PREBINDING = NO;
 				PRODUCT_NAME = "kikin video";
@@ -1674,6 +1727,7 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+				269B6F6213AADF540019133D /* Ad Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1683,6 +1737,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				269B6F6113AADF540019133D /* Ad Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

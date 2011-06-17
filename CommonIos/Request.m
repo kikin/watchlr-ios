@@ -64,7 +64,7 @@
 		finalUrl = [[finalUrl stringByAppendingString:@"?"] stringByAppendingString: [UrlUtils encodeParameters:params]];
 	}
 	
-	LOG_INFO(@"request url: %@", finalUrl);
+	// LOG_INFO(@"request url: %@", finalUrl);
 	
 	// create the data storage
 	responseData = [[NSMutableData alloc] init];
