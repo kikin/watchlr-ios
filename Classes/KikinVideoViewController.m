@@ -10,6 +10,8 @@
 #import "LoginViewController.h"
 #import "UserObject.h"
 #import "FeedbackViewController.h"
+#import "VideoPlayerView.h"
+#import "VideoTableCell.h"
 
 @implementation KikinVideoToolBar
 
@@ -23,7 +25,7 @@
         }
     }
     
-    kikinLogo.frame = CGRectMake(((self.frame.size.width / 2) - 50), ((self.frame.size.height / 2) - 14), 100, 28);
+    kikinLogo.frame = CGRectMake(((self.frame.size.width - 110) / 2), ((self.frame.size.height - 24) / 2), 110, 24);
 }
 
 -(void) dealloc {
@@ -35,13 +37,30 @@
 
 @implementation KikinVideoViewController
 
+@synthesize onLogoutCallback;
+
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
 	// create the view
 	UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
 	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    view.autoresizesSubviews = YES;
 	self.view = view;
 	[view release];
+    
+    // create the video player
+    videoPlayerView = [[VideoPlayerView alloc] init];
+    videoPlayerView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+    videoPlayerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    videoPlayerView.hidden = YES;
+    videoPlayerView.onCloseButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerCloseButtonClicked)];
+    videoPlayerView.onNextButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerNextButtonClicked)];
+    videoPlayerView.onPreviousButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerPreviousButtonClicked)];
+    videoPlayerView.onVideoFinishedCallback = [Callback create:self selector:@selector(onVideoPlaybackFinished)];
+    videoPlayerView.onLikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoLiked:)];
+    videoPlayerView.onUnlikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
+    videoPlayerView.onSaveButtonClickedCallback = [Callback create:self selector:@selector(onVideoSaved:)];
+    [self.view addSubview:videoPlayerView];
     
     // create the toolbar
 	topToolbar = [[KikinVideoToolBar alloc] init];
@@ -49,7 +68,7 @@
     topToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     topToolbar.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
     
-    UIImageView* kikinLogo = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"kikin_logo_with_name.png"]] autorelease];
+    UIImageView* kikinLogo = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"watchlr_logo.png"]] autorelease];
     [topToolbar insertSubview:kikinLogo atIndex:0];
     [topToolbar setAutoresizesSubviews:YES];
     
@@ -100,13 +119,13 @@
     [self.view addSubview:refreshStatusView];
     [self.view bringSubviewToFront:refreshStatusView];
     [refreshStatusView setHidden:YES];
-    state = REFRESH_NONE;
+    refreshState = REFRESH_NONE;
+    loadMoreState = LOAD_MORE_NONE;
     
     [self.view addSubview:topToolbar];
     [self.view bringSubviewToFront:topToolbar];
     
     // settingsMenu = [[UIViewController alloc] init];
-    
     
     // get the event when the app comes back
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onApplicationBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -114,12 +133,68 @@
 
 - (void) playVideo:(VideoObject *)videoObject {
     if (videoObject != nil) {
-        PlayerViewController* playerViewController = [[PlayerViewController alloc] init];
+        /*PlayerViewController* playerViewController = [[PlayerViewController alloc] init];
         playerViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         [self presentModalViewController:playerViewController animated:YES];
         [playerViewController setVideo:videoObject];
-        [playerViewController release];
+        [playerViewController release];*/
+        /*if (videoPlayerView.hidden == YES) {
+            [self.view bringSubviewToFront:videoPlayerView];
+            videoPlayerView.hidden = NO;
+            [UIView animateWithDuration:0.2 animations:^(void) {
+                videoPlayerView.frame = CGRectMake((self.view.frame.size.width - 580)/2, (self.view.frame.size.height - 365)/ 2, 580, 365);
+            } completion:^(BOOL finished) {
+                [videoPlayerView playVideo:videoObject];
+            }];
+        } else {
+            [videoPlayerView playVideo:videoObject];
+        }*/
+        
+        if (videoPlayerView.hidden == YES) {
+            [self.view bringSubviewToFront:videoPlayerView];
+            videoPlayerView.hidden = NO;
+            // LOG_DEBUG(@"list view Frame coordinates: %f, %f, %f, %f", self.view.frame.size.width, self.view.frame.size.height, self.view.frame.origin.x, self.view.frame.origin.y);
+            // videoPlayerView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
+            self.hidesBottomBarWhenPushed = YES;
+        }
+        
+        [videoPlayerView playVideo:videoObject];
     }
+}
+
+- (void) onVideoPlayerCloseButtonClicked {
+    /*[UIView animateWithDuration:0.2 animations:^(void) {
+        videoPlayerView.frame = CGRectMake((self.view.frame.size.width)/2, (self.view.frame.size.height)/ 2, 0, 0);
+    } completion:^(BOOL finished) {
+        videoPlayerView.hidden = YES;
+    }];*/
+    videoPlayerView.hidden = YES;
+    self.hidesBottomBarWhenPushed = NO;
+}
+
+- (void) onVideoPlayerNextButtonClicked {
+    VideoObject* videoObject = videoPlayerView.video;
+    NSUInteger idx = [videos indexOfObject:videoObject] + 1;
+    // LOG_DEBUG(@"next idx = %ld %ld", idx, videoObject);
+    
+    if (idx < videos.count) {
+        [self playVideo:[videos objectAtIndex:idx]];
+    }
+}
+
+- (void) onVideoPlayerPreviousButtonClicked {
+    VideoObject* videoObject = videoPlayerView.video;
+    NSUInteger idx = [videos indexOfObject:videoObject];
+    if (idx > 0) {
+        idx -= 1;
+        // LOG_DEBUG(@"previous idx = %ld %ld", idx, videoObject);
+        [self playVideo:[videos objectAtIndex:idx]];
+        
+    }
+}
+
+- (void) onVideoPlaybackFinished {
+    [self onVideoPlayerNextButtonClicked];
 }
 
 - (void) showUserProfile {
@@ -144,10 +219,16 @@
     // erase userId
 	UserObject* userObject = [UserObject getUser];
 	userObject.sessionId = nil;
-    [self dismissModalViewControllerAnimated:TRUE];
+    if (onLogoutCallback != nil) {
+        [onLogoutCallback execute:nil];
+    }
 }
 
 - (void) onClickRefresh {
+    // Sub class will implement this method
+}
+
+- (void) onLoadMoreData {
     // Sub class will implement this method
 }
 
@@ -178,8 +259,8 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return !DeviceUtils.isIphone;
-    // return YES;
+    // return !DeviceUtils.isIphone;
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -192,6 +273,8 @@
 }
 
 - (void)dealloc {
+    LOG_DEBUG(@"Dealloc called.");
+    
 	// stop observing events
 	[[NSNotificationCenter defaultCenter] removeObserver:self];	
 
@@ -203,25 +286,163 @@
     [userProfileView release];
     [userSettingsView release];
     [refreshStatusView release];
+    [videoPlayerView release];
     
     [super dealloc];
 }
 
 // --------------------------------------------------------------------------------
-// TableView delegates/datasource
+// Notification callbacks
 // --------------------------------------------------------------------------------
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (void) onApplicationBecomeInactive {
+    LOG_DEBUG(@"Application become inactive.");
+    [videoPlayerView closePlayer];
 }
 
-// Customize the number of rows in the table view.
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	if (videos != nil) {
-		return [videos count];
+// --------------------------------------------------------------------------------
+// Requests
+// --------------------------------------------------------------------------------
+
+- (void) onVideoLiked:(VideoObject*)videoObject {
+    if (likeVideoRequest == nil) {
+        // create a delete request if not already done
+        likeVideoRequest = [[LikeVideoRequest alloc] init];
+        likeVideoRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
+        likeVideoRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
+    }
+    
+    
+    // cancel any current request
+    if ([likeVideoRequest isRequesting]) {
+        [likeVideoRequest cancelRequest];
+    }
+    
+    // do the request
+    [likeVideoRequest doLikeVideoRequest:videoObject];
+}
+
+- (void) onVideoUnliked:(VideoObject*)videoObject {
+    if (unlikeVideoRequest == nil) {
+        // create a delete request if not already done
+        unlikeVideoRequest = [[UnlikeVideoRequest alloc] init];
+        unlikeVideoRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
+        unlikeVideoRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
+    }
+    
+    
+    // cancel any current request
+    if ([unlikeVideoRequest isRequesting]) {
+        [unlikeVideoRequest cancelRequest];
+    }
+    
+    // do the request
+    [unlikeVideoRequest doUnlikeVideoRequest:videoObject];
+}
+
+- (void) onVideoSaved:(VideoObject*)videoObject {
+    if (addVideoRequest == nil) {
+        // create a delete request if not already done
+        addVideoRequest = [[AddVideoRequest alloc] init];
+        addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
+        addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
+    }
+    
+    
+    // cancel any current request
+    if ([addVideoRequest isRequesting]) {
+        [addVideoRequest cancelRequest];
+    }
+    
+    // do the request
+    [addVideoRequest doAddVideoRequest:videoObject];
+}
+
+- (void) onVideoRemoved:(VideoObject*)videoObject {
+    if (deleteVideoRequest == nil) {
+        // create a delete request if not already done
+        deleteVideoRequest = [[DeleteVideoRequest alloc] init];
+        deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
+        deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
+    }
+    
+    
+    // cancel any current request
+    if ([deleteVideoRequest isRequesting]) {
+        [deleteVideoRequest cancelRequest];
+    }
+    
+    // do the request
+    [deleteVideoRequest doDeleteVideoRequest:videoObject];
+}
+
+- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response {
+	if (response.success) {
+        VideoObject* videoObject = response.videoObject;
+        NSUInteger idx = [videos indexOfObject:videoObject];
+		// LOG_DEBUG(@"like idx = %ld %ld", idx, videoObject);
+        videoObject.likes += 1;
+        videoObject.liked = true;
+        [videos replaceObjectAtIndex:idx withObject:videoObject];
+        
+		
+		[videosTable beginUpdates];
+		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+        if (index.row < videos.count) {
+            // Update data for the cell
+            // LOG_DEBUG(@"Updating video object.");
+            VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
+            [cell setVideoObject: videoObject];
+        }
+        [videosTable endUpdates];
+        
 	} else {
-		return 0;
+		LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
 	}
+}
+
+- (void) onLikeVideoRequestFailed: (NSString*)errorMessage {		
+	LOG_ERROR(@"failed to like video: %@", errorMessage);
+}
+
+- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response {
+	if (response.success) {
+        VideoObject* videoObject = response.videoObject;
+        NSUInteger idx = [videos indexOfObject:videoObject];
+		// LOG_DEBUG(@"unlike idx = %ld %ld", idx, videoObject);
+        videoObject.likes -= 1;
+        videoObject.liked = false;
+        [videos replaceObjectAtIndex:idx withObject:videoObject];
+        
+		
+		[videosTable beginUpdates];
+		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+        if (index.row < videos.count) {
+            // Update data for the cell
+            // LOG_DEBUG(@"Updating video object.");
+            VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
+            [cell setVideoObject: videoObject];
+        }
+        [videosTable endUpdates];
+        
+    } else {
+        LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
+    }
+}
+
+- (void) onUnlikeVideoRequestFailed: (NSString*)errorMessage {		
+	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
+}
+
+- (void) onAddVideoRequestSuccess: (UnlikeVideoResponse*)response {
+	if (response.success) {
+        
+	} else {
+		LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
+	}
+}
+
+- (void) onAddVideoRequestFailed: (NSString*)errorMessage {		
+	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
 }
 
 - (void) onDeleteRequestSuccess: (DeleteVideoResponse*)response {
@@ -229,7 +450,7 @@
 		VideoObject* videoObject = response.videoObject;
 		
 		NSUInteger idx = [videos indexOfObject:videoObject];
-		LOG_DEBUG(@"delete idx = %ld %ld", idx, videoObject);
+		// LOG_DEBUG(@"delete idx = %ld %ld", idx, videoObject);
 		[videos removeObjectAtIndex:idx];
 		
 		[videosTable beginUpdates];
@@ -260,15 +481,32 @@
 	LOG_ERROR(@"failed to delete video: %@", errorMessage);
 }
 
+
+// --------------------------------------------------------------------------------
+// TableView delegates/datasource
+// --------------------------------------------------------------------------------
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+// Customize the number of rows in the table view.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	if (videos != nil) {
+		return [videos count];
+	} else {
+		return 0;
+	}
+}
+
+
 - (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath {
 	return UITableViewCellEditingStyleDelete;
 }
 
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+/*- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     return nil;
-}
+}*/
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
 	return YES;
@@ -279,13 +517,60 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
 }
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+	if (deleteVideoRequest == nil) {
+		// create a delete request if not already done
+		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
+		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
+		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
+	}
+	
+	// get the video item
+	if (indexPath.row < videos.count) {
+		VideoObject* video = [videos objectAtIndex:indexPath.row];
+		
+		// cancel any current request
+		if ([deleteVideoRequest isRequesting]) {
+			[deleteVideoRequest cancelRequest];
+		}
+		
+		// LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
+		
+		// do the request
+		[deleteVideoRequest doDeleteVideoRequest:video];
+	}
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"VideoTableCell";
+	
+	// try to reuse an id
+    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        // Create the cell
+        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
+		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+        cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
+        cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
+    }
+	
+	if (indexPath.row < videos.count) {
+		// Update data for the cell
+		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
+		[cell setVideoObject: videoObject];
+	}
+	
+    return cell;
+}
+
+
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
     if (scrollView.contentOffset.y < 0 && scrollView.contentOffset.y > -60) {
         if (refreshStatusView.hidden)
             refreshStatusView.hidden = NO;
         
-        if (state != PULLING_DOWN) {
-            state = PULLING_DOWN;
+        if (refreshState != PULLING_DOWN) {
+            refreshState = PULLING_DOWN;
             [refreshStatusView setRefreshStatus:PULLING_DOWN];
         }
         
@@ -298,11 +583,19 @@
             [refreshStatusView setRefreshStatus:REFRESH_NONE];
         }
         
-        state = REFRESH_NONE;
+        refreshState = REFRESH_NONE;
+        
+        // If user has reached at the end of the list load more videos, if there are any
+        if (scrollView.contentOffset.y > self.view.frame.size.height) {
+            if (loadMoreState != LOADING) {
+                loadMoreState = LOADING;
+                [self onLoadMoreData];
+            }
+        }
         
     } else if (scrollView.contentOffset.y <= -60) {
-        if (state < RELEASING) {
-            state = RELEASING;
+        if (refreshState < RELEASING) {
+            refreshState = RELEASING;
             [refreshStatusView setRefreshStatus:RELEASING];
         }
         
@@ -313,7 +606,7 @@
 
 - (void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.contentOffset.y <= -65) {
-        state = REFRESHING;
+        refreshState = REFRESHING;
         [refreshStatusView setRefreshStatus:REFRESHING];
         scrollView.contentInset = UIEdgeInsetsMake(60.0f, 0.0f, 0.0f, 0.0f);
         [self onClickRefresh];

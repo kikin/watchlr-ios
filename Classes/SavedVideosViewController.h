@@ -13,8 +13,10 @@
 @interface SavedVideosViewController : KikinVideoViewController {
 	VideoListRequest* videoListRequest;
 	VideoListResponse* videoListResponse;
+    
+    bool isRefreshing;
 }
 
-- (void) doVideoListRequest;
+- (void) doVideoListRequest:(int)startIndex;
 
 @end

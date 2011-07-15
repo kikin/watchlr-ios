@@ -27,7 +27,7 @@
 		titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		//titleLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;	
 		titleLabel.frame = CGRectMake(0, 10, frame.size.width, 35);
-		titleLabel.text = @"kikin video";
+		titleLabel.text = @"watchlr";
 		titleLabel.textAlignment = UITextAlignmentCenter;
 		titleLabel.backgroundColor = [UIColor clearColor];
 		titleLabel.font = [UIFont boldSystemFontOfSize:28.0];
@@ -37,7 +37,7 @@
 		descriptionLabel = [[UILabel alloc] init];
 		descriptionLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;	
 		descriptionLabel.frame = CGRectMake(30, 50, frame.size.width-60, 70);
-		descriptionLabel.text = @"Access kikin video from your iPad by login on facebook. Go to http://video.kikin.com for more information.";
+		descriptionLabel.text = @"Access watchlr from your iPad by login on facebook. Go to http://www.watchlr.com for more information.";
 		descriptionLabel.textAlignment = UITextAlignmentCenter;
 		descriptionLabel.backgroundColor = [UIColor clearColor];
 		descriptionLabel.numberOfLines = 3;

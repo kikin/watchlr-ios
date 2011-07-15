@@ -16,7 +16,7 @@
 			// get data
 			sessionId = [[[jsonObject objectForKey:@"result"] objectForKey:@"session_id"] retain];
 			
-			LOG_DEBUG(@"sessionId = %@", sessionId);
+			// LOG_DEBUG(@"sessionId = %@", sessionId);
 		}
 	}
 	return self;

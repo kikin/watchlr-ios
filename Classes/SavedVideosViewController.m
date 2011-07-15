@@ -8,6 +8,7 @@
 
 #import "SavedVideosViewController.h"
 #import "VideoTableCell.h"
+#import "VideoObject.h"
 
 @implementation SavedVideosViewController
 
@@ -15,17 +16,12 @@
 - (void)loadView {
     [super loadView];
 	
-    UIImage* anImage = [UIImage imageNamed:@"save_video.png"];
-    UITabBarItem* theItem = [[UITabBarItem alloc] initWithTitle:@"Saved" image:anImage tag:0];
-    self.tabBarItem = theItem;
-    [theItem release];
-    // [anImage release];
-    
     // request video lsit
-	[self doVideoListRequest];
+    isRefreshing = true;
+	[self doVideoListRequest:-1];
 }
 
-- (void) doVideoListRequest {
+- (void) doVideoListRequest:(int)startIndex {
 	// get the list of videos
 	if (videoListRequest == nil) {
 		videoListRequest = [[VideoListRequest alloc] init];
@@ -35,30 +31,69 @@
 	if ([videoListRequest isRequesting]) {
 		[videoListRequest cancelRequest];
 	}
-	[videoListRequest doGetVideoListRequest:NO];	
+	[videoListRequest doGetVideoListRequest:NO startingAt:startIndex];
 }
 
 - (void) onClickRefresh {
-	[self doVideoListRequest];
+    isRefreshing = true;
+	[self doVideoListRequest: -1];
+}
+
+- (void) onLoadMoreData {
+    if (!loadedAllVideos) {
+        isRefreshing = false;
+        [self doVideoListRequest: (lastPageRequested + 1)];
+    } else {
+        loadMoreState = LOADED;
+    }
 }
 
 - (void) onApplicationBecomeActive: (NSNotification*)notification {
-	[self doVideoListRequest];
+    // LOG_DEBUG(@"Changing orientation");
+    isRefreshing = true;
+	[self doVideoListRequest: -1];
 }
 
 - (void) onListRequestSuccess: (VideoListResponse*)response {
 	if (response.success) {
 		// save response and get videos
 		videoListResponse = [response retain];
-		videos = [[NSMutableArray arrayWithArray:[response videos]] retain];
-		
+        if (isRefreshing) {
+            if (videos == nil) {
+                videos = [[response videos] retain]; 
+                lastPageRequested = [response page];
+                loadedAllVideos = false;
+            } else {
+                VideoObject* firstVideo = [videos objectAtIndex:0];
+                NSUInteger i, count = [[response videos] count];
+                for (i = 0; i < count; i++)
+                {
+                    VideoObject* newVideo = (VideoObject*)[[response videos] objectAtIndex:i];
+                    if (newVideo.videoId == firstVideo.videoId) {
+                        break;
+                    }
+                    
+                    [videos insertObject:newVideo atIndex:i];
+                }
+                
+            }
+            
+            refreshState = REFRESHED;
+            [refreshStatusView setRefreshStatus:REFRESHED];
+            
+        } else {
+            [videos addObjectsFromArray:[response videos]];
+            loadMoreState = LOADED;
+            lastPageRequested = [response page];
+            if ([response total] == [videos count]) {
+                loadedAllVideos = true;
+            }
+        }
+        
 		// refresh the table
 		[videosTable reloadData];
-        
-        state = REFRESHED;
-        [refreshStatusView setRefreshStatus:REFRESHED];
 		
-		LOG_DEBUG(@"list request success");
+		// LOG_DEBUG(@"list request success");
 	} else {
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
 		
@@ -70,14 +105,17 @@
 		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
 	}
     
-    state = REFRESH_NONE;
+    loadMoreState = LOAD_MORE_NONE;
+    refreshState = REFRESH_NONE;
     [refreshStatusView setRefreshStatus:REFRESH_NONE];
     [refreshStatusView setHidden:YES];
     videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+    isRefreshing = false;
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
-	state = REFRESH_NONE;
+    loadMoreState = LOAD_MORE_NONE;
+	refreshState = REFRESH_NONE;
     [refreshStatusView setRefreshStatus:REFRESH_NONE];
     [refreshStatusView setHidden:YES];
     videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
@@ -95,56 +133,6 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return @"Remove";
 }
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (deleteVideoRequest == nil) {
-		// create a delete request if not already done
-		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
-		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
-		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
-	}
-	
-	// get the video item
-	if (indexPath.row < videos.count) {
-		VideoObject* video = [videos objectAtIndex:indexPath.row];
-		
-		// cancel any current request
-		if ([deleteVideoRequest isRequesting]) {
-			[deleteVideoRequest cancelRequest];
-		}
-		
-		LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
-		
-		// do the request
-		[deleteVideoRequest doDeleteVideoRequest:video];
-	}
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"VideoTableCell";
-	
-	// try to reuse an id
-    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        // Create the cell
-        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
-		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
-    }
-	
-	if (indexPath.row < videos.count) {
-		// Update data for the cell
-		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
-		[cell setVideoObject: videoObject];
-	}
-	
-    return cell;
-}
-
-/*- (void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView.contentOffset.y <= -65) {
-        [self onClickRefresh];
-    }
-}*/
 
 - (void)dealloc {
 	// release memory

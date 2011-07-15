@@ -26,7 +26,7 @@
     self.saved = [[data objectForKey:@"saved"] boolValue];
     self.seek = [[data objectForKey:@"seek"] doubleValue];
     
-    LOG_DEBUG(@"HTML code received=%@", self.htmlCode);
+    // LOG_DEBUG(@"HTML code received=%@", self.htmlCode);
 	
 	// set default values
 	if (title == nil) self.title = @"No title";

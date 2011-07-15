@@ -24,7 +24,7 @@
 		}
         
         errorCode = [[jsonObject objectForKey:@"code"] intValue];
-        LOG_DEBUG(@"Error code:%d", errorCode);
+        // LOG_DEBUG(@"Error code:%d", errorCode);
 	} 
 	return self;
 }

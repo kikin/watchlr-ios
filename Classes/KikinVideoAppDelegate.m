@@ -8,9 +8,11 @@
 
 #import "KikinVideoAppDelegate.h"
 #import "LoginViewController.h"
+#import "SavedVideosViewController.h"
+#import "LikedVideosViewController.h"
 #import "UserObject.h"
 #import <CommonIos/DeviceUtils.h>
-
+#import <CommonIos/Callback.h>
 
 @implementation KikinVideoAppDelegate
 
@@ -19,21 +21,27 @@
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	window.backgroundColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
 	
-	viewController = [[LoginViewController alloc] init];
-	window.rootViewController = viewController;
+    // when application starts show the logged view
+    // if user is logged in, application will automatically 
+    // show the tabbed view.
+	LoginViewController* loginViewController = [[[LoginViewController alloc] init] autorelease];
+    loginViewController.onLoginSuccessCallback = [Callback create:self selector:@selector(onLoginSuccess)];
+	window.rootViewController = loginViewController;
 	[window makeKeyAndVisible];
 	
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+/*- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    LOG_DEBUG(@"Get called in handleOpen url.");
 	LoginViewController* loginViewController = (LoginViewController*)viewController;
     return [loginViewController.facebook handleOpenURL:url]; 
-}
+}*/
 
 - (void)applicationWillResignActive:(UIApplication *)application {
 	// track the stop time
 	if (startDate != nil) {
+        [((KikinVideoViewController*)((UITabBarController*)window.rootViewController).selectedViewController) onApplicationBecomeInactive];
 		NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
 		LOG_EVENT(@"eventStopApp", EVENT_LOCATION_APPLICATION, [NSString stringWithFormat:@"%ld", (int)time]);
 	} else {
@@ -62,9 +70,42 @@
 	}
 }
 
+- (void) onLoginSuccess {
+    // create saved videos tab
+    SavedVideosViewController* savedVideosViewController = [[[SavedVideosViewController alloc] initWithNibName:@"SavedVideosView" bundle:nil] autorelease];
+    UIImage* savedTabImage = [[UIImage imageNamed:@"save_video.png"] autorelease];
+    UITabBarItem* savedTabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Saved" image:savedTabImage tag:1] autorelease];
+    savedVideosViewController.tabBarItem = savedTabBarItem;
+    savedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
+    
+    // create liked videos tab
+    LikedVideosViewController* likedVideosViewController = [[[LikedVideosViewController alloc] initWithNibName:@"LikedVideosView" bundle:nil] autorelease];
+    UIImage* likedTabImage = [[UIImage imageNamed:@"29-heart.png"] autorelease];
+    UITabBarItem* likedTabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Liked" image:likedTabImage tag:1] autorelease];
+    likedVideosViewController.tabBarItem = likedTabBarItem;
+    likedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
+    
+    // create the tabbed view
+    UITabBarController* tabBarController = [[[UITabBarController alloc] init] autorelease];
+    [tabBarController setViewControllers:[NSArray arrayWithObjects:savedVideosViewController, likedVideosViewController, nil] animated:YES];
+    // tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [tabBarController setSelectedViewController:savedVideosViewController];
+    
+    // set the tabbed view as the root view
+    window.rootViewController = tabBarController;
+}
+
+
+
+- (void) onLogout {
+    // set the login view as the root view.
+    LoginViewController* loginViewController = [[[LoginViewController alloc] init] autorelease];
+    loginViewController.onLoginSuccessCallback = [Callback create:self selector:@selector(onLoginSuccess)];
+	window.rootViewController = loginViewController;
+}
+
 - (void)dealloc {
 	[startDate release];
-    [viewController release];
     [window release];
     [super dealloc];
 }

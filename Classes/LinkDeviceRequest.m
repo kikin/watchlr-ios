@@ -17,7 +17,7 @@
 	[params setObject:facebookId forKey:@"id"];
 	
 	// do request	
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://video.kikin.com/api/auth/swap/"];
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://www.watchlr.com/api/auth/swap/"];
     requestUrl = [requestUrl stringByAppendingString:facebookId];
     
     

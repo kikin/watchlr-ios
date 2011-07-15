@@ -11,6 +11,10 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		265A5BD113C04CA500CE8FBD /* closeX.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BD013C04CA400CE8FBD /* closeX.png */; };
+		265A5BE313C3603900CE8FBD /* watchlr_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE213C3603800CE8FBD /* watchlr_logo.png */; };
+		265A5BE513C3AAFE00CE8FBD /* watchlr_favicon_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE413C3AAFD00CE8FBD /* watchlr_favicon_big.png */; };
+		265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */; };
 		2664FD55139F0D2100B145A7 /* ThumnailObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2664FD54139F0D2100B145A7 /* ThumnailObject.m */; };
 		2664FD58139F0DF100B145A7 /* SourceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 2664FD57139F0DF100B145A7 /* SourceObject.m */; };
 		2699392513A99A7900672FD5 /* RefreshStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2699392413A99A7900672FD5 /* RefreshStatusView.m */; };
@@ -18,6 +22,9 @@
 		2699392913A9B63400672FD5 /* whiteArrowUp.png in Resources */ = {isa = PBXBuildFile; fileRef = 2699392813A9B63400672FD5 /* whiteArrowUp.png */; };
 		269B6F6013AADF000019133D /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 269B6F5F13AADEFF0019133D /* Entitlements.plist */; };
 		269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269B6F6413ABB6880019133D /* MediaPlayer.framework */; };
+		269B6F6B13ABB9150019133D /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 269B6F6A13ABB9150019133D /* VideoPlayerView.m */; };
+		269B6F6E13AFB9F20019133D /* VideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 269B6F6D13AFB9F10019133D /* VideoRequest.m */; };
+		269B6F7113AFBA1C0019133D /* VideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 269B6F7013AFBA1C0019133D /* VideoResponse.m */; };
 		26AC58F513A157F200750D2F /* LikeVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58F413A157F200750D2F /* LikeVideoRequest.m */; };
 		26AC58F813A157FE00750D2F /* LikeVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58F713A157FE00750D2F /* LikeVideoResponse.m */; };
 		26AC58FB13A15C5F00750D2F /* AddVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC58FA13A15C5F00750D2F /* AddVideoResponse.m */; };
@@ -32,8 +39,10 @@
 		26AC591713A1AA2D00750D2F /* LikedVideosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC591613A1AA2D00750D2F /* LikedVideosViewController.m */; };
 		26AC591A13A1B6A700750D2F /* LikedVideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26AC591913A1B6A700750D2F /* LikedVideoTableCell.m */; };
 		26AC591C13A1D0E000750D2F /* play_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 26AC591B13A1D0DF00750D2F /* play_button.png */; };
-		26AC591E13A2A4EE00750D2F /* kikin_logo_with_name.png in Resources */ = {isa = PBXBuildFile; fileRef = 26AC591D13A2A4EE00750D2F /* kikin_logo_with_name.png */; };
 		26AC592013A2AB0400750D2F /* default_video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26AC591F13A2AB0400750D2F /* default_video_icon.png */; };
+		26CF9DBD13CF82C400BD718A /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBB13CF82C200BD718A /* back_arrow.png */; };
+		26CF9DBE13CF82C400BD718A /* fwd_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBC13CF82C300BD718A /* fwd_arrow.png */; };
+		26CF9DC013CFF02C00BD718A /* check_mark_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBF13CFF02B00BD718A /* check_mark_green.png */; };
 		26E3000013A7BF6800F35642 /* FeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3FFFF13A7BF6800F35642 /* FeedbackViewController.m */; };
 		26E3000613A7DAF200F35642 /* SeekVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3000513A7DAF100F35642 /* SeekVideoRequest.m */; };
 		26E3000913A7DB3500F35642 /* SeekVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3000813A7DB3500F35642 /* SeekVideoResponse.m */; };
@@ -263,15 +272,11 @@
 		357A192E131821A50050C2CA /* UserDataFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A192D131821A50050C2CA /* UserDataFile.m */; };
 		357A1952131824690050C2CA /* PListFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A1951131824690050C2CA /* PListFile.m */; };
 		357A1E37131878EC0050C2CA /* UserObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A1E36131878EC0050C2CA /* UserObject.m */; };
-		357A20201318A22E0050C2CA /* kikin_logo_bottom_right.gif in Resources */ = {isa = PBXBuildFile; fileRef = 357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */; };
-		357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A20C6131BFA4C0050C2CA /* kikin_logo.png */; };
 		357A21E4131C07B70050C2CA /* DeleteVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */; };
 		357A21E7131C08A60050C2CA /* DeleteVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */; };
 		359103071365E6E20000A814 /* DefaultResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 359103061365E6E20000A814 /* DefaultResponse.m */; };
-		359108FC13661F670000A814 /* AppIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 359108FB13661F670000A814 /* AppIcon.png */; };
 		3599670F1370705E002E7EF1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3599670E1370705E002E7EF1 /* libsqlite3.dylib */; };
 		3599671313707072002E7EF1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3599671213707072002E7EF1 /* CFNetwork.framework */; };
-		35CDF20F1367483D006CF279 /* NoImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 35CDF20E1367483D006CF279 /* NoImage.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -306,8 +311,12 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* KikinVideoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KikinVideoAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KikinVideoAppDelegate.m; sourceTree = "<group>"; };
-		1D6058910D05DD3D006BFB54 /* kikin video.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "kikin video.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* watchlr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watchlr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		265A5BD013C04CA400CE8FBD /* closeX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeX.png; sourceTree = "<group>"; };
+		265A5BE213C3603800CE8FBD /* watchlr_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_logo.png; sourceTree = "<group>"; };
+		265A5BE413C3AAFD00CE8FBD /* watchlr_favicon_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_favicon_big.png; sourceTree = "<group>"; };
+		265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_icon.png; sourceTree = "<group>"; };
 		2664FD53139F0C6700B145A7 /* ThumbnailObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailObject.h; sourceTree = "<group>"; };
 		2664FD54139F0D2100B145A7 /* ThumnailObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumnailObject.m; sourceTree = "<group>"; };
 		2664FD56139F0DF100B145A7 /* SourceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceObject.h; sourceTree = "<group>"; };
@@ -318,6 +327,12 @@
 		2699392813A9B63400672FD5 /* whiteArrowUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrowUp.png; sourceTree = "<group>"; };
 		269B6F5F13AADEFF0019133D /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		269B6F6413ABB6880019133D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		269B6F6913ABB90C0019133D /* VideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayerView.h; sourceTree = "<group>"; };
+		269B6F6A13ABB9150019133D /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerView.m; sourceTree = "<group>"; };
+		269B6F6C13AFB9E80019133D /* VideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoRequest.h; sourceTree = "<group>"; };
+		269B6F6D13AFB9F10019133D /* VideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoRequest.m; sourceTree = "<group>"; };
+		269B6F6F13AFBA110019133D /* VideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoResponse.h; sourceTree = "<group>"; };
+		269B6F7013AFBA1C0019133D /* VideoResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoResponse.m; sourceTree = "<group>"; };
 		26AC58F313A157F200750D2F /* LikeVideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeVideoRequest.h; sourceTree = "<group>"; };
 		26AC58F413A157F200750D2F /* LikeVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikeVideoRequest.m; sourceTree = "<group>"; };
 		26AC58F613A157FE00750D2F /* LikeVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikeVideoResponse.h; sourceTree = "<group>"; };
@@ -341,8 +356,10 @@
 		26AC591813A1B6A700750D2F /* LikedVideoTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikedVideoTableCell.h; sourceTree = "<group>"; };
 		26AC591913A1B6A700750D2F /* LikedVideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikedVideoTableCell.m; sourceTree = "<group>"; };
 		26AC591B13A1D0DF00750D2F /* play_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_button.png; sourceTree = "<group>"; };
-		26AC591D13A2A4EE00750D2F /* kikin_logo_with_name.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kikin_logo_with_name.png; sourceTree = "<group>"; };
 		26AC591F13A2AB0400750D2F /* default_video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = default_video_icon.png; sourceTree = "<group>"; };
+		26CF9DBB13CF82C200BD718A /* back_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = back_arrow.png; path = "../../Dropbox/kikin Video Design (1)/Design/mini icons/back_arrow.png"; sourceTree = "<group>"; };
+		26CF9DBC13CF82C300BD718A /* fwd_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwd_arrow.png; path = "../../Dropbox/kikin Video Design (1)/Design/mini icons/fwd_arrow.png"; sourceTree = "<group>"; };
+		26CF9DBF13CFF02B00BD718A /* check_mark_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check_mark_green.png; path = ../kikinvideo/static/images/check_mark_green.png; sourceTree = "<group>"; };
 		26E3000413A7DAEA00F35642 /* SeekVideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeekVideoRequest.h; sourceTree = "<group>"; };
 		26E3000513A7DAF100F35642 /* SeekVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeekVideoRequest.m; sourceTree = "<group>"; };
 		26E3000713A7DB2E00F35642 /* SeekVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeekVideoResponse.h; sourceTree = "<group>"; };
@@ -600,19 +617,15 @@
 		357A1951131824690050C2CA /* PListFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PListFile.m; sourceTree = "<group>"; };
 		357A1E35131878EC0050C2CA /* UserObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserObject.h; sourceTree = "<group>"; };
 		357A1E36131878EC0050C2CA /* UserObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserObject.m; sourceTree = "<group>"; };
-		357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = kikin_logo_bottom_right.gif; sourceTree = "<group>"; };
-		357A20C6131BFA4C0050C2CA /* kikin_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kikin_logo.png; sourceTree = "<group>"; };
 		357A21E2131C07B70050C2CA /* DeleteVideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteVideoRequest.h; sourceTree = "<group>"; };
 		357A21E3131C07B70050C2CA /* DeleteVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoRequest.m; sourceTree = "<group>"; };
 		357A21E5131C08A60050C2CA /* DeleteVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteVideoResponse.h; sourceTree = "<group>"; };
 		357A21E6131C08A60050C2CA /* DeleteVideoResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeleteVideoResponse.m; sourceTree = "<group>"; };
 		359103051365E6E20000A814 /* DefaultResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultResponse.h; sourceTree = "<group>"; };
 		359103061365E6E20000A814 /* DefaultResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultResponse.m; sourceTree = "<group>"; };
-		359108FB13661F670000A814 /* AppIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon.png; sourceTree = "<group>"; };
 		3599670E1370705E002E7EF1 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		3599671213707072002E7EF1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		3599677F13708227002E7EF1 /* EventsLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventsLocation.h; sourceTree = "<group>"; };
-		35CDF20E1367483D006CF279 /* NoImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NoImage.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* KikinVideo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "KikinVideo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -654,7 +667,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* kikin video.app */,
+				1D6058910D05DD3D006BFB54 /* watchlr.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -790,6 +803,31 @@
 			name = headers;
 			sourceTree = "<group>";
 		};
+		269B6F6613ABB8AF0019133D /* video */ = {
+			isa = PBXGroup;
+			children = (
+				269B6F6713ABB8C80019133D /* headers */,
+				269B6F6813ABB8D40019133D /* source */,
+			);
+			name = video;
+			sourceTree = "<group>";
+		};
+		269B6F6713ABB8C80019133D /* headers */ = {
+			isa = PBXGroup;
+			children = (
+				269B6F6913ABB90C0019133D /* VideoPlayerView.h */,
+			);
+			name = headers;
+			sourceTree = "<group>";
+		};
+		269B6F6813ABB8D40019133D /* source */ = {
+			isa = PBXGroup;
+			children = (
+				269B6F6A13ABB9150019133D /* VideoPlayerView.m */,
+			);
+			name = source;
+			sourceTree = "<group>";
+		};
 		26AC590513A15D1D00750D2F /* headers */ = {
 			isa = PBXGroup;
 			children = (
@@ -803,6 +841,7 @@
 				26E3000713A7DB2E00F35642 /* SeekVideoResponse.h */,
 				26AC58FF13A15C8500750D2F /* UnlikeVideoResponse.h */,
 				357A120313171B2A0050C2CA /* VideoListResponse.h */,
+				269B6F6F13AFBA110019133D /* VideoResponse.h */,
 			);
 			name = headers;
 			sourceTree = "<group>";
@@ -820,6 +859,7 @@
 				26E3000813A7DB3500F35642 /* SeekVideoResponse.m */,
 				26AC590013A15C8500750D2F /* UnlikeVideoResponse.m */,
 				357A120413171B2A0050C2CA /* VideoListResponse.m */,
+				269B6F7013AFBA1C0019133D /* VideoResponse.m */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -836,6 +876,7 @@
 				26E3000513A7DAF100F35642 /* SeekVideoRequest.m */,
 				26AC590313A15C8D00750D2F /* UnlikeVideoRequest.m */,
 				357A10CF13170A150050C2CA /* VideoListRequest.m */,
+				269B6F6D13AFB9F10019133D /* VideoRequest.m */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -852,6 +893,7 @@
 				26E3000413A7DAEA00F35642 /* SeekVideoRequest.h */,
 				26AC590213A15C8D00750D2F /* UnlikeVideoRequest.h */,
 				357A10CE13170A150050C2CA /* VideoListRequest.h */,
+				269B6F6C13AFB9E80019133D /* VideoRequest.h */,
 			);
 			name = headers;
 			sourceTree = "<group>";
@@ -923,9 +965,10 @@
 		3559B4F61374375D00D6D892 /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				2699392213A99A0800672FD5 /* scroll */,
 				3559B617137443B200D6D892 /* loginView */,
+				2699392213A99A0800672FD5 /* scroll */,
 				26E3FFE113A6705600F35642 /* settings */,
+				269B6F6613ABB8AF0019133D /* video */,
 			);
 			name = ui;
 			sourceTree = "<group>";
@@ -942,7 +985,7 @@
 		357A08C81316AEF30050C2CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
-				359108FB13661F670000A814 /* AppIcon.png */,
+				265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */,
 				357A08C91316AEF30050C2CA /* 01-refresh.png */,
 				357A08CA1316AEF30050C2CA /* 02-redo.png */,
 				357A08CB1316AEF30050C2CA /* 03-loopback.png */,
@@ -1197,20 +1240,22 @@
 		357A201A1318A2230050C2CA /* images */ = {
 			isa = PBXGroup;
 			children = (
-				2699392813A9B63400672FD5 /* whiteArrowUp.png */,
-				2699392613A9B0E200672FD5 /* whiteArrow.png */,
+				26CF9DBF13CFF02B00BD718A /* check_mark_green.png */,
+				265A5BD013C04CA400CE8FBD /* closeX.png */,
 				26E3FFE513A67DA000F35642 /* checkbox-checked.png */,
 				26E3FFE613A67DA000F35642 /* checkbox.png */,
 				26AC591F13A2AB0400750D2F /* default_video_icon.png */,
-				26AC591D13A2A4EE00750D2F /* kikin_logo_with_name.png */,
-				26AC591B13A1D0DF00750D2F /* play_button.png */,
 				26AC590913A16B5E00750D2F /* heart_grey.png */,
 				26AC590A13A16B5E00750D2F /* heart_red.png */,
+				26AC591B13A1D0DF00750D2F /* play_button.png */,
 				26AC590B13A16B5E00750D2F /* save_video.png */,
+				26CF9DBB13CF82C200BD718A /* back_arrow.png */,
+				26CF9DBC13CF82C300BD718A /* fwd_arrow.png */,
+				265A5BE213C3603800CE8FBD /* watchlr_logo.png */,
+				265A5BE413C3AAFD00CE8FBD /* watchlr_favicon_big.png */,
+				2699392813A9B63400672FD5 /* whiteArrowUp.png */,
+				2699392613A9B0E200672FD5 /* whiteArrow.png */,
 				26AC590C13A16B5E00750D2F /* x_grey.png */,
-				35CDF20E1367483D006CF279 /* NoImage.png */,
-				357A20C6131BFA4C0050C2CA /* kikin_logo.png */,
-				357A201F1318A22E0050C2CA /* kikin_logo_bottom_right.gif */,
 			);
 			name = images;
 			sourceTree = "<group>";
@@ -1259,7 +1304,7 @@
 			);
 			name = KikinVideo;
 			productName = KikinVideo;
-			productReference = 1D6058910D05DD3D006BFB54 /* kikin video.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* watchlr.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1308,8 +1353,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				26AC590D13A16B5E00750D2F /* heart_grey.png in Resources */,
+				265A5BD113C04CA500CE8FBD /* closeX.png in Resources */,
 				26AC592013A2AB0400750D2F /* default_video_icon.png in Resources */,
-				26AC591E13A2A4EE00750D2F /* kikin_logo_with_name.png in Resources */,
 				26AC591C13A1D0E000750D2F /* play_button.png in Resources */,
 				26AC590E13A16B5F00750D2F /* heart_red.png in Resources */,
 				26AC590F13A16B5F00750D2F /* save_video.png in Resources */,
@@ -1514,15 +1559,17 @@
 				357A0A561316AEF30050C2CA /* 97-puzzle.png in Resources */,
 				357A0A571316AEF30050C2CA /* 98-palette.png in Resources */,
 				357A0A581316AEF30050C2CA /* 99-umbrella.png in Resources */,
-				357A20201318A22E0050C2CA /* kikin_logo_bottom_right.gif in Resources */,
-				357A20C7131BFA4C0050C2CA /* kikin_logo.png in Resources */,
-				359108FC13661F670000A814 /* AppIcon.png in Resources */,
-				35CDF20F1367483D006CF279 /* NoImage.png in Resources */,
 				26E3FFE713A67DA000F35642 /* checkbox-checked.png in Resources */,
 				26E3FFE813A67DA000F35642 /* checkbox.png in Resources */,
 				2699392713A9B0E200672FD5 /* whiteArrow.png in Resources */,
 				2699392913A9B63400672FD5 /* whiteArrowUp.png in Resources */,
 				269B6F6013AADF000019133D /* Entitlements.plist in Resources */,
+				265A5BE313C3603900CE8FBD /* watchlr_logo.png in Resources */,
+				265A5BE513C3AAFE00CE8FBD /* watchlr_favicon_big.png in Resources */,
+				265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */,
+				26CF9DBD13CF82C400BD718A /* back_arrow.png in Resources */,
+				26CF9DBE13CF82C400BD718A /* fwd_arrow.png in Resources */,
+				26CF9DC013CFF02C00BD718A /* check_mark_green.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1575,6 +1622,9 @@
 				26E3000613A7DAF200F35642 /* SeekVideoRequest.m in Sources */,
 				26E3000913A7DB3500F35642 /* SeekVideoResponse.m in Sources */,
 				2699392513A99A7900672FD5 /* RefreshStatusView.m in Sources */,
+				269B6F6B13ABB9150019133D /* VideoPlayerView.m in Sources */,
+				269B6F6E13AFB9F20019133D /* VideoRequest.m in Sources */,
+				269B6F7113AFBA1C0019133D /* VideoResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1612,7 +1662,7 @@
 					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = "kikin video";
+				PRODUCT_NAME = watchlr;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 			};
 			name = Debug;
@@ -1636,7 +1686,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
 				);
-				PRODUCT_NAME = "kikin video";
+				PRODUCT_NAME = watchlr;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1679,7 +1729,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
 				);
-				PRODUCT_NAME = "kikin video";
+				PRODUCT_NAME = watchlr;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Ad Hoc";

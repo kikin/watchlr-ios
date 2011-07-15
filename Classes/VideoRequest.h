@@ -7,12 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CommonIos/JsonRequest.h>
-#import "VideoListResponse.h"
+#import <CommonIos/Request.h>
 
-@interface VideoListRequest : JsonRequest
+@interface VideoRequest : Request
 
-- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)index;
+- (void) doGetVideoRequest:(NSString*)url;
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

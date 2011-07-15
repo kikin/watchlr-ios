@@ -15,17 +15,12 @@
 - (void)loadView {
     [super loadView];
 	
-    UIImage* anImage = [UIImage imageNamed:@"29-heart.png"];
-    UITabBarItem* theItem = [[UITabBarItem alloc] initWithTitle:@"Liked" image:anImage tag:0];
-    self.tabBarItem = theItem;
-    [theItem release];
-    // [anImage release];
-	
-	// request video lsit
-	[self doVideoListRequest];
+	// request video list
+    isRefreshing = true;
+	[self doVideoListRequest:-1];
 }
 
-- (void) doVideoListRequest {
+- (void) doVideoListRequest:(int)startIndex {
 	// get the list of videos
 	if (videoListRequest == nil) {
 		videoListRequest = [[VideoListRequest alloc] init];
@@ -35,30 +30,67 @@
 	if ([videoListRequest isRequesting]) {
 		[videoListRequest cancelRequest];
 	}
-	[videoListRequest doGetVideoListRequest:YES];	
+	[videoListRequest doGetVideoListRequest:YES startingAt:startIndex];	
 }
 
 - (void) onClickRefresh {
-	[self doVideoListRequest];
+    isRefreshing = true;
+	[self doVideoListRequest:-1];
+}
+
+- (void) onLoadMoreData {
+    if (!loadedAllVideos) {
+        isRefreshing = false;
+        [self doVideoListRequest: (lastPageRequested + 1)];
+    } else {
+        loadMoreState = LOADED;
+    }
 }
 
 - (void) onApplicationBecomeActive: (NSNotification*)notification {
-	[self doVideoListRequest];
+    isRefreshing = true;
+	[self doVideoListRequest: -1];
 }
 
 - (void) onListRequestSuccess: (VideoListResponse*)response {
 	if (response.success) {
 		// save response and get videos
 		videoListResponse = [response retain];
-		videos = [[NSMutableArray arrayWithArray:[response videos]] retain];
-		
+        if (isRefreshing) {
+            if (videos == nil) {
+                videos = [[response videos] retain]; // [[NSMutableArray arrayWithArray:[response videos]] retain];
+                lastPageRequested = [response page];
+                loadedAllVideos = false;
+            } else {
+                VideoObject* firstVideo = [videos objectAtIndex:0];
+                NSUInteger i, count = [[response videos] count];
+                for (i = 0; i < count; i++)
+                {
+                    VideoObject* newVideo = (VideoObject*)[[response videos] objectAtIndex:i];
+                    if (newVideo.videoId == firstVideo.videoId) {
+                        break;
+                    }
+                    
+                    [videos insertObject:newVideo atIndex:i];
+                }
+            }
+            
+            refreshState = REFRESHED;
+            [refreshStatusView setRefreshStatus:REFRESHED];
+            
+        } else {
+            [videos addObjectsFromArray:[response videos]];
+            loadMoreState = LOADED;
+            lastPageRequested = [response page];
+            if ([response total] == [videos count]) {
+                loadedAllVideos = true;
+            }
+        }
+        
 		// refresh the table
 		[videosTable reloadData];
-        
-        state = REFRESHED;
-        [refreshStatusView setRefreshStatus:REFRESHED];
 		
-		LOG_DEBUG(@"list request success");
+		// LOG_DEBUG(@"list request success");
 	} else {
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
 		
@@ -70,15 +102,17 @@
 		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
 	}
     
-    state = REFRESH_NONE;
+    loadMoreState = LOAD_MORE_NONE;
+    refreshState = REFRESH_NONE;
     [refreshStatusView setRefreshStatus:REFRESH_NONE];
     [refreshStatusView setHidden:YES];
     videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
-    
+    isRefreshing = false;
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
-	state = REFRESH_NONE;
+    loadMoreState = LOAD_MORE_NONE;
+	refreshState = REFRESH_NONE;
     [refreshStatusView setRefreshStatus:REFRESH_NONE];
     [refreshStatusView setHidden:YES];
     videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
@@ -93,7 +127,7 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+/*- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"VideoTableCell";
 	
 	// try to reuse an id
@@ -111,7 +145,7 @@
 	}
 	
     return cell;
-}
+}*/
 
 - (void)dealloc {
 	// release memory

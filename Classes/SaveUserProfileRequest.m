@@ -20,7 +20,7 @@
     [params setObject:sessionId forKey:@"session_id"];
     // [params setObject:videoObject.videoUrl forKey:@"url"];
     
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://video.kikin.com/api/auth/profile"];
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://www.watchlr.com/api/auth/profile"];
     
     // do request	
     [self doGetRequest:requestUrl params:params];

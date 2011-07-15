@@ -8,11 +8,11 @@
 
 #import "LoginViewController.h"
 #import "LinkDeviceRequest.h"
-#import "SavedVideosViewController.h"
-#import "LikedVideosViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation LoginViewController
+
+@synthesize onLoginSuccessCallback;
 
 - (void)loadView {
 	// create the view
@@ -24,7 +24,7 @@
 	// add the kikin logo in the middle
 	logoImage = [[UIImageView alloc] init];
 	logoImage.frame = CGRectMake((view.frame.size.width-350)/2, (view.frame.size.height-350)/2, 350, 350);
-	logoImage.image = [UIImage imageNamed:@"kikin_logo.png"];
+	logoImage.image = [UIImage imageNamed:@"watchlr_favicon_big.png"];
 	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
 	[view addSubview:logoImage];
 	
@@ -91,21 +91,10 @@
 }
 
 - (void) goToMainView:(bool)animated {
-    UITabBarController* tabBarController = [[UITabBarController alloc] init];
-    SavedVideosViewController* savedVideosViewController = [[SavedVideosViewController alloc] initWithNibName:@"SavedVideosView" bundle:nil];
-    LikedVideosViewController* likedVideosViewController = [[LikedVideosViewController alloc] initWithNibName:@"LikedVideosView" bundle:nil];
-    NSArray* controllers = [NSArray arrayWithObjects:savedVideosViewController, likedVideosViewController, nil]; 
-    
-    [tabBarController setViewControllers:controllers animated:YES];
-    [tabBarController setSelectedIndex:[[NSNumber numberWithInt:1] unsignedIntegerValue]];
-    [tabBarController setSelectedIndex:[[NSNumber numberWithInt:0] unsignedIntegerValue]];
-    tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentModalViewController:tabBarController animated:YES];
-    [savedVideosViewController release];
-    [likedVideosViewController release];
-    [tabBarController release];
-	
-	[self showView:connectMainView];
+    if (onLoginSuccessCallback != nil) {
+        [onLoginSuccessCallback execute:nil];
+    }
+	// [self showView:connectMainView];
 }
 
 - (void) fbDidNotLogin:(BOOL)cancelled {
@@ -145,14 +134,14 @@
 			// go the the main view
 			[self goToMainView:YES];
 		} else {
-			NSString* errorMessage = @"We failed to connect with the kikin servers: Missing sessionId";
+			NSString* errorMessage = @"We failed to connect with the watchlr servers: Missing sessionId";
 			[errorMainView setErrorMessage:errorMessage];
 			[self showView:errorMainView];
 			
 			LOG_ERROR(@"failed to connect: missing sessionId");
 		}
 	} else {
-		NSString* errorMessage = [NSString stringWithFormat:@"We failed to connect with the kikin servers: %@.", response.errorMessage];
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to connect with the watchlr servers: %@.", response.errorMessage];
 		[errorMainView setErrorMessage:errorMessage];
 		[self showView:errorMainView];
 		
@@ -161,7 +150,7 @@
 }
 
 - (void) onLinkRequestFailed: (NSString*)errorMessage {
-	[errorMainView setErrorMessage:@"We failed to connect with the kikin servers: Bad response."];
+	[errorMainView setErrorMessage:@"We failed to connect with the watchlr servers: Bad response."];
 	[self showView:errorMainView];
 	
 	LOG_ERROR(@"failed to link the device: %@", errorMessage);

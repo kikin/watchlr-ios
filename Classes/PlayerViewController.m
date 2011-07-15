@@ -111,7 +111,7 @@
         "   } catch (err) { } "
         "} "
         "window.onload = onPageLoad;", video.seek];
-    LOG_DEBUG(@"javascript = %@", javasciptString);
+    // LOG_DEBUG(@"javascript = %@", javasciptString);
     
     NSString* htmlCode = video.htmlCode;
     if (htmlCode != nil && ([htmlCode length] > 0)) {
@@ -128,7 +128,7 @@
                                 "   </body>"
                                 "</html>", 
                                 htmlCode, javasciptString];
-        LOG_DEBUG(@"htmlcode = %@", htmlString);
+        // LOG_DEBUG(@"htmlcode = %@", htmlString);
         [webView setMediaPlaybackRequiresUserAction:NO];
         [webView setAllowsInlineMediaPlayback:YES];
         
@@ -188,7 +188,7 @@
         [seekRequest doSeekVideoRequest:video andTime:videoPauseTime];
         video.seek = [videoPauseTime doubleValue];
     } else {
-        LOG_DEBUG(@"Either video ended or we were not able to find the current time of the video.");
+        LOG_ERROR(@"Either video ended or we were not able to find the current time of the video.");
     }
     
     showAlert = false;
@@ -215,7 +215,7 @@
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    LOG_DEBUG(@"failed to load page. Reason:%@", [error localizedDescription]);
+    LOG_ERROR(@"failed to load page. Reason:%@", [error localizedDescription]);
 }
 
 - (UIControl *)findButtonInView:(UIView *)view {
@@ -236,7 +236,7 @@
 
 
 - (void)webViewDidFinishLoad:(UIWebView *)uiWebView {
-    LOG_DEBUG(@"Page loaded");
+    // LOG_DEBUG(@"Page loaded");
     /*NSString* javasciptString = [NSString stringWithFormat:
         @"function onPageLoad() {                                                                  \n"
         "   try {                                                                                  \n"
@@ -401,9 +401,9 @@
 - (void) onSwipeGesture:(UIGestureRecognizer *)sender {
     UISwipeGestureRecognizerDirection swipeDirection = ((UISwipeGestureRecognizer*)sender).direction;
     if (swipeDirection == UISwipeGestureRecognizerDirectionRight) {
-        LOG_DEBUG(@"Swiped Right");
+        // LOG_DEBUG(@"Swiped Right");
     } else if (swipeDirection == UISwipeGestureRecognizerDirectionLeft) {
-        LOG_DEBUG(@"Swiped Left");
+        // LOG_DEBUG(@"Swiped Left");
     }
 }
 

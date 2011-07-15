@@ -20,13 +20,15 @@ int main(int argc, char *argv[]) {
 	Logger* logger = nil;
 #ifdef RELEASE
 	//logger = [[ConsoleLogger alloc] init];
-	logger = [[GoogleAnalyticsLogger alloc] initWithAccount:@"UA-4788978-1" appName:@"kikinVideoIos" version:@"v1.0"];
+	logger = [[GoogleAnalyticsLogger alloc] initWithAccount:@"UA-4788978-1" appName:@"kikinVideoIos" version:@"v1.1"];
 	logger.level = LOGGER_WARN;
 #elif DEBUG
 	logger = [[ConsoleLogger alloc] init];
 	logger.level = LOGGER_TRACE;
 #endif
 	[Logger setLogger:logger];
+    
+    [logger release];
 	
 	// launch application
     int retVal = UIApplicationMain(argc, argv, nil, @"KikinVideoAppDelegate");

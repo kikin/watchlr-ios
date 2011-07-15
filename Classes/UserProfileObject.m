@@ -24,7 +24,7 @@
 }
 
 - (NSDictionary*) toDictionary {
-    NSMutableDictionary* userNotification = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary* userNotification = [[[NSMutableDictionary alloc] init] autorelease];
     
     [userNotification setObject:[[NSNumber numberWithInt:self.welcome] stringValue] forKey:@"welcome"];
     [userNotification setObject:[[NSNumber numberWithInt:self.firstLike] stringValue] forKey:@"firstlike"];
@@ -52,7 +52,7 @@
 }
 
 - (NSDictionary*) toDictionary {
-    NSMutableDictionary* userPreferences = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary* userPreferences = [[[NSMutableDictionary alloc] init] autorelease];
     [userPreferences setObject:[[NSNumber numberWithInt:self.syndicate] stringValue] forKey:@"syndicate"];
     return userPreferences;
 }
@@ -88,7 +88,7 @@
 }
 
 - (NSDictionary*) toDictionary {
-    NSMutableDictionary* userProfile = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary* userProfile = [[[NSMutableDictionary alloc] init] autorelease];
     
     [userProfile setObject:[[NSNumber numberWithInt:self.likes] stringValue] forKey:@"likes"];
     [userProfile setObject:[[NSNumber numberWithInt:self.watched] stringValue] forKey:@"watched"];

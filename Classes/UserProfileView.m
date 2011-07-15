@@ -36,7 +36,7 @@
         
         // create the user profile image
         userProfileImageView = [[UIImageView alloc] init];
-        userProfileImageView.image = [UIImage imageNamed:@"kikin_logo.png"];
+        userProfileImageView.image = [UIImage imageNamed:@"watchlr_favicon.png"];
         [self addSubview:userProfileImageView];
         
         // create the username label
@@ -347,7 +347,7 @@
         }];
         // [self setHidden:NO];
 		
-		LOG_DEBUG(@"get user profile request success");
+		// LOG_DEBUG(@"get user profile request success");
 	} else {
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your profile: %@", response.errorMessage];
 		
@@ -393,7 +393,7 @@
 		saveUserProfileResponse = [response retain];
         [self setHidden:YES];
 		
-		LOG_DEBUG(@"save user profile request success");
+		// LOG_DEBUG(@"save user profile request success");
 	} else {
         
         UIAlertView* alertView; 

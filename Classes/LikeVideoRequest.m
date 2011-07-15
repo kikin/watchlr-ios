@@ -23,7 +23,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:videoObject.videoUrl forKey:@"url"];
     
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://video.kikin.com/api/like/"];
+    NSString* requestUrl = [NSString stringWithUTF8String:"http://www.watchlr.com/api/like/"];
     requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
 	
 	// do request	

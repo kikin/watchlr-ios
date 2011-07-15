@@ -11,7 +11,6 @@
 @interface KikinVideoAppDelegate : NSObject <UIApplicationDelegate> {
 	NSDate* startDate;
     UIWindow* window;
-    UIViewController* viewController;
 }
 
 @end

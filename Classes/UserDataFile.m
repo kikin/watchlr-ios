@@ -24,12 +24,13 @@
 	[super dealloc];
 }
 
-- (void) load {
+- (NSDictionary*) load {
 	// load data and fill up this object
 	NSDictionary* fileData = [super load];
 	if (fileData != nil) {
 		self.userId = [fileData objectForKey:@"userId"];
 	}
+    return fileData;
 }
 
 - (void) save {

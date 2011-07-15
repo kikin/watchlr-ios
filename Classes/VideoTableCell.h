@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CommonIos/Callback.h>
 
-#import "LikeVideoRequest.h"
-#import "UnlikeVideoRequest.h"
 #import "VideoObject.h"
 
 @interface VideoTableCell : UITableViewCell {
@@ -26,22 +24,17 @@
     UIImageView* likeImageView;
     
 	Callback* playVideoCallback;
+    Callback* likeVideoCallback;
+    Callback* unlikeVideoCallback;
     
-    LikeVideoRequest* likeVideoRequest;
-    UnlikeVideoRequest* unlikeVideoRequest;
-    
-	NSThread* imageThread;
+    NSThread* imageThread;
 }
 
 @property(retain) Callback* playVideoCallback;
+@property(retain) Callback* likeVideoCallback;
+@property(retain) Callback* unlikeVideoCallback;
 
 - (void)setVideoObject: (VideoObject*)video;
 - (void) loadImage;
-
-- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response;
-- (void) onLikeVideoRequestFailed: (NSString*)errorMessage;
-- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response;
-- (void) onUnlikeVideoRequestFailed: (NSString*)errorMessage;
-
 
 @end

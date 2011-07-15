@@ -13,7 +13,7 @@
 
 @implementation VideoTableCell
 
-@synthesize playVideoCallback;
+@synthesize playVideoCallback, likeVideoCallback, unlikeVideoCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
@@ -221,6 +221,7 @@
 
 - (void)setVideoObject: (VideoObject*)video {
 	// change video object
+    // LOG_DEBUG(@"Drawing the cell");
 	if (videoObject) [videoObject release];
 	videoObject = [video retain];
 	
@@ -288,37 +289,13 @@
         likeRect = [likeImageView convertRect:likeRect toView:self];
         if (CGRectContainsPoint(likeRect, touchLocation)) {
             if (!videoObject.liked) {
-                if (likeVideoRequest == nil) {
-                    // create a delete request if not already done
-                    likeVideoRequest = [[LikeVideoRequest alloc] init];
-                    likeVideoRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
-                    likeVideoRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
+                if (likeVideoCallback != nil) {
+                    [likeVideoCallback execute:videoObject];
                 }
-                
-                
-                // cancel any current request
-                if ([likeVideoRequest isRequesting]) {
-                    [likeVideoRequest cancelRequest];
-                }
-                    
-                // do the request
-                [likeVideoRequest doLikeVideoRequest:videoObject];
             } else {
-                if (unlikeVideoRequest == nil) {
-                    // create a delete request if not already done
-                    unlikeVideoRequest = [[UnlikeVideoRequest alloc] init];
-                    unlikeVideoRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
-                    unlikeVideoRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
+                if (unlikeVideoCallback != nil) {
+                    [unlikeVideoCallback execute:videoObject];
                 }
-                
-                
-                // cancel any current request
-                if ([unlikeVideoRequest isRequesting]) {
-                    [unlikeVideoRequest cancelRequest];
-                }
-                
-                // do the request
-                [unlikeVideoRequest doUnlikeVideoRequest:videoObject];
             }
         }
     }
@@ -335,61 +312,11 @@
     [likesLabel release];
 	[likeImageView release];
     [videoObject release];
+    
+    [likeVideoCallback release];
+    [unlikeVideoCallback release];
+    [playVideoCallback release];
     [super dealloc];
-}
-
-// ---------------------------------------------------------
-//                  Request Callbacks                       
-// ---------------------------------------------------------
-- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response {
-	if (response.success) {
-		if (![[NSThread currentThread] isCancelled]) {
-            
-            // update like button
-            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_red.png"] waitUntilDone:YES];
-            
-            videoObject.likes += 1;
-            videoObject.liked = true;
-            likesLabel.text = [[NSNumber numberWithInt:(videoObject.likes)] stringValue];
-            likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-            likesLabel.hidden = NO;
-        }
-		
-	} else {
-		LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
-	}
-}
-
-- (void) onLikeVideoRequestFailed: (NSString*)errorMessage {		
-	LOG_ERROR(@"failed to like video: %@", errorMessage);
-}
-
-- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response {
-	if (response.success) {
-		
-		if (![[NSThread currentThread] isCancelled]) {
-            
-            // update like button
-            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_grey.png"] waitUntilDone:YES];
-            
-            videoObject.likes -= 1;
-            videoObject.liked = false;
-            if (videoObject.likes > 0) {
-                likesLabel.text = [[NSNumber numberWithInt:(videoObject.likes)] stringValue];
-                likesLabel.hidden = NO;
-            } else {
-                likesLabel.hidden = YES;
-            }
-            likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
-        }
-        
-	} else {
-		LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
-	}
-}
-
-- (void) onUnlikeVideoRequestFailed: (NSString*)errorMessage {		
-	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
 }
 
 @end

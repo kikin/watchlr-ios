@@ -27,6 +27,7 @@
 		
 		// add to the list
 		NSString* part = [NSString stringWithFormat: @"%@=%@", stringKey, encodedValue];
+        [encodedValue release];
 		[parts addObject: part];
 	}
 	return [parts componentsJoinedByString: @"&"];
@@ -41,12 +42,12 @@
 }
 
 + (BOOL) isSameUrlWithoutHash: (NSString*)url1 url:(NSString*)url2 {
-	LOG_DEBUG(@"url1 = %@", url1);
-	LOG_DEBUG(@"url2 = %@", url2);
+	// LOG_DEBUG(@"url1 = %@", url1);
+	// LOG_DEBUG(@"url2 = %@", url2);
 	NSString* urlNoHash1 = [[UrlUtils urlWithoutHash:url1] lowercaseString];
 	NSString* urlNoHash2 = [[UrlUtils urlWithoutHash:url2] lowercaseString];
-	LOG_DEBUG(@"urlNoHash1 = %@", urlNoHash1);
-	LOG_DEBUG(@"urlNoHash2 = %@", urlNoHash2);
+	// LOG_DEBUG(@"urlNoHash1 = %@", urlNoHash1);
+	// LOG_DEBUG(@"urlNoHash2 = %@", urlNoHash2);
 	return [urlNoHash1 isEqualToString:urlNoHash2];
 }
 

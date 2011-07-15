@@ -13,7 +13,7 @@
 	NSString* userId;
 }
 
-- (void) load;
+- (NSDictionary*) load;
 - (void) save;
 
 @property(retain) NSString* userId;

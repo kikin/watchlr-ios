@@ -23,16 +23,21 @@
 }
 
 - (void) releaseConnection {
-	[urlConnection release], urlConnection = nil;
-	[responseData release], responseData = nil;
+	[urlConnection release];
+    urlConnection = nil;
+	[responseData release];
+    responseData = nil;
 }
 
 - (void) dealloc {
 	[self releaseConnection];
 	
-	[connectionLock release], connectionLock = nil;
-	[errorCallback release], errorCallback = nil;
-	[successCallback release], successCallback = nil;
+	[connectionLock release];
+    connectionLock = nil;
+	[errorCallback release];
+    errorCallback = nil;
+	[successCallback release];
+    successCallback = nil;
 	
 	[super dealloc];
 }
@@ -42,12 +47,14 @@
 }
 
 - (void) cancelRequest {
-	[connectionLock lock];
 	if (urlConnection != nil) {
+        [connectionLock lock];
+        // LOG_DEBUG(@"Locked connection for cancelling the request.");
 		[urlConnection cancel];
 		[self releaseConnection];
+        [connectionLock unlock];
+        // LOG_DEBUG(@"Unlocked connection after cancelling the request.");
 	}
-	[connectionLock unlock];
 }
 
 - (void) doGetRequest: (NSString *)url params:(NSMutableDictionary*)params {
@@ -57,11 +64,12 @@
 									  userInfo:nil];
 	
 	[connectionLock lock];
+    // LOG_DEBUG(@"Locked connection for making the request.");
 	
 	// create final url with parameters
-	NSString* finalUrl = [url copy];
+	// NSString* finalUrl = [url copy];
 	if (params != nil && params.count > 0) {
-		finalUrl = [[finalUrl stringByAppendingString:@"?"] stringByAppendingString: [UrlUtils encodeParameters:params]];
+		url = [[url stringByAppendingString:@"?"] stringByAppendingString: [UrlUtils encodeParameters:params]];
 	}
 	
 	// LOG_INFO(@"request url: %@", finalUrl);
@@ -70,11 +78,14 @@
 	responseData = [[NSMutableData alloc] init];
 	
 	// do the request
-	NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:finalUrl]];
+	NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    [urlRequest setValue: @"AppleCoreMedia/1.0.0.8H7 (iPad; U; CPU OS 4_3_2 like Mac OS X; en_us)" forHTTPHeaderField:@"User-Agent"];
+    
 	urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
 	[urlRequest release];
-	
+	// [finalUrl release];
 	[connectionLock unlock];
+    // LOG_DEBUG(@"Unlocked connection after making the request.");
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
@@ -83,18 +94,22 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 	[connectionLock lock];
+    // LOG_DEBUG(@"Locked connection for appending the response data.");
 	if (responseData != nil) {
 		// add to our current data
 		[responseData appendData:data];
 	}
 	[connectionLock unlock];
+    // LOG_DEBUG(@"Unocked connection after appending the response data.");
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	[connectionLock lock];
+    // LOG_DEBUG(@"Locked connection because request failed and we want to do cleanup.");
 	[self releaseConnection];
 	[self onRequestFailed: [error localizedDescription]];
 	[connectionLock unlock];
+    // LOG_DEBUG(@"Unlocked connection because request failed and we have done cleanup.");
 }
 
 - (id) processReceivedString: (NSString*)receivedString {
@@ -111,7 +126,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	[connectionLock lock];
-	
+	// LOG_DEBUG(@"Locked connection data finished loading and we are calling callbacks.");
 	@try {
 		// get string from received data
 		NSString* receivedString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
@@ -134,6 +149,7 @@
 	}
 
 	[connectionLock unlock];
+    // LOG_DEBUG(@"Unlocked connection data finished loading and we have called callbacks.");
 }
 
 @end

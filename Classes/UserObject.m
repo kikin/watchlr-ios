@@ -19,7 +19,7 @@ static UserObject* userInstance = nil;
 	if ((self = [super init])) {
 		userDataFile = [[UserDataFile alloc] init];
 		sessionId = [userDataFile.userId retain];
-		LOG_DEBUG(@"sessionId = %@", sessionId);
+		// LOG_DEBUG(@"sessionId = %@", sessionId);
 	}
 	return self;
 }

@@ -12,19 +12,24 @@
 
 @implementation VideoListRequest
 
-- (void) doGetVideoListRequest:(BOOL)likedVideosOnly {
+- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)pageIndex {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
-	LOG_DEBUG(@"sessionId = %@", sessionId);
+	// LOG_DEBUG(@"sessionId = %@", sessionId);
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
     [params setObject:@"html5" forKey:@"type"];
     [params setObject:(likedVideosOnly ? @"true" : @"false") forKey:@"likes"];
+    
+    // send the page index only if you are loading more videos
+    if (pageIndex > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", pageIndex] forKey:@"page"];
+    }
 	
 	// do request
-	[self doGetRequest:@"http://video.kikin.com/api/list" params:params];
+	[self doGetRequest:@"http://www.watchlr.com/api/list" params:params];
 	
 	// release memory
 	[params release];

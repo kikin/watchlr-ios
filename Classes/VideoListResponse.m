@@ -19,7 +19,8 @@
 			
 			// get count/start
 			count = [[response objectForKey:@"count"] intValue];
-			start = [[response objectForKey:@"start"] intValue];
+			page = [[response objectForKey:@"page"] intValue];
+            total = [[response objectForKey:@"total"] intValue];
 			
 			// get all the videos
 			if (count > 0) {
@@ -43,8 +44,12 @@
 	return count;
 }
 
-- (int) start {
-	return start;
+- (int) page {
+	return page;
+}
+
+- (int) total {
+    return total;
 }
 
 - (NSArray*) videos {

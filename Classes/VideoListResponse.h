@@ -10,12 +10,16 @@
 #import "DefaultResponse.h"
 
 @interface VideoListResponse : DefaultResponse {
-	int			count;
-	int			start;
+	int	count;
+	int	page;
+    int total;
 	NSMutableArray* videos;
 }
 
 - (NSArray*) videos;
+- (int) count;
+- (int) page;
+- (int) total;
 - (id) initWithResponse: (id)jsonObject;
 
 @end

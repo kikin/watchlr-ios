@@ -12,12 +12,14 @@
 #import "LoadingMainView.h"
 #import "ErrorMainView.h"
 #import "ConnectMainView.h"
+#import "CommonIos/Callback.h"
 
 @interface LoginViewController : UIViewController <FBSessionDelegate, FBRequestDelegate> {
 	Facebook* facebook;
 	ErrorMainView* errorMainView;
 	LoadingMainView* loadingMainView;
 	ConnectMainView* connectMainView;
+    Callback* onLoginSuccessCallback;
 	UIImageView* logoImage;
 }
 
@@ -27,5 +29,7 @@
 - (void) doLinkDeviceRequest: (NSString*)accessToken;
 - (void) onLinkRequestSuccess: (id)jsonObject;
 - (void) onLinkRequestFailed: (NSString*)errorMessage;
+
+@property(retain) Callback* onLoginSuccessCallback;
 
 @end

@@ -49,7 +49,7 @@
 	NSString* localizedPath = [self getPath];
 	NSData* xmlData = [NSPropertyListSerialization dataFromPropertyList:pList format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];
 	if (xmlData) {
-		LOG_DEBUG(@"xml=%@", [NSString stringWithUTF8String: [xmlData bytes]]);
+		// LOG_DEBUG(@"xml=%@", [NSString stringWithUTF8String: [xmlData bytes]]);
 		BOOL success = [xmlData writeToFile:localizedPath options:NSDataWritingAtomic error:&error2];  
 		if (success == NO) {
 			LOG_ERROR(@"Error writing plist to file '%@', error = '%@'", localizedPath, error2);
