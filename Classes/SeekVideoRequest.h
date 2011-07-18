@@ -14,6 +14,7 @@
 
 }
 
+- (void) doSeekVideoRequest:(VideoObject*)video;
 - (void) doSeekVideoRequest:(VideoObject*)video andTime:(NSString*)seekTime;
 - (id) processReceivedString: (NSString*)receivedString;
 

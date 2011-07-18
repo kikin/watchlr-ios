@@ -58,7 +58,7 @@
 	UserObject* user = [UserObject getUser];
 	if (user.sessionId != nil) {
 		// go the the main view
-		[self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.5];
+		[self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.0];
 	} else {
 		[self showView:connectMainView];
 	}

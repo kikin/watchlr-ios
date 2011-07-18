@@ -13,11 +13,13 @@
 	NSString*   favicon;
     NSString*   name;
 	NSString*   sourceUrl;
+    UIImage*    faviconImage;
 }
 
 @property(retain)	NSString* favicon;
 @property(retain)	NSString* name;
 @property(retain)	NSString* sourceUrl;
+@property(retain)	UIImage* faviconImage;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 

@@ -7,21 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "ThumbnailObject.h"
+#import "SourceObject.h"
 
 @interface VideoObject : NSObject {
-	int             videoId;
-    int             likes;
-	NSString*       title;
-	NSString*       description;
-	NSString*       embedUrl;
-	NSString*       videoUrl;
-	NSDictionary*	thumbnail;
-    NSDictionary*	videoSource;
-    NSString*       htmlCode;
-    bool            liked;
-    bool            saved;
-    double          seek;
+	int                 videoId;
+    int                 likes;
+	NSString*           title;
+	NSString*           description;
+	NSString*           embedUrl;
+	NSString*           videoUrl;
+	ThumbnailObject*	thumbnail;
+    SourceObject*	videoSource;
+    NSString*           htmlCode;
+    bool                liked;
+    bool                saved;
+    double              seek;
 }
 
 @property()			int videoId;
@@ -30,8 +31,8 @@
 @property(retain)	NSString* description;
 @property(retain)	NSString* videoUrl;
 @property(retain)	NSString* embedUrl;
-@property(retain)	NSDictionary* thumbnail;
-@property(retain)	NSDictionary* videoSource;
+@property(retain)	ThumbnailObject* thumbnail;
+@property(retain)	SourceObject* videoSource;
 @property(retain)	NSString* htmlCode;
 @property()			bool liked;
 @property()			bool saved;

@@ -101,65 +101,46 @@
 
 - (void) loadImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
+    
     if (![[NSThread currentThread] isCancelled]) {
-        // update default thumbnail image
-        [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"default_video_icon.png"] waitUntilDone:YES];
-        
         // update play button image
         [playButtonImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"play_button.png"] waitUntilDone:YES];
         
         // update like button
         [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:(videoObject.liked ? @"heart_red.png" : @"heart_grey.png")] waitUntilDone:YES];
     }
-    
-    if (videoObject.thumbnail != nil) {
-        ThumbnailObject* thumbnailObject = [[ThumbnailObject alloc] initFromDictionnary:videoObject.thumbnail];
-        if (thumbnailObject.thumbnailUrl != nil) {
-            NSURL* url = [NSURL URLWithString:thumbnailObject.thumbnailUrl];
-            NSData* data = [NSData dataWithContentsOfURL:url];
-            if (data != nil) {
-                // set thumbnail image
-                UIImage* img = [[UIImage alloc] initWithData:data];
-                if (img != nil) {
-                    // make sure the thread was not killed
-                    if (![[NSThread currentThread] isCancelled]) {
-                        [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
-                    }
-                    [img release];
-                }
-            }
+	
+    // set the thumbnail image
+    if (videoObject.thumbnail != nil && videoObject.thumbnail.thumbnailImage != nil) {
+        // make sure the thread was not killed
+        if (![[NSThread currentThread] isCancelled]) {
+            [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:(videoObject.thumbnail.thumbnailImage) waitUntilDone:YES];
         }
-        [thumbnailObject release];
+    } else {
+        // make sure the thread was not killed
+        if (![[NSThread currentThread] isCancelled]) {
+            [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"default_video_icon.png"] waitUntilDone:YES];
+        }
     }
-    
+
+    // bring play button on top of thumbnail
     [self bringSubviewToFront:playButtonImage];
     
     if (videoObject.videoSource != nil) {
-        SourceObject* sourceObject = [[SourceObject alloc] initFromDictionnary:videoObject.videoSource];
-        if (sourceObject.favicon != nil) {
-            NSURL* url = [NSURL URLWithString:sourceObject.favicon];
-            NSData* data = [NSData dataWithContentsOfURL:url];
-            if (data != nil) {
-                // set thumbnail image
-                UIImage* img = [[UIImage alloc] initWithData:data];
-                if (img != nil) {
-                    // make sure the thread was not killed
-                    if (![[NSThread currentThread] isCancelled]) {
-                        [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
-                        faviconImageView.hidden = NO;
-                    }
-                    [img release];
-                }
+        // set the favicon image
+        if (videoObject.videoSource.faviconImage != nil) {
+            // make sure the thread was not killed
+            if (![[NSThread currentThread] isCancelled]) {
+                [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:videoObject.videoSource.faviconImage waitUntilDone:YES];
+                faviconImageView.hidden = NO;
             }
         }
         
-        if (sourceObject.name != nil) {
-            sourceLabel.text = sourceObject.name;
+        // set the source name
+        if (videoObject.videoSource.name != nil) {
+            sourceLabel.text = videoObject.videoSource.name;
             sourceLabel.hidden = NO;
         }
-        
-        [sourceObject release];
     }
     
     [pool release];

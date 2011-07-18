@@ -54,47 +54,95 @@
 	[self doVideoListRequest: -1];
 }
 
-- (void) onListRequestSuccess: (VideoListResponse*)response {
-	if (response.success) {
-		// save response and get videos
-		videoListResponse = [response retain];
-        if (isRefreshing) {
-            if (videos == nil) {
-                videos = [[response videos] retain]; 
-                lastPageRequested = [response page];
-                loadedAllVideos = false;
+- (void) updateList:(NSArray*)videosList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)videoCount {
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
+    if (videos == nil) {
+        // This is the first time we are loading videos
+        // we should create the new videos list element.
+        videos = [[NSMutableArray alloc] init];
+        
+        for (NSDictionary* videoDic in videosList) {
+            // create video from dictionnary
+            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+            [videos addObject:videoObject];
+        }
+        
+        lastPageRequested = pageNumber;
+        loadedAllVideos = false;
+        
+        [loadingView stopAnimating];
+        
+    } else if (isRefreshing) {
+        // user wants to refresh the list
+        // insert only those videos which are never inserted
+        int firstVideoId = ((VideoObject*)[videos objectAtIndex:0]).videoId;
+        int i = 0;
+        for (NSDictionary* videoDic in videosList) {
+            int videoId = [[videoDic objectForKey:@"id"] intValue];
+            if (firstVideoId == videoId) {
+                break;
             } else {
-                VideoObject* firstVideo = [videos objectAtIndex:0];
-                NSUInteger i, count = [[response videos] count];
-                for (i = 0; i < count; i++)
-                {
-                    VideoObject* newVideo = (VideoObject*)[[response videos] objectAtIndex:i];
-                    if (newVideo.videoId == firstVideo.videoId) {
-                        break;
-                    }
-                    
-                    [videos insertObject:newVideo atIndex:i];
-                }
-                
-            }
-            
-            refreshState = REFRESHED;
-            [refreshStatusView setRefreshStatus:REFRESHED];
-            
-        } else {
-            [videos addObjectsFromArray:[response videos]];
-            loadMoreState = LOADED;
-            lastPageRequested = [response page];
-            if ([response total] == [videos count]) {
-                loadedAllVideos = true;
+                // create video from dictionnary
+                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+                [videos insertObject:videoObject atIndex:i];
+                ++i;
             }
         }
         
-		// refresh the table
-		[videosTable reloadData];
-		
+        // indicates refresh action is completed
+        refreshState = REFRESHED;
+        [refreshStatusView setRefreshStatus:REFRESHED];
+        
+    } else { 
+        // Appending the videos retreived to the list
+        for (NSDictionary* videoDic in videosList) {
+            // create video from dictionnary
+            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+            [videos addObject:videoObject];
+        }
+        
+        loadMoreState = LOADED;
+        lastPageRequested = pageNumber;
+        if (videoCount < 10) {
+            loadedAllVideos = true;
+        }
+    }
+    
+    //LOG_DEBUG(@"Sending message to main thread to update videos list");
+    [videosTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    
+    loadMoreState = LOAD_MORE_NONE;
+    refreshState = REFRESH_NONE;
+    [refreshStatusView setRefreshStatus:REFRESH_NONE];
+    [refreshStatusView setHidden:YES];
+    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+    isRefreshing = false;
+    
+    [pool release];
+}
+
+- (void) updateListWrapper: (NSDictionary*)args {
+    [self updateList:[args objectForKey:@"videosList"] withLastPageRequested:[[args objectForKey:@"pageNumber"] integerValue] andNumberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
+}
+
+- (void) onListRequestSuccess: (VideoListResponse*)response {
+    if (response.success) {
 		// LOG_DEBUG(@"list request success");
+        NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [response videos], @"videosList",
+                              [NSNumber numberWithInt:[response page]], @"pageNumber",
+                              [NSNumber numberWithInt:[response count]], @"videoCount",
+                              nil];
+        [self performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
+        loadMoreState = LOAD_MORE_NONE;
+        refreshState = REFRESH_NONE;
+        [refreshStatusView setRefreshStatus:REFRESH_NONE];
+        [refreshStatusView setHidden:YES];
+        videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+        isRefreshing = false;
+        
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
 		
 		// show error message
@@ -104,13 +152,6 @@
 		
 		LOG_ERROR(@"request success but failed to list videos: %@", response.errorMessage);
 	}
-    
-    loadMoreState = LOAD_MORE_NONE;
-    refreshState = REFRESH_NONE;
-    [refreshStatusView setRefreshStatus:REFRESH_NONE];
-    [refreshStatusView setHidden:YES];
-    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
-    isRefreshing = false;
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
@@ -137,8 +178,6 @@
 - (void)dealloc {
 	// release memory
 	[videoListRequest release];
-	[videoListResponse release];
-	
     [super dealloc];
 }
 

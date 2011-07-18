@@ -125,6 +125,13 @@
     [self.view addSubview:topToolbar];
     [self.view bringSubviewToFront:topToolbar];
     
+    loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    loadingView.frame = CGRectMake((self.view.frame.size.width - 150) / 2, (self.view.frame.size.height - 150) / 2, 150, 150);
+    loadingView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    [loadingView startAnimating];
+    [self.view addSubview:loadingView];
+    [self.view bringSubviewToFront:loadingView];
+    
     // settingsMenu = [[UIViewController alloc] init];
     
     // get the event when the app comes back
@@ -287,6 +294,7 @@
     [userSettingsView release];
     [refreshStatusView release];
     [videoPlayerView release];
+    [loadingView release];
     
     [super dealloc];
 }
@@ -587,7 +595,9 @@
         
         // If user has reached at the end of the list load more videos, if there are any
         if (scrollView.contentOffset.y > self.view.frame.size.height) {
+            // LOG_DEBUG(@"User reached at the end of the list");
             if (loadMoreState != LOADING) {
+                // LOG_DEBUG(@"Loading more data");
                 loadMoreState = LOADING;
                 [self onLoadMoreData];
             }

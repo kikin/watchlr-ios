@@ -55,6 +55,7 @@ typedef enum {
     UserSettingsView* userSettingsView;
     RefreshStatusView* refreshStatusView;
     VideoPlayerView* videoPlayerView;
+    UIActivityIndicatorView* loadingView;
     
     Callback* onLogoutCallback;
     

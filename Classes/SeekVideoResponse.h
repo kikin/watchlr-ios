@@ -10,8 +10,10 @@
 #import "DefaultResponse.h"
 
 @interface SeekVideoResponse : DefaultResponse {
-
+    double seekTime;
 }
+
+@property() double seekTime;
 
 - (id) initWithResponse: (NSDictionary*)jsonObject;
 

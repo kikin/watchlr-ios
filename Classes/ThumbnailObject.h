@@ -13,11 +13,13 @@
 	int             height;
     int             width;
 	NSString*       thumbnailUrl;
+    UIImage*        thumbnailImage;
 }
 
 @property()			int height;
 @property()			int width;
 @property(retain)	NSString* thumbnailUrl;
+@property(retain)	UIImage* thumbnailImage;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 

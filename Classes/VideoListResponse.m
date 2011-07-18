@@ -24,16 +24,7 @@
 			
 			// get all the videos
 			if (count > 0) {
-				NSArray* videosArr = [response objectForKey:@"videos"];
-				
-				// create our video array
-				videos = [[NSMutableArray alloc] init];
-				for (NSDictionary* videoDic in videosArr) {
-					// create video from dictionnary
-					VideoObject* videoObject = [[VideoObject alloc] initFromDictionnary:videoDic];
-					[videos addObject:videoObject];
-					[videoObject release];
-				}
+				videos = [[response objectForKey:@"videos"] retain];
 			}
 		}
 	}

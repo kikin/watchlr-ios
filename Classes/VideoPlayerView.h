@@ -28,11 +28,15 @@
     UIButton* prevButton;
     UIButton* nextButton;
     
+    MPMoviePlayerController *moviePlayerController;
+    UIActivityIndicatorView* loadingActivity;
     UILabel* countdown;
     UILabel* errorMessage;
     
-    MPMoviePlayerController *moviePlayerController;
-    UIActivityIndicatorView* loadingAcctivity;
+    UIView* fullScreenModeView;
+    UIActivityIndicatorView* fullScreenLoadingActivity;
+    UILabel* fullScreenCountdown;
+    UILabel* fullScreenErrorMessage;
 
     // UIView* moviePlayerNativeControlView;
     // UIView* videosListView;
@@ -53,6 +57,10 @@
     bool areControlsVisible;
     bool isLeanBackMode;
     bool hasUserInitiatedVideoFinished;
+    bool isFullScreenMode;
+    bool shouldPlayVideo;
+    
+    NSString* currentlyPlayingVideoUrl;
 }
 
 @property(retain) VideoObject* video;

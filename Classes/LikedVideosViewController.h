@@ -12,8 +12,6 @@
 
 @interface LikedVideosViewController : KikinVideoViewController {
 	VideoListRequest* videoListRequest;
-	VideoListResponse* videoListResponse;
-    
     bool isRefreshing;
 }
 

@@ -41,8 +41,11 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
 	// track the stop time
 	if (startDate != nil) {
-        [((KikinVideoViewController*)((UITabBarController*)window.rootViewController).selectedViewController) onApplicationBecomeInactive];
-		NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
+        if ([window.rootViewController isKindOfClass:[UITabBarController class]]) {
+            [((KikinVideoViewController*)((UITabBarController*)window.rootViewController).selectedViewController) onApplicationBecomeInactive];
+        }
+        
+        NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
 		LOG_EVENT(@"eventStopApp", EVENT_LOCATION_APPLICATION, [NSString stringWithFormat:@"%ld", (int)time]);
 	} else {
 		LOG_EVENT(@"eventStopApp", EVENT_LOCATION_APPLICATION, @"no_date");
@@ -73,16 +76,14 @@
 - (void) onLoginSuccess {
     // create saved videos tab
     SavedVideosViewController* savedVideosViewController = [[[SavedVideosViewController alloc] initWithNibName:@"SavedVideosView" bundle:nil] autorelease];
-    UIImage* savedTabImage = [[UIImage imageNamed:@"save_video.png"] autorelease];
-    UITabBarItem* savedTabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Saved" image:savedTabImage tag:1] autorelease];
-    savedVideosViewController.tabBarItem = savedTabBarItem;
+    UIImage* savedTabImage = [UIImage imageNamed:@"save_video.png"];
+    savedVideosViewController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Saved" image:savedTabImage tag:1] autorelease];
     savedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
     // create liked videos tab
     LikedVideosViewController* likedVideosViewController = [[[LikedVideosViewController alloc] initWithNibName:@"LikedVideosView" bundle:nil] autorelease];
-    UIImage* likedTabImage = [[UIImage imageNamed:@"29-heart.png"] autorelease];
-    UITabBarItem* likedTabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Liked" image:likedTabImage tag:1] autorelease];
-    likedVideosViewController.tabBarItem = likedTabBarItem;
+    UIImage* likedTabImage = [UIImage imageNamed:@"29-heart.png"];
+    likedVideosViewController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Liked" image:likedTabImage tag:1] autorelease];
     likedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
     // create the tabbed view

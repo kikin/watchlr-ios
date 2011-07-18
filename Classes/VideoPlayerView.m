@@ -9,6 +9,7 @@
 #import "VideoPlayerView.h"
 #import "SourceObject.h"
 #import <QuartzCore/QuartzCore.h>
+#import "SeekVideoResponse.h"
 
 @implementation VideoPlayerView
 
@@ -109,13 +110,16 @@
         
         // create the movie player
         moviePlayerController = [[MPMoviePlayerController alloc] init];
-        moviePlayerController.shouldAutoplay = TRUE;
-        moviePlayerController.allowsAirPlay = YES;
-        moviePlayerController.scalingMode = MPMovieScalingModeAspectFit;
+        // moviePlayerController.shouldAutoplay = TRUE;
+        if([moviePlayerController respondsToSelector:@selector(setAllowsAirPlay:)])
+        {
+            [moviePlayerController setAllowsAirPlay:YES];
+        }
+        
+        // moviePlayerController.scalingMode = MPMovieScalingModeAspectFit;
         // moviePlayerController.controlStyle = MPMovieControlStyleEmbedded;
-        moviePlayerController.repeatMode = NO;
+        // moviePlayerController.repeatMode = NO;
         moviePlayerController.view.autoresizesSubviews = YES;
-        moviePlayerController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [moviePlayer addSubview:moviePlayerController.view];
         // moviePlayerNativeControlView = nil;
         
@@ -132,12 +136,11 @@
         [self addGestureRecognizer:tapGesture];
         
         // add the loading view to movie player
-        loadingAcctivity = [[UIActivityIndicatorView alloc] init];
-        loadingAcctivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
-        [loadingAcctivity setHidesWhenStopped:YES];
-        loadingAcctivity.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [moviePlayerController.view addSubview:loadingAcctivity];
-        [moviePlayerController.view bringSubviewToFront:loadingAcctivity];
+        loadingActivity = [[UIActivityIndicatorView alloc] init];
+        loadingActivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+        [loadingActivity setHidesWhenStopped:YES];
+        [moviePlayerController.view addSubview:loadingActivity];
+        [moviePlayerController.view bringSubviewToFront:loadingActivity];
         
         // add the countdown to loading activity
         countdown = [[UILabel alloc] init];
@@ -147,7 +150,7 @@
         countdown.textAlignment = UITextAlignmentCenter;
         countdown.numberOfLines = 1;
         countdown.hidden = YES;
-        [loadingAcctivity addSubview:countdown];
+        [loadingActivity addSubview:countdown];
         
         // add the error message to movie player
         errorMessage = [[UILabel alloc] init];
@@ -164,10 +167,12 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onVideoLoadingStateChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:moviePlayerController];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onVideoPlaybackStateChanged:) name: MPMoviePlayerPlaybackStateDidChangeNotification object:moviePlayerController];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onFullScreenMode:) name: MPMoviePlayerDidEnterFullscreenNotification object:moviePlayerController];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willExitFullScreenMode:) name: MPMoviePlayerWillExitFullscreenNotification object:moviePlayerController];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onEmbededMode:) name: MPMoviePlayerDidExitFullscreenNotification object:moviePlayerController];
         
         // LOG_DEBUG(@"Reinitializing video player.");
         isLeanBackMode = false;
+        isFullScreenMode = false;
     }
     return self;
 }
@@ -195,10 +200,10 @@
     nextButton.frame = CGRectMake(moviePlayer.frame.origin.x + moviePlayer.frame.size.width + 10, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
     
     moviePlayerController.view.frame = CGRectMake(10, 50, moviePlayer.frame.size.width - 20, moviePlayer.frame.size.height - 110);
-    loadingAcctivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
+    loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
                                             ((moviePlayerController.view.frame.size.height - 100) / 2), 
                                             100, 100);
-    countdown.frame = CGRectMake(((loadingAcctivity.frame.size.width - 20)/ 2), ((loadingAcctivity.frame.size.height - 20) / 2) - 4, 20, 20);
+    countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
     
     errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);
     // videosListView.frame = CGRectMake(0, (self.frame.size.height - 111), self.frame.size.width, 110);
@@ -218,7 +223,7 @@
     [prevButton release];
     [nextButton release];
     // [moviePlayerNativeControlView release];
-    [loadingAcctivity release];
+    [loadingActivity release];
     [moviePlayer release];
     [description release];
     [favicon release];
@@ -239,6 +244,8 @@
     
     [onVideoFinishedCallback release];
     
+    // currentlyPlayingVideoUrl = NULL;
+    
     [super dealloc];
 }
 
@@ -253,10 +260,13 @@
  * video either by clicking on close button or previous or next button.
  * This function is also called when video finished playing.
  */
-- (void) updatePauseTime:(float)pauseTime {
+- (void) updatePauseTime:(NSNumber*)pauseTime {
+    // NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     // if request object is never created, create it
     if (seekRequest == nil) {
         seekRequest = [[SeekVideoRequest alloc] init];
+        seekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
+        seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
     }
     
     // if any of the current request is going on
@@ -268,9 +278,12 @@
     // convert the pause time in string with 2 decimal digits.
     // It seems if you send anything more than 2 decimal digits
     // server does not likes it.
-    NSString* videoPauseTime = [NSString stringWithFormat:@"%.2f", pauseTime];
-    video.seek = [videoPauseTime doubleValue];
+    NSString* videoPauseTime = [NSString stringWithFormat:@"%.2f", [pauseTime floatValue]];
+    video.seek = [pauseTime doubleValue];
+    shouldPlayVideo = false;
     [seekRequest doSeekVideoRequest:video andTime:videoPauseTime];
+    LOG_DEBUG(@"Get called in update pause time.");
+    // [pool release];
 }
 
 /*
@@ -322,18 +335,49 @@
     areControlsVisible = false;
 }*/
 
-- (void) loadVideo:(NSString*) videoUrl {
-    if (! [[NSThread currentThread] isCancelled]) {
-        moviePlayerController.contentURL = [NSURL URLWithString:videoUrl];
-        if (!isLeanBackMode) {
-            moviePlayerController.initialPlaybackTime = video.seek;
-        } else {
-            // LOG_DEBUG(@"We are in lean back mode.");
-            moviePlayerController.initialPlaybackTime = 0.0;
-        }
-            
-        [moviePlayerController performSelectorOnMainThread:@selector(play) withObject:nil waitUntilDone:NO];
+/*
+ * Play the video with given url and initial position.
+ */
+-(void) play:(NSString*)videoUrl withInitialPlaybackTime:(double)seekTime {
+    if (![[NSThread currentThread] isCancelled]) {
         hasUserInitiatedVideoFinished = false;
+        moviePlayerController.contentURL = [NSURL URLWithString:videoUrl];
+        moviePlayerController.initialPlaybackTime = seekTime;
+        [moviePlayerController performSelectorOnMainThread:@selector(play) withObject:nil waitUntilDone:NO];
+    }
+}
+
+/*
+ * load the video.
+ *
+ * If user is in lean back mode play the video from the start
+ * else start the video from where user left it last time.
+ *
+ * To know the last seek position we should ping the server again.
+ * It may happen that user play their video on some other device 
+ * and does not refresh the current list loaded. Then we have an 
+ * invalid start position.
+ */
+- (void) loadVideo:(NSString*) videoUrl {
+    currentlyPlayingVideoUrl = [videoUrl copy];
+    if (isLeanBackMode) {
+        [self play:videoUrl withInitialPlaybackTime:0.0];
+    } else {
+        // if request object is never created, create it
+        if (seekRequest == nil) {
+            seekRequest = [[SeekVideoRequest alloc] init];
+            seekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
+            seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
+        }
+        
+        // if any of the current request is going on
+        // cancel the request and start the new request.
+        if ([seekRequest isRequesting]) {
+            [seekRequest cancelRequest];
+        }
+        
+        shouldPlayVideo = true;
+        [seekRequest doSeekVideoRequest:video];
     }
 }
 
@@ -814,28 +858,45 @@
 - (void) loadImages {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-    if (video.videoSource != nil) {
-        SourceObject* sourceObject = [[SourceObject alloc] initFromDictionnary:video.videoSource];
-        if (sourceObject.favicon != nil) {
-            NSURL* url = [NSURL URLWithString:sourceObject.favicon];
-            NSData* data = [NSData dataWithContentsOfURL:url];
-            if (data != nil) {
-                // set thumbnail image
-                UIImage* img = [[UIImage alloc] initWithData:data];
-                if (img != nil) {
-                    // make sure the thread was not killed
-                    if (![[NSThread currentThread] isCancelled]) {
-                        [favicon performSelectorOnMainThread:@selector(setImage:) withObject:img waitUntilDone:YES];
-                    }
-                    [img release];
-                }
-            }
+    if (video.videoSource != nil && video.videoSource.faviconImage != nil) {
+        // make sure the thread was not killed
+        if (![[NSThread currentThread] isCancelled]) {
+            [favicon performSelectorOnMainThread:@selector(setImage:) withObject:video.videoSource.faviconImage waitUntilDone:YES];
         }
-        
-        [sourceObject release];
     }
     
     [pool release];
+}
+
+// -------------------------------------------------------------------------
+//                       Request callback functions
+// -------------------------------------------------------------------------
+- (void) onSeekRequestSuccess:(SeekVideoResponse*)response {
+    double seekTime = video.seek;
+    if (response.success) {
+        seekTime = response.seekTime;
+    }
+    
+    if (shouldPlayVideo) {
+        if (currentlyPlayingVideoUrl != NULL) {
+            // LOG_DEBUG(@"Video url: %@", currentlyPlayingVideoUrl);
+            [self play:currentlyPlayingVideoUrl withInitialPlaybackTime:seekTime];
+        } else {
+            LOG_ERROR(@"Unable to found the URL for vimeo video stream.");
+            [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        }
+    }
+}
+
+- (void) onSeekRequestFailure:(SeekVideoResponse*)response {
+    if (shouldPlayVideo) {
+        if (currentlyPlayingVideoUrl != NULL) {
+            [self play:currentlyPlayingVideoUrl withInitialPlaybackTime:video.seek];
+        } else {
+            LOG_ERROR(@"Unable to found the URL for vimeo video stream.");
+            [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        }
+    }
 }
 
 // -------------------------------------------------------------------------
@@ -854,7 +915,7 @@
     if (onCloseButtonClickedCallback != nil) {
         [onCloseButtonClickedCallback execute:nil];
         // LOG_DEBUG(@"Current playback time: %f", currentPlaybackTime);
-        [self updatePauseTime:currentPlaybackTime];
+        [self updatePauseTime:[NSNumber numberWithDouble:currentPlaybackTime]];
     }
 }
 
@@ -901,16 +962,85 @@
 }
 
 - (void) onFullScreenMode: (NSNotification*) aNotification {
-    [moviePlayerController.view addSubview:loadingAcctivity];
-    loadingAcctivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
+    //[moviePlayerController.view addSubview:loadingAcctivity];
+    /*loadingAcctivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
                                         ((moviePlayerController.view.frame.size.height - 100) / 2), 
                                         100, 100);
+    [moviePlayerController.view bringSubviewToFront:loadingAcctivity];
+    
     countdown.frame = CGRectMake(((loadingAcctivity.frame.size.width - 20)/ 2), ((loadingAcctivity.frame.size.height - 20) / 2) - 4, 20, 20);
-    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);
+    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);*/
+    isFullScreenMode = true;
+    
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    if (!window)
+    {
+        window = [[UIApplication sharedApplication].windows objectAtIndex:0];
+    }
+    fullScreenModeView = [[window subviews] objectAtIndex:0];
+    
+    // add the loading view to movie player
+    fullScreenLoadingActivity = [[UIActivityIndicatorView alloc] init];
+    fullScreenLoadingActivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
+    [fullScreenLoadingActivity setHidesWhenStopped:YES];
+    fullScreenLoadingActivity.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [fullScreenModeView addSubview:fullScreenLoadingActivity];
+    [fullScreenModeView bringSubviewToFront:fullScreenLoadingActivity];
+    
+    // add the countdown to loading activity
+    fullScreenCountdown = [[UILabel alloc] init];
+    fullScreenCountdown.textColor = [UIColor whiteColor];
+    fullScreenCountdown.backgroundColor = [UIColor clearColor];
+    fullScreenCountdown.font = [UIFont systemFontOfSize:25];
+    fullScreenCountdown.textAlignment = UITextAlignmentCenter;
+    fullScreenCountdown.numberOfLines = 1;
+    fullScreenCountdown.hidden = YES;
+    [fullScreenLoadingActivity addSubview:fullScreenCountdown];
+    
+    // add the error message to movie player
+    fullScreenErrorMessage = [[UILabel alloc] init];
+    fullScreenErrorMessage.textColor = [UIColor whiteColor];
+    fullScreenErrorMessage.backgroundColor = [UIColor clearColor];
+    fullScreenErrorMessage.font = [UIFont systemFontOfSize:20];
+    fullScreenErrorMessage.textAlignment = UITextAlignmentCenter;
+    fullScreenErrorMessage.numberOfLines = 3;
+    fullScreenErrorMessage.hidden = YES;
+    [fullScreenModeView addSubview:fullScreenErrorMessage];
+    
+    // adjust the positions
+    fullScreenLoadingActivity.frame = CGRectMake(((fullScreenModeView.frame.size.width) / 2), 
+                                       ((fullScreenModeView.frame.size.height) / 2), 
+                                       100, 100);
+    fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 20)/ 2), ((fullScreenLoadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
+    
+    fullScreenErrorMessage.frame = CGRectMake(0, 10, fullScreenModeView.frame.size.width, 100);
+}
+
+-(void) willExitFullScreenMode: (NSNotification*) aNotification {
+    if ([fullScreenLoadingActivity isAnimating]) {
+        [fullScreenLoadingActivity stopAnimating];
+    }
+    
+    [fullScreenCountdown removeFromSuperview];
+    [fullScreenLoadingActivity removeFromSuperview];
+    [fullScreenErrorMessage removeFromSuperview];
+    
+    [fullScreenCountdown release];
+    [fullScreenLoadingActivity release];
+    [fullScreenErrorMessage release];
+    
+    isFullScreenMode = false;
 }
 
 - (void) onEmbededMode: (NSNotification*) aNotification {
     [moviePlayerController play];
+    
+    /*loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
+                                        ((moviePlayerController.view.frame.size.height - 100) / 2), 
+                                        100, 100);
+    countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
+    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);*/
+    
     // LOG_DEBUG(@"Exited full screen mode.");
     // find the native controller view so that we can 
     // show/hide the controls when native controls show/hide 
@@ -974,7 +1104,7 @@
 }
 
 - (void) onVideoFinished:(NSNotification*)aNotification {
-    // LOG_DEBUG(@"Video finished");
+    LOG_DEBUG(@"Video finished");
     NSDictionary *userInfo = [aNotification userInfo];
     // LOG_DEBUG(@"Reason video finished: %d", [[userInfo objectForKey:@"MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"] intValue]);
     // LOG_DEBUG(@"Has user initiated finish action: %@", (hasUserInitiatedVideoFinished ? @"true" : @"false"));
@@ -985,14 +1115,21 @@
         isLeanBackMode = true;
         [onVideoFinishedCallback execute:nil];
         // LOG_DEBUG(@"Updating time because video is finished.");
-        [self updatePauseTime:0.0];
+        [self updatePauseTime:[NSNumber numberWithDouble:0.0]];
     }
 }
 
 - (void) onVideoLoadingStateChange:(NSNotification*) aNotification {
     // LOG_DEBUG(@"Movie player load state: %d", moviePlayerController.loadState);
     if (moviePlayerController.loadState == MPMovieLoadStatePlayable) {
-        [loadingAcctivity stopAnimating];
+        if (isFullScreenMode) {
+            if (fullScreenLoadingActivity != nil) {
+                [fullScreenLoadingActivity stopAnimating]; 
+            }
+        } else {
+            [loadingActivity stopAnimating];
+        }
+        
         // [self showCustomControls];
         // [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
         
@@ -1011,12 +1148,12 @@
     //    if (!areControlsVisible) {
     //        [self showCustomControls];
     //    }
-        
-        /*if (moviePlayerController.playbackState == MPMoviePlaybackStatePaused) {
-            LOG_DEBUG(@"Updating time because user has paused the video.");
-            [self updatePauseTime:moviePlayerController.currentPlaybackTime];
-        }*/
     // }
+    
+    if (moviePlayerController.playbackState == MPMoviePlaybackStatePaused && moviePlayerController.loadState != MPMovieLoadStateStalled) {
+        LOG_DEBUG(@"Updating time because user has paused the video.");
+        [self updatePauseTime:[NSNumber numberWithDouble:moviePlayerController.currentPlaybackTime]];
+    }
 }
 
 - (void) onVideoRequestFailed:(NSString*) errorMessage {
@@ -1045,7 +1182,13 @@
 - (void) playVideo:(VideoObject*) videoObject {
     
     // show the loading indicator
-    [loadingAcctivity startAnimating];
+    if (isFullScreenMode) {
+        if (fullScreenLoadingActivity != nil) {
+            [fullScreenLoadingActivity startAnimating]; 
+        }
+    } else {
+        [loadingActivity startAnimating];
+    }
     
     // save the video object
     video = [videoObject retain];
@@ -1072,7 +1215,7 @@
     }
     
     // set the favicon
-    NSThread* thread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImages) object:nil];
+    NSThread* thread = [[[NSThread alloc] initWithTarget:self selector:@selector(loadImages) object:nil] autorelease];
     [thread start];
     
     
