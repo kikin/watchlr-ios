@@ -75,7 +75,8 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
             keyIndex = 0, keyPtr = keyData;
     }
    
-    return [self newStringInBase64FromData:data];
+    NSString* base64EncodedString = [[self newStringInBase64FromData:data] autorelease];
+    return base64EncodedString;
 //    NSString* encryptedString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 //    return encryptedString;
 }

@@ -335,7 +335,7 @@
 // --------------------------------------------------------------------------------
 
 - (void) trackAction:(NSString*)action forVideo:(int)vid {
-    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+    TrackerRequest* trackerRequest = [[[TrackerRequest alloc] init] autorelease];
         //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
         //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
     
@@ -344,7 +344,7 @@
 }
 
 - (void) trackEvent:(NSString*)name withValue:(NSString*)value {
-    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+    TrackerRequest* trackerRequest = [[[TrackerRequest alloc] init] autorelease];
     //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
     //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
     
@@ -353,7 +353,7 @@
 }
 
 - (void) trackError:(NSString*)error from:(NSString*)where withMessage:(NSString*)message {
-    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+    TrackerRequest* trackerRequest = [[[TrackerRequest alloc] init] autorelease];
     //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
     //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
     
