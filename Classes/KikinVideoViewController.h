@@ -12,6 +12,7 @@
 #import "LikeVideoRequest.h"
 #import "UnlikeVideoRequest.h"
 #import "AddVideoRequest.h"
+#import "TrackerRequest.h"
 #import "UserProfileView.h"
 #import "UserSettingsView.h"
 #import "RefreshStatusView.h"
@@ -79,6 +80,10 @@ typedef enum {
 - (void) showFeedbackForm;
 - (void) logoutUser;
 - (void) onApplicationBecomeInactive;
+
+- (void) trackAction:(NSString*)action forVideo:(int)vid;
+- (void) trackEvent:(NSString*)name withValue:(NSString*)value;
+- (void) trackError:(NSString*)error from:(NSString*)where withMessage:(NSString*)message;
 
 
 @property(retain) Callback* onLogoutCallback;

@@ -57,6 +57,7 @@
     videoPlayerView.onNextButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerNextButtonClicked)];
     videoPlayerView.onPreviousButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerPreviousButtonClicked)];
     videoPlayerView.onVideoFinishedCallback = [Callback create:self selector:@selector(onVideoPlaybackFinished)];
+    videoPlayerView.onPlaybackErrorCallback = [Callback create:self selector:@selector(onPlaybackError)];
     videoPlayerView.onLikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoLiked:)];
     videoPlayerView.onUnlikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
     videoPlayerView.onSaveButtonClickedCallback = [Callback create:self selector:@selector(onVideoSaved:)];
@@ -157,15 +158,24 @@
             [videoPlayerView playVideo:videoObject];
         }*/
         
+        bool isLeanback = true;
+        
         if (videoPlayerView.hidden == YES) {
             [self.view bringSubviewToFront:videoPlayerView];
             videoPlayerView.hidden = NO;
             // LOG_DEBUG(@"list view Frame coordinates: %f, %f, %f, %f", self.view.frame.size.width, self.view.frame.size.height, self.view.frame.origin.x, self.view.frame.origin.y);
             // videoPlayerView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
             self.hidesBottomBarWhenPushed = YES;
+            isLeanback = false;
         }
         
         [videoPlayerView playVideo:videoObject];
+        
+        if (isLeanback) {
+            [self trackAction:@"leanback-view" forVideo:videoObject.videoId];
+        } else {
+            [self trackAction:@"view" forVideo:videoObject.videoId];
+        }
     }
 }
 
@@ -186,6 +196,15 @@
     
     if (idx < videos.count) {
         [self playVideo:[videos objectAtIndex:idx]];
+        if (idx == (videos.count - 1)) {
+            if (loadMoreState != LOADING) {
+                LOG_DEBUG(@"Loading more data");
+                loadMoreState = LOADING;
+                [self onLoadMoreData];
+            }
+        }
+    } else {
+        [videoPlayerView onAllVideosPlayed];
     }
 }
 
@@ -198,6 +217,10 @@
         [self playVideo:[videos objectAtIndex:idx]];
         
     }
+}
+
+- (void) onPlaybackError {
+    [self trackEvent:@"VideoPlaybackError" withValue:[[NSNumber numberWithInt:videoPlayerView.video.videoId] stringValue]];
 }
 
 - (void) onVideoPlaybackFinished {
@@ -311,6 +334,33 @@
 // Requests
 // --------------------------------------------------------------------------------
 
+- (void) trackAction:(NSString*)action forVideo:(int)vid {
+    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+        //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
+        //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
+    
+    // do the request
+    [trackerRequest doTrackActionRequest:action forVideoId:vid from:@"SavedTab"];
+}
+
+- (void) trackEvent:(NSString*)name withValue:(NSString*)value {
+    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+    //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
+    //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
+    
+    // do the request
+    [trackerRequest doTrackEventRequest:name withValue:value from:@"SavedTab"];
+}
+
+- (void) trackError:(NSString*)error from:(NSString*)where withMessage:(NSString*)message {
+    TrackerRequest* trackerRequest = [[TrackerRequest alloc] init];
+    //            addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
+    //            addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
+    
+    // do the request
+    [trackerRequest doTrackErrorRequest:message from:where andError:error];
+}
+
 - (void) onVideoLiked:(VideoObject*)videoObject {
     if (likeVideoRequest == nil) {
         // create a delete request if not already done
@@ -403,6 +453,8 @@
         }
         [videosTable endUpdates];
         
+        [self trackAction:@"like" forVideo:videoObject.videoId];
+        
 	} else {
 		LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
 	}
@@ -432,6 +484,8 @@
         }
         [videosTable endUpdates];
         
+        [self trackAction:@"unlike" forVideo:videoObject.videoId];
+        
     } else {
         LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
     }
@@ -443,7 +497,7 @@
 
 - (void) onAddVideoRequestSuccess: (UnlikeVideoResponse*)response {
 	if (response.success) {
-        
+        [self trackAction:@"save" forVideo:response.videoObject.videoId];
 	} else {
 		LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
 	}
@@ -466,6 +520,7 @@
 		[videosTable deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
 						   withRowAnimation:UITableViewRowAnimationFade];
 		[videosTable endUpdates];
+        [self trackAction:@"remove" forVideo:videoObject.videoId];
 	} else {
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to delete this video: %@", response.errorMessage];
 		
@@ -566,6 +621,14 @@
 		// Update data for the cell
 		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
 		[cell setVideoObject: videoObject];
+        
+        if (indexPath.row == (videos.count - 1)) {
+            if (loadMoreState != LOADING) {
+                LOG_DEBUG(@"Loading more data");
+                loadMoreState = LOADING;
+                [self onLoadMoreData];
+            }
+        }
 	}
 	
     return cell;
@@ -592,16 +655,6 @@
         }
         
         refreshState = REFRESH_NONE;
-        
-        // If user has reached at the end of the list load more videos, if there are any
-        if (scrollView.contentOffset.y > self.view.frame.size.height) {
-            // LOG_DEBUG(@"User reached at the end of the list");
-            if (loadMoreState != LOADING) {
-                // LOG_DEBUG(@"Loading more data");
-                loadMoreState = LOADING;
-                [self onLoadMoreData];
-            }
-        }
         
     } else if (scrollView.contentOffset.y <= -60) {
         if (refreshState < RELEASING) {

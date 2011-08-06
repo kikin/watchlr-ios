@@ -7,20 +7,25 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "CommonIos/Callback.h"
 
 @interface ThumbnailObject : NSObject {
-	int             height;
-    int             width;
-	NSString*       thumbnailUrl;
-    UIImage*        thumbnailImage;
+	int         height;
+    int         width;
+    
+	NSString*   thumbnailUrl;
+    UIImage*    thumbnailImage;
+    
+    Callback*   onThumbnailImageLoaded;
 }
 
 @property()			int height;
 @property()			int width;
 @property(retain)	NSString* thumbnailUrl;
 @property(retain)	UIImage* thumbnailImage;
+@property(retain)   Callback* onThumbnailImageLoaded;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
+
 
 @end

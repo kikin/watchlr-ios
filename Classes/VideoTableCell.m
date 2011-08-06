@@ -99,6 +99,27 @@
     return self;
 }
 
+- (void) onThumbnailImageLoaded:(UIImage*)thumbnailImage {
+    if (thumbnailImage == nil) {
+        thumbnailImage = [UIImage imageNamed:@"default_video_icon"];
+    }
+    
+    if (![[NSThread currentThread] isCancelled]) {
+        [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:thumbnailImage waitUntilDone:YES];
+    }
+}
+
+- (void) onFaviconImageLoaded:(UIImage*)faviconImage {
+    if (faviconImage != nil) {
+        if (![[NSThread currentThread] isCancelled]) {
+            [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:faviconImage waitUntilDone:YES];
+            faviconImageView.hidden = NO;
+        }
+    } else {
+        faviconImageView.hidden = YES;
+    }
+}
+
 - (void) loadImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
@@ -111,10 +132,14 @@
     }
 	
     // set the thumbnail image
-    if (videoObject.thumbnail != nil && videoObject.thumbnail.thumbnailImage != nil) {
-        // make sure the thread was not killed
-        if (![[NSThread currentThread] isCancelled]) {
-            [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:(videoObject.thumbnail.thumbnailImage) waitUntilDone:YES];
+    if (videoObject.thumbnail != nil) {
+        if (videoObject.thumbnail.thumbnailImage != nil) {
+            // make sure the thread was not killed
+            if (![[NSThread currentThread] isCancelled]) {
+                [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:(videoObject.thumbnail.thumbnailImage) waitUntilDone:YES];
+            }
+        } else {
+            videoObject.thumbnail.onThumbnailImageLoaded = [Callback create:self selector:@selector(onThumbnailImageLoaded:)];
         }
     } else {
         // make sure the thread was not killed
@@ -128,12 +153,18 @@
     
     if (videoObject.videoSource != nil) {
         // set the favicon image
-        if (videoObject.videoSource.faviconImage != nil) {
-            // make sure the thread was not killed
-            if (![[NSThread currentThread] isCancelled]) {
-                [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:videoObject.videoSource.faviconImage waitUntilDone:YES];
-                faviconImageView.hidden = NO;
+        if (videoObject.videoSource.isFaviconImageLoaded) {
+            if (videoObject.videoSource.faviconImage != nil) {
+                // make sure the thread was not killed
+                if (![[NSThread currentThread] isCancelled]) {
+                    [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:videoObject.videoSource.faviconImage waitUntilDone:YES];
+                    faviconImageView.hidden = NO;
+                }
+            } else {
+                faviconImageView.hidden = YES;
             }
+        } else {
+            videoObject.videoSource.onFaviconImageLoaded = [Callback create:self selector:@selector(onFaviconImageLoaded:)];
         }
         
         // set the source name
@@ -205,6 +236,7 @@
     // LOG_DEBUG(@"Drawing the cell");
 	if (videoObject) [videoObject release];
 	videoObject = [video retain];
+    faviconImageView.hidden = YES;
 	
 	// change text
 	titleLabel.text = video.title;

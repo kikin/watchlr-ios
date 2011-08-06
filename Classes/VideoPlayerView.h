@@ -51,6 +51,7 @@
     Callback* onLikeButtonClickedCallback;
     Callback* onUnlikeButtonClickedCallback;
     Callback* onSaveButtonClickedCallback;
+    Callback* onPlaybackErrorCallback;
     
     bool isVimeoVideo;
     bool isYoutubeVideo;
@@ -71,10 +72,12 @@
 @property(retain) Callback* onLikeButtonClickedCallback;
 @property(retain) Callback* onUnlikeButtonClickedCallback;
 @property(retain) Callback* onSaveButtonClickedCallback;
+@property(retain) Callback* onPlaybackErrorCallback;
 
 - (void) playVideo:(VideoObject*) videoObject;
 - (void) onVideoRequestFailed:(NSString*) errorMessage;
 - (void) onVideoRequestSuccess:(VideoResponse*) aResponse;
 - (void) closePlayer;
+- (void) onAllVideosPlayed;
 
 @end

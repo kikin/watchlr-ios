@@ -104,6 +104,19 @@ static NSString* kSDKVersion = @"2";
 /**
  * A private function for opening the authorization dialog.
  */
+- (void)authorize:(NSArray *)permissions 
+            WithFBAppAuth:(BOOL)tryFBAppAuth
+            safariAuth:(BOOL)trySafariAuth 
+{
+    [_permissions release];
+    _permissions = [permissions retain];
+    
+    [self authorizeWithFBAppAuth:tryFBAppAuth safariAuth:trySafariAuth];
+}
+
+/**
+ * A private function for opening the authorization dialog.
+ */
 - (void)authorizeWithFBAppAuth:(BOOL)tryFBAppAuth
                     safariAuth:(BOOL)trySafariAuth {
   NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:

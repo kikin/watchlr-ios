@@ -50,6 +50,10 @@
 - (void)authorizeWithFBAppAuth:(BOOL)tryFBAppAuth
                     safariAuth:(BOOL)trySafariAuth;
 
+- (void)authorize:(NSArray *)permissions 
+        WithFBAppAuth:(BOOL)tryFBAppAuth
+        safariAuth:(BOOL)trySafariAuth;
+
 - (BOOL)handleOpenURL:(NSURL *)url;
 
 - (void) removeAllCookies;

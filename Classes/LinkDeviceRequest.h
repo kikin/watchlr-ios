@@ -14,7 +14,7 @@
 	
 }
 
-- (void) doLinkDeviceRequest:(NSString*)facebookId;
+- (void) doLinkDeviceRequest:(NSString*)facebookId  andAccessToken:(NSString*)facebookAccessToken;
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

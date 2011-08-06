@@ -52,7 +52,7 @@
 	}
 	
 	// create the facebook object for connection
-	facebook = [[Facebook alloc] initWithAppId:@"142118469191927"];
+	facebook = [[Facebook alloc] initWithAppId:@"220283271338035"];
 	
 	// look if the user is already loggedIn
 	UserObject* user = [UserObject getUser];
@@ -83,7 +83,9 @@
 	// start facebook connect
 	facebook.sessionDelegate = self;
 	[facebook removeAllCookies];
-	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
+    NSArray* permissions = [NSArray arrayWithObjects:@"offline_access", @"publish_stream", @"read_stream", @"email", nil];
+    [facebook authorize:permissions WithFBAppAuth:YES safariAuth:NO];
+//	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
 }
 
 - (Facebook*) facebook {
@@ -104,7 +106,7 @@
 
 - (void) fbDidLogin {
 	// we need the user id in order to connect him with the server
-	[facebook requestWithGraphPath:@"me" andDelegate:self];
+    [facebook requestWithGraphPath:@"me" andDelegate:self];
 }
 
 - (void)request:(FBRequest *)request didFailWithError:(NSError *)error {
@@ -118,9 +120,11 @@
 	// get the user id
 	NSDictionary* data = result;
 	NSString* facebookId = [data objectForKey:@"id"];
-	if (facebookId != nil) {
+    LOG_DEBUG(@"Facebook access tooken: %@", [facebook accessToken]);
+    NSString* facebookAccessToken = [facebook accessToken];
+	if (facebookId != nil && facebookAccessToken != nil) {
 		// link this device with the server using this id
-		[self doLinkDeviceRequest:facebookId];
+		[self doLinkDeviceRequest:facebookId andAccessToken:facebookAccessToken];
 	}
 }
 
@@ -156,11 +160,11 @@
 	LOG_ERROR(@"failed to link the device: %@", errorMessage);
 }
 
-- (void) doLinkDeviceRequest: (NSString*)accessToken {
+- (void) doLinkDeviceRequest: (NSString*)facebookId andAccessToken:(NSString*)facebookAccessToken {
 	LinkDeviceRequest* request = [[LinkDeviceRequest alloc] init];
 	request.successCallback = [Callback create:self selector:@selector(onLinkRequestSuccess:)];
 	request.errorCallback = [Callback create:self selector:@selector(onLinkRequestFailed:)];
-	[request doLinkDeviceRequest:accessToken];
+	[request doLinkDeviceRequest:facebookId andAccessToken:facebookAccessToken];
     [request release];
 }
 

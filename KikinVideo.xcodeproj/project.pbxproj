@@ -11,6 +11,8 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		262D0C1C13ECB388002B0FF9 /* TrackerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 262D0C1913ECB388002B0FF9 /* TrackerRequest.m */; };
+		262D0C1D13ECB388002B0FF9 /* TrackerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 262D0C1B13ECB388002B0FF9 /* TrackerResponse.m */; };
 		265A5BD113C04CA500CE8FBD /* closeX.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BD013C04CA400CE8FBD /* closeX.png */; };
 		265A5BE313C3603900CE8FBD /* watchlr_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE213C3603800CE8FBD /* watchlr_logo.png */; };
 		265A5BE513C3AAFE00CE8FBD /* watchlr_favicon_big.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE413C3AAFD00CE8FBD /* watchlr_favicon_big.png */; };
@@ -313,6 +315,10 @@
 		1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KikinVideoAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* watchlr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watchlr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		262D0C1813ECB388002B0FF9 /* TrackerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackerRequest.h; sourceTree = "<group>"; };
+		262D0C1913ECB388002B0FF9 /* TrackerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackerRequest.m; sourceTree = "<group>"; };
+		262D0C1A13ECB388002B0FF9 /* TrackerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackerResponse.h; sourceTree = "<group>"; };
+		262D0C1B13ECB388002B0FF9 /* TrackerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackerResponse.m; sourceTree = "<group>"; };
 		265A5BD013C04CA400CE8FBD /* closeX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeX.png; sourceTree = "<group>"; };
 		265A5BE213C3603800CE8FBD /* watchlr_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_logo.png; sourceTree = "<group>"; };
 		265A5BE413C3AAFD00CE8FBD /* watchlr_favicon_big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_favicon_big.png; sourceTree = "<group>"; };
@@ -839,6 +845,7 @@
 				357A16E61317FE240050C2CA /* LinkDeviceResponse.h */,
 				26E3FFF513A6C2D500F35642 /* SaveUserProfileResponse.h */,
 				26E3000713A7DB2E00F35642 /* SeekVideoResponse.h */,
+				262D0C1A13ECB388002B0FF9 /* TrackerResponse.h */,
 				26AC58FF13A15C8500750D2F /* UnlikeVideoResponse.h */,
 				357A120313171B2A0050C2CA /* VideoListResponse.h */,
 				269B6F6F13AFBA110019133D /* VideoResponse.h */,
@@ -857,6 +864,7 @@
 				357A16E71317FE240050C2CA /* LinkDeviceResponse.m */,
 				26E3FFF613A6C2E100F35642 /* SaveUserProfileResponse.m */,
 				26E3000813A7DB3500F35642 /* SeekVideoResponse.m */,
+				262D0C1B13ECB388002B0FF9 /* TrackerResponse.m */,
 				26AC590013A15C8500750D2F /* UnlikeVideoResponse.m */,
 				357A120413171B2A0050C2CA /* VideoListResponse.m */,
 				269B6F7013AFBA1C0019133D /* VideoResponse.m */,
@@ -874,6 +882,7 @@
 				357A16E41317FDE60050C2CA /* LinkDeviceRequest.m */,
 				26E3FFF313A6C2C100F35642 /* SaveUserProfileRequest.m */,
 				26E3000513A7DAF100F35642 /* SeekVideoRequest.m */,
+				262D0C1913ECB388002B0FF9 /* TrackerRequest.m */,
 				26AC590313A15C8D00750D2F /* UnlikeVideoRequest.m */,
 				357A10CF13170A150050C2CA /* VideoListRequest.m */,
 				269B6F6D13AFB9F10019133D /* VideoRequest.m */,
@@ -891,6 +900,7 @@
 				357A16E31317FDE60050C2CA /* LinkDeviceRequest.h */,
 				26E3FFF213A6C2B600F35642 /* SaveUserProfileRequest.h */,
 				26E3000413A7DAEA00F35642 /* SeekVideoRequest.h */,
+				262D0C1813ECB388002B0FF9 /* TrackerRequest.h */,
 				26AC590213A15C8D00750D2F /* UnlikeVideoRequest.h */,
 				357A10CE13170A150050C2CA /* VideoListRequest.h */,
 				269B6F6C13AFB9E80019133D /* VideoRequest.h */,
@@ -1625,6 +1635,8 @@
 				269B6F6B13ABB9150019133D /* VideoPlayerView.m in Sources */,
 				269B6F6E13AFB9F20019133D /* VideoRequest.m in Sources */,
 				269B6F7113AFBA1C0019133D /* VideoResponse.m in Sources */,
+				262D0C1C13ECB388002B0FF9 /* TrackerRequest.m in Sources */,
+				262D0C1D13ECB388002B0FF9 /* TrackerResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

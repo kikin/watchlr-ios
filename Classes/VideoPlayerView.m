@@ -13,7 +13,7 @@
 
 @implementation VideoPlayerView
 
-@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback;
+@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -385,9 +385,10 @@
  * Shows the error message if we cannot play the video.
  */
 - (void) showErrorMessage:(NSString*) message {
+    [self performSelector:@selector(onPlaybackError) withObject:[NSNumber numberWithInt:4] afterDelay:1.0];
+    
     errorMessage.text = message;
     errorMessage.hidden = NO;
-    
     countdown.hidden = NO;
     countdown.text = @"5";
     [self performSelector:@selector(updateCountdown:) withObject:[NSNumber numberWithInt:4] afterDelay:1.0];
@@ -435,7 +436,7 @@
     NSError* error = NULL;
     
     // Extract the youtube video id
-    NSRegularExpression *videoIdRegex = [NSRegularExpression regularExpressionWithPattern:@"embed\\/([\\S]+?)\\?autoplay"
+    NSRegularExpression *videoIdRegex = [NSRegularExpression regularExpressionWithPattern:@"embed\\/([\\S]+?)\\?"
                                                                                   options:NSRegularExpressionCaseInsensitive
                                                                                     error:&error];
     
@@ -446,9 +447,9 @@
             
             // If we matched the timestamp regex in the metadata
             // remove the first 6 characters('embed/') and last 9 
-            // characters('?autoplay') from the matched string
+            // characters('?') from the matched string
             youtubeVideoId = [videoSrc substringWithRange:rangeOfvideoIdString];
-            youtubeVideoId = [youtubeVideoId substringWithRange:NSMakeRange(6, ([youtubeVideoId length] - 15))];
+            youtubeVideoId = [youtubeVideoId substringWithRange:NSMakeRange(6, ([youtubeVideoId length] - 7))];
             // LOG_DEBUG(@"youtube video id for video: %@", youtubeVideoId);
         } else {
             LOG_ERROR(@"Unable to found any match for youtube video id.");
@@ -682,147 +683,58 @@
  */
 -(void) playYoutubeVideo:(NSString*) metadata {
     // LOG_DEBUG(@"Playing youtube video.");
-    NSString* status = NULL;
+    NSString *videoUrlHD = NULL;
     NSString *videoUrl = NULL;
-    NSError *error = NULL;
     
-    // decode the meta data fetched
-    metadata = [metadata stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-    // LOG_DEBUG(@"Body of the page:\n%@\n\n", metadata);
-    
-    // check the status code for the results fetched
-    NSRegularExpression *statusRegex = [NSRegularExpression regularExpressionWithPattern:@"status=([\\w]+)\\&"
-                                                                                   options:NSRegularExpressionCaseInsensitive
-                                                                                     error:&error];
-    
-    // If there is no error in regex, try to find all the matches in regex 
-    if (error == NULL) {
-        NSRange rangeOfStatusString = [statusRegex rangeOfFirstMatchInString:metadata options:0 range:NSMakeRange(0, [metadata length])];
-        if (!NSEqualRanges(rangeOfStatusString, NSMakeRange(NSNotFound, 0))) {
-            
-            // If we matched the timestamp regex in the metadata
-            // remove the first 7 characters('status=') and the last 
-            // character('&') from the matched string
-            status = [metadata substringWithRange:rangeOfStatusString];
-            status = [status substringWithRange:NSMakeRange(7, ([status length] - 8))];
-            // LOG_DEBUG(@"Youtube video url: %@", videoUrl);
-        } else {
-            LOG_ERROR(@"Unable to found any match for status.");
-        }
-    } else {
-        LOG_ERROR(@"Error in status regex.");
+    NSArray* params = [metadata componentsSeparatedByString:@"&"];
+    NSMutableDictionary* paramsDict = [[[NSMutableDictionary alloc] init] autorelease];
+    for (int i = 0; i < [params count]; i++) {
+        NSString* keyValuePair = (NSString*)[params objectAtIndex:i];
+        // LOG_DEBUG(@"\n%@\n\n\n", keyValuePair);
+        NSUInteger equalPos = [keyValuePair rangeOfString:@"="].location;
+        [paramsDict setValue:[keyValuePair substringFromIndex:(equalPos + 1)] forKey:[keyValuePair substringToIndex:equalPos]];
     }
     
     // if meta data URL returns status as false,
     // then video is not embeddable and we cannot play that video.
-    if (NSOrderedSame != [status caseInsensitiveCompare:@"ok"]) {
-        LOG_ERROR(@"Youtube video is not embeddable. Status: %@", status);
+    if (NSOrderedSame != [(NSString*)[paramsDict valueForKey:@"status"] caseInsensitiveCompare:@"ok"]) {
+        LOG_ERROR(@"Youtube video is not embeddable. Status: %@", (NSString*)[paramsDict valueForKey:@"status"]);
         [self showErrorMessage:@"Embedding disabled by request.\nYour next video will play in"];
         return;
     }
     
-    // Try to fetch the HD quality video
-    // Look for something '22|...,35|'
-    NSRegularExpression *videoUrlRegex = [NSRegularExpression regularExpressionWithPattern:@"22\\|([\\S]+?)\\,\\d+\\|"
-                                                                                   options:NSRegularExpressionCaseInsensitive
-                                                                                     error:&error];
-    
-    // If there is no error in regex, try to find all the matches in regex 
-    if (error == NULL) {
-        NSRange rangeOfVideoUrlString = [videoUrlRegex rangeOfFirstMatchInString:metadata options:0 range:NSMakeRange(0, [metadata length])];
-        if (!NSEqualRanges(rangeOfVideoUrlString, NSMakeRange(NSNotFound, 0))) {
-            
-            // If we matched the timestamp regex in the metadata
-            // remove the first 3 characters('22|') and the last 
-            // character('|') from the matched string
-            videoUrl = [metadata substringWithRange:rangeOfVideoUrlString];
-            videoUrl = [videoUrl substringWithRange:NSMakeRange(3, ([videoUrl length] - 4))];
-            // LOG_DEBUG(@"Youtube video url: %@", videoUrl);
-        } else {
-            LOG_ERROR(@"Unable to found any match for video url.");
-        }
-    } else {
-        LOG_ERROR(@"Error in video url regex.");
+    NSString* url_encoded_fmt_stream_map = (NSString*)[paramsDict valueForKey:@"url_encoded_fmt_stream_map"];
+    if (url_encoded_fmt_stream_map == nil || [url_encoded_fmt_stream_map length] == 0) {
+        LOG_ERROR(@"Unable to fetch the url_encoded_fmt_stream_map");
+        [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        return;
     }
     
-    // If HD quality does not exist try to fetch the normal quality
-    if (videoUrl == NULL) {
-        // Look for something '18|...,35|'
-        NSRegularExpression *videoUrlRegex = [NSRegularExpression regularExpressionWithPattern:@"18\\|([\\S]+?)\\,\\d+\\|"
-                                                                                       options:NSRegularExpressionCaseInsensitive
-                                                                                         error:&error];
-        
-        // If there is no error in regex, try to find all the matches in regex 
-        if (error == NULL) {
-            NSRange rangeOfVideoUrlString = [videoUrlRegex rangeOfFirstMatchInString:metadata options:0 range:NSMakeRange(0, [metadata length])];
-            if (!NSEqualRanges(rangeOfVideoUrlString, NSMakeRange(NSNotFound, 0))) {
-                
-                // If we matched the timestamp regex in the metadata
-                // remove the first 3 characters('18|') and the last 
-                // character('|') from the matched string
-                videoUrl = [metadata substringWithRange:rangeOfVideoUrlString];
-                videoUrl = [videoUrl substringWithRange:NSMakeRange(3, ([videoUrl length] - 4))];
-                // LOG_DEBUG(@"Youtube video url: %@", videoUrl);
-            } else {
-                LOG_ERROR(@"Unable to found any match for video url.");
-            }
-        } else {
-            LOG_ERROR(@"Error in video url regex.");
-        }
-    }
+    // decode the meta data fetched
+    url_encoded_fmt_stream_map = [url_encoded_fmt_stream_map stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+    // LOG_DEBUG(@"url_encoded_fmt_stream_map:\n%@\n\n", url_encoded_fmt_stream_map);
     
-    if (videoUrl != NULL) {
-        // Look for something '&id=...'
-        // Remove || and anything after that
-        videoUrlRegex = [NSRegularExpression regularExpressionWithPattern:@"[\\S]+\\|\\|"
-                                                                  options:NSRegularExpressionCaseInsensitive
-                                                                    error:&error];
-        
-        // If there is no error in regex, try to find all the matches in regex 
-        if (error == NULL) {
-            NSRange rangeOfVideoUrlString = [videoUrlRegex rangeOfFirstMatchInString:videoUrl options:0 range:NSMakeRange(0, [videoUrl length])];
-            if (!NSEqualRanges(rangeOfVideoUrlString, NSMakeRange(NSNotFound, 0))) {
-                
-                // If we matched the timestamp regex in the metadata
-                // remove the last 2 characters('||') from the matched string
-                videoUrl = [videoUrl substringWithRange:rangeOfVideoUrlString];
-                videoUrl = [videoUrl substringWithRange:NSMakeRange(0, ([videoUrl length] - 2))];
-                // LOG_DEBUG(@"\n\n\nYoutube video url: %@", videoUrl);
-            } else {
-                LOG_ERROR(@"Unable to found any match for video url2. Video URL Regex passed: %@", videoUrl);
-                // Look for something '&id=...'
-                // Remove || and anything after that
-                videoUrlRegex = [NSRegularExpression regularExpressionWithPattern:@"\\,[\\d]+"
-                                                                          options:NSRegularExpressionCaseInsensitive
-                                                                            error:&error];
-                
-                // If there is no error in regex, try to find all the matches in regex 
-                if (error == NULL) {
-                    NSRange rangeOfVideoUrlString = [videoUrlRegex rangeOfFirstMatchInString:videoUrl options:0 range:NSMakeRange(0, [videoUrl length])];
-                    if (!NSEqualRanges(rangeOfVideoUrlString, NSMakeRange(NSNotFound, 0))) {
-                        
-                        // If we matched the timestamp regex in the metadata
-                        // remove the last 2 characters('||') from the matched string
-                        videoUrl = [videoUrl substringToIndex:rangeOfVideoUrlString.location];
-                        // videoUrl = [videoUrl substringWithRange:NSMakeRange(0, ([videoUrl length] - 2))];
-                        // LOG_DEBUG(@"\n\n\nYoutube video url: %@", videoUrl);
-                    } else {
-                        LOG_ERROR(@"Unable to found any match for video url2. Video URL Regex passed: %@", videoUrl);
-                        videoUrl = NULL;
-                    }
-                } else {
-                    LOG_ERROR(@"Error in video url regex2.");
-                    videoUrl = NULL;
-                }
-            }
-        } else {
-            LOG_ERROR(@"Error in video url regex2.");
-            videoUrl = NULL;
+    NSArray* urls = [url_encoded_fmt_stream_map componentsSeparatedByString:@","];
+    for (int i = 0; i < [urls count]; i++) {
+        NSString* url = [urls objectAtIndex:i];
+        if (NSOrderedSame == [[url substringFromIndex:[url length] - 2] caseInsensitiveCompare:@"22"]) {
+            NSRange range = [url rangeOfString:@"url="];
+            url = [[url substringFromIndex:(range.location + range.length)] stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+            range = [url rangeOfString:@"type=video/mp4"];
+            videoUrlHD = [url substringToIndex:(range.location + range.length)]; 
+            break;
+        } else if (NSOrderedSame == [[url substringFromIndex:[url length] - 2] caseInsensitiveCompare:@"18"]) {
+            NSRange range = [url rangeOfString:@"url="];
+            url = [[url substringFromIndex:(range.location + range.length)] stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+            range = [url rangeOfString:@"type=video/mp4"];
+            videoUrl = [url substringToIndex:(range.location + range.length)];
         }
     }
     
     // If we found the video URL, play the video.
-    if (videoUrl != NULL) {
+    if (videoUrlHD != NULL) {
+        [self loadVideo: videoUrlHD];
+    } else if (videoUrl !=NULL) {
         [self loadVideo: videoUrl];
     } else {
         LOG_ERROR(@"Unable to found the URL for youtube video stream.");
@@ -899,14 +811,17 @@
     }
 }
 
+- (void) stopCountdown {
+    [UIApplication cancelPreviousPerformRequestsWithTarget:self];
+    countdown.hidden = YES;
+    errorMessage.hidden = YES;
+}
+
 // -------------------------------------------------------------------------
 //                              Callback functions
 // -------------------------------------------------------------------------
 - (void) onCloseButtonClicked:(UIButton*) sender {
-    // LOG_DEBUG(@"Close button clicked.");
-    [UIApplication cancelPreviousPerformRequestsWithTarget:self];
-    countdown.hidden = YES;
-    errorMessage.hidden = YES;
+    [self stopCountdown];
     // LOG_DEBUG(@"User closed the player");
     isLeanBackMode = false;
     hasUserInitiatedVideoFinished = true;
@@ -944,6 +859,7 @@
 }
 
 - (void) onPreviousButtonClicked:(UIButton*) sender {
+    [self stopCountdown];
     isLeanBackMode = true;
     hasUserInitiatedVideoFinished = true;
     [moviePlayerController stop];
@@ -953,11 +869,21 @@
 }
 
 - (void) onNextButtonClicked:(UIButton*) sender {
+    [self stopCountdown];
     isLeanBackMode = true;
     hasUserInitiatedVideoFinished = true;
     [moviePlayerController stop];
     if (onNextButtonClickedCallback != nil) {
         [onNextButtonClickedCallback execute:nil];
+    }
+}
+
+-(void) onPlaybackError {
+    isLeanBackMode = true;
+    hasUserInitiatedVideoFinished = true;
+    [moviePlayerController stop];
+    if (onPlaybackErrorCallback != nil) {
+        [onPlaybackErrorCallback execute:nil];
     }
 }
 
@@ -1104,7 +1030,7 @@
 }
 
 - (void) onVideoFinished:(NSNotification*)aNotification {
-    LOG_DEBUG(@"Video finished");
+    LOG_DEBUG(@"Video finished for URL:%@", video.videoUrl);
     NSDictionary *userInfo = [aNotification userInfo];
     // LOG_DEBUG(@"Reason video finished: %d", [[userInfo objectForKey:@"MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"] intValue]);
     // LOG_DEBUG(@"Has user initiated finish action: %@", (hasUserInitiatedVideoFinished ? @"true" : @"false"));
@@ -1267,6 +1193,17 @@
 - (void) closePlayer {
     if (MPMoviePlaybackStateStopped != moviePlayerController.playbackState) {
         [self onCloseButtonClicked: nil];
+    }
+}
+
+- (void) onAllVideosPlayed {
+    // show the loading indicator
+    if (isFullScreenMode) {
+        if (fullScreenLoadingActivity != nil) {
+            [fullScreenLoadingActivity stopAnimating]; 
+        }
+    } else {
+        [loadingActivity stopAnimating];
     }
 }
 

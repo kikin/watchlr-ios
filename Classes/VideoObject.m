@@ -50,9 +50,9 @@
 	self.description = nil;
 	self.videoUrl = nil;
 	self.embedUrl = nil;
-	self.thumbnail = nil;
+//	self.thumbnail = nil;
     self.htmlCode = nil;
-    self.videoSource = nil;
+//    self.videoSource = nil;
 	[super dealloc];
 }
 

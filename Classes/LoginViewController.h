@@ -26,7 +26,7 @@
 - (Facebook*) facebook;
 - (void) showView: (UIView*)view;
 - (void) goToMainView:(bool)animated;
-- (void) doLinkDeviceRequest: (NSString*)accessToken;
+- (void) doLinkDeviceRequest: (NSString*)facebookId andAccessToken:(NSString*)facebookAccessToken;
 - (void) onLinkRequestSuccess: (id)jsonObject;
 - (void) onLinkRequestFailed: (NSString*)errorMessage;
 

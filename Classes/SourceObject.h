@@ -7,19 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "CommonIos/Callback.h"
 
 @interface SourceObject : NSObject {
 	NSString*   favicon;
     NSString*   name;
 	NSString*   sourceUrl;
     UIImage*    faviconImage;
+    
+    bool        isFaviconImageLoaded;
+    Callback*   onFaviconImageLoaded;
 }
 
 @property(retain)	NSString* favicon;
 @property(retain)	NSString* name;
 @property(retain)	NSString* sourceUrl;
 @property(retain)	UIImage* faviconImage;
+@property()         bool isFaviconImageLoaded;
+@property(retain)   Callback* onFaviconImageLoaded;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 

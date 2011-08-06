@@ -10,7 +10,27 @@
 
 @implementation ThumbnailObject
 
-@synthesize height, width, thumbnailUrl, thumbnailImage;
+@synthesize height, width, thumbnailUrl, thumbnailImage, onThumbnailImageLoaded;
+
+- (void) loadImage {
+    
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    
+    NSURL* url = [NSURL URLWithString:self.thumbnailUrl];
+    NSData* data = [NSData dataWithContentsOfURL:url];
+    if (data != nil) {
+        // set thumbnail image
+        thumbnailImage = [[UIImage alloc] initWithData:data];
+    } else {
+        thumbnailImage = [UIImage imageNamed:@"default_video_icon.png"];
+    }
+    
+    if (onThumbnailImageLoaded != nil) {
+        [onThumbnailImageLoaded execute:thumbnailImage];
+    }
+    
+    [pool release];
+}
 
 - (id) initFromDictionnary: (NSDictionary*)data {
     // LOG_DEBUG(@"Creating thumbnail object");
@@ -20,12 +40,8 @@
 	self.thumbnailUrl = [data objectForKey:@"url"] != [NSNull null] ? [data objectForKey:@"url"] : nil;
     
     if (self.thumbnailUrl != nil) {
-        NSURL* url = [NSURL URLWithString:self.thumbnailUrl];
-        NSData* data = [NSData dataWithContentsOfURL:url];
-        if (data != nil) {
-            // set thumbnail image
-            thumbnailImage = [[UIImage alloc] initWithData:data];
-        }
+        NSThread* imageLoaderThread = [[[NSThread alloc] initWithTarget:self selector:@selector(loadImage) object:nil] autorelease];
+        [imageLoaderThread start];
     } else {
         thumbnailImage = [UIImage imageNamed:@"default_video_icon.png"];
     }
