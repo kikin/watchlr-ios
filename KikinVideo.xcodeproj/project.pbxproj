@@ -45,6 +45,10 @@
 		26CF9DBD13CF82C400BD718A /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBB13CF82C200BD718A /* back_arrow.png */; };
 		26CF9DBE13CF82C400BD718A /* fwd_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBC13CF82C300BD718A /* fwd_arrow.png */; };
 		26CF9DC013CFF02C00BD718A /* check_mark_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CF9DBF13CFF02B00BD718A /* check_mark_green.png */; };
+		26E2300613F0503B00DB6D0A /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300213F0503B00DB6D0A /* Icon-72.png */; };
+		26E2300713F0503B00DB6D0A /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300313F0503B00DB6D0A /* Icon-Small-50.png */; };
+		26E2300813F0503B00DB6D0A /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300413F0503B00DB6D0A /* Icon-Small.png */; };
+		26E2300913F0503B00DB6D0A /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300513F0503B00DB6D0A /* Icon.png */; };
 		26E3000013A7BF6800F35642 /* FeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3FFFF13A7BF6800F35642 /* FeedbackViewController.m */; };
 		26E3000613A7DAF200F35642 /* SeekVideoRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3000513A7DAF100F35642 /* SeekVideoRequest.m */; };
 		26E3000913A7DB3500F35642 /* SeekVideoResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E3000813A7DB3500F35642 /* SeekVideoResponse.m */; };
@@ -366,6 +370,10 @@
 		26CF9DBB13CF82C200BD718A /* back_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = back_arrow.png; path = "../../Dropbox/kikin Video Design (1)/Design/mini icons/back_arrow.png"; sourceTree = "<group>"; };
 		26CF9DBC13CF82C300BD718A /* fwd_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fwd_arrow.png; path = "../../Dropbox/kikin Video Design (1)/Design/mini icons/fwd_arrow.png"; sourceTree = "<group>"; };
 		26CF9DBF13CFF02B00BD718A /* check_mark_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check_mark_green.png; path = ../kikinvideo/static/images/check_mark_green.png; sourceTree = "<group>"; };
+		26E2300213F0503B00DB6D0A /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		26E2300313F0503B00DB6D0A /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
+		26E2300413F0503B00DB6D0A /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
+		26E2300513F0503B00DB6D0A /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		26E3000413A7DAEA00F35642 /* SeekVideoRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeekVideoRequest.h; sourceTree = "<group>"; };
 		26E3000513A7DAF100F35642 /* SeekVideoRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeekVideoRequest.m; sourceTree = "<group>"; };
 		26E3000713A7DB2E00F35642 /* SeekVideoResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeekVideoResponse.h; sourceTree = "<group>"; };
@@ -995,6 +1003,10 @@
 		357A08C81316AEF30050C2CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				26E2300213F0503B00DB6D0A /* Icon-72.png */,
+				26E2300313F0503B00DB6D0A /* Icon-Small-50.png */,
+				26E2300413F0503B00DB6D0A /* Icon-Small.png */,
+				26E2300513F0503B00DB6D0A /* Icon.png */,
 				265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */,
 				357A08C91316AEF30050C2CA /* 01-refresh.png */,
 				357A08CA1316AEF30050C2CA /* 02-redo.png */,
@@ -1580,6 +1592,10 @@
 				26CF9DBD13CF82C400BD718A /* back_arrow.png in Resources */,
 				26CF9DBE13CF82C400BD718A /* fwd_arrow.png in Resources */,
 				26CF9DC013CFF02C00BD718A /* check_mark_green.png in Resources */,
+				26E2300613F0503B00DB6D0A /* Icon-72.png in Resources */,
+				26E2300713F0503B00DB6D0A /* Icon-Small-50.png in Resources */,
+				26E2300813F0503B00DB6D0A /* Icon-Small.png in Resources */,
+				26E2300913F0503B00DB6D0A /* Icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1676,6 +1692,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = watchlr;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -1699,6 +1716,7 @@
 					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
 				);
 				PRODUCT_NAME = watchlr;
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1742,6 +1760,7 @@
 					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
 				);
 				PRODUCT_NAME = watchlr;
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Ad Hoc";

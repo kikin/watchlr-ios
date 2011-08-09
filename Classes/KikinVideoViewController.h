@@ -80,6 +80,7 @@ typedef enum {
 - (void) showFeedbackForm;
 - (void) logoutUser;
 - (void) onApplicationBecomeInactive;
+- (void) closePlayer;
 
 - (void) trackAction:(NSString*)action forVideo:(int)vid;
 - (void) trackEvent:(NSString*)name withValue:(NSString*)value;

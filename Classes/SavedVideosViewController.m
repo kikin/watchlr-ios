@@ -31,7 +31,7 @@
 	if ([videoListRequest isRequesting]) {
 		[videoListRequest cancelRequest];
 	}
-	[videoListRequest doGetVideoListRequest:NO startingAt:startIndex];
+	[videoListRequest doGetVideoListRequest:NO startingAt:startIndex withCount:10];
 }
 
 - (void) onClickRefresh {
@@ -69,26 +69,76 @@
         }
         
         lastPageRequested = pageNumber;
-        loadedAllVideos = false;
-        
-        [loadingView stopAnimating];
+        if ((videoCount % 10) == 0) {
+            loadedAllVideos = false;
+        } else {
+            loadedAllVideos = true;            
+        }
         
     } else if (isRefreshing) {
         // user wants to refresh the list
         // insert only those videos which are never inserted
-        int firstVideoId = ((VideoObject*)[videos objectAtIndex:0]).videoId;
-        int i = 0;
-        for (NSDictionary* videoDic in videosList) {
-            int videoId = [[videoDic objectForKey:@"id"] intValue];
-            if (firstVideoId == videoId) {
-                break;
-            } else {
+        NSUInteger firstMatchedVideoIndex = NSNotFound;
+        if ([videos count] > 0) {
+            for (int i = 0; i < [videos count]; i++) {
+                VideoObject* video = [videos objectAtIndex:i];
+                firstMatchedVideoIndex = [videosList indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                    if ([[(NSDictionary*)(obj) objectForKey:@"id"] intValue] == video.videoId) {
+                        *stop = YES;
+                        return YES;
+                    }
+                    return NO;
+                }];
+                
+                if (firstMatchedVideoIndex != NSNotFound) {
+                    break;
+                }
+                
+                [videos removeObject:video];
+                i--;
+            }
+            
+        }
+        
+        if (firstMatchedVideoIndex != NSNotFound) {
+            // add all the videos to the list that were not present before
+            for (int i = 0; i < firstMatchedVideoIndex; i++) {
                 // create video from dictionnary
-                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:[videosList objectAtIndex:i]] autorelease];
                 [videos insertObject:videoObject atIndex:i];
-                ++i;
+            }
+            
+            int lastSavedVideoListItemProcessedIndex = [videos count];
+            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; i < [videosList count];) {
+                NSDictionary* newVideoListItem = (NSDictionary*)[videosList objectAtIndex:i];
+                VideoObject* savedVideoListItem = (VideoObject*)[videos objectAtIndex:j];
+                
+                if ([[newVideoListItem objectForKey:@"id"] intValue] == savedVideoListItem.videoId) {
+                    savedVideoListItem.likes = [[newVideoListItem objectForKey:@"likes"] intValue];
+                    savedVideoListItem.liked = [[newVideoListItem objectForKey:@"liked"] boolValue];
+                    j++;
+                    i++;
+                } else {
+                    [videos removeObject:savedVideoListItem];
+                }
+                
+                lastSavedVideoListItemProcessedIndex = j;
+            }
+            
+            if (lastSavedVideoListItemProcessedIndex < [videos count]) {
+                NSRange range = NSMakeRange(lastSavedVideoListItemProcessedIndex, ([videos count] - lastSavedVideoListItemProcessedIndex));
+                [videos removeObjectsInRange:range];
+                loadedAllVideos = false;
             }
         }
+        
+        // NOTE: please don't update lastPageRequested over here
+        //       otherwise it will screw the logic for loading more videos.
+        //       Refresh can request for more than 10 videos in the
+        //       single page. So updating it here will screw the last page 
+        //       requested number. If you really want to update the last page 
+        //       requested over here. Then my suggestion would be to divide
+        //       the videos count with 10 and then update the page number accordingly.
         
         // indicates refresh action is completed
         refreshState = REFRESHED;
@@ -104,8 +154,10 @@
         
         loadMoreState = LOADED;
         lastPageRequested = pageNumber;
-        if (videoCount < 10) {
-            loadedAllVideos = true;
+        if ((videoCount % 10) == 0) {
+            loadedAllVideos = false;
+        } else {
+            loadedAllVideos = true;            
         }
     }
     
@@ -118,6 +170,10 @@
     [refreshStatusView setHidden:YES];
     videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
     isRefreshing = false;
+    
+    if ([loadingView isAnimating]) {
+        [loadingView stopAnimating];
+    }
     
     [pool release];
 }
@@ -136,6 +192,10 @@
                               nil];
         [self performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
+        if ([loadingView isAnimating]) {
+            [loadingView stopAnimating];
+        }
+        
         loadMoreState = LOAD_MORE_NONE;
         refreshState = REFRESH_NONE;
         [refreshStatusView setRefreshStatus:REFRESH_NONE];
@@ -155,6 +215,10 @@
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
+    if ([loadingView isAnimating]) {
+        [loadingView stopAnimating];
+    }
+    
     loadMoreState = LOAD_MORE_NONE;
 	refreshState = REFRESH_NONE;
     [refreshStatusView setRefreshStatus:REFRESH_NONE];
@@ -174,6 +238,39 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return @"Remove";
 }
+
+- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath {
+	return UITableViewCellEditingStyleDelete;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+	return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+	if (deleteVideoRequest == nil) {
+		// create a delete request if not already done
+		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
+		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
+		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
+	}
+	
+	// get the video item
+	if (indexPath.row < videos.count) {
+		VideoObject* video = [videos objectAtIndex:indexPath.row];
+		
+		// cancel any current request
+		if ([deleteVideoRequest isRequesting]) {
+			[deleteVideoRequest cancelRequest];
+		}
+		
+		// LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
+		
+		// do the request
+		[deleteVideoRequest doDeleteVideoRequest:video];
+	}
+}
+
 
 - (void)dealloc {
 	// release memory

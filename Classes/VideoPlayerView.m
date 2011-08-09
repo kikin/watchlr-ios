@@ -135,6 +135,21 @@
         tapGesture.delegate = self;
         [self addGestureRecognizer:tapGesture];
         
+        UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc]
+                                               initWithTarget:self action:@selector(handleSwipeLeft:)];
+        
+        swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+        [[moviePlayerController view] addGestureRecognizer:swipeLeft];
+        [swipeLeft release];
+        
+        // Swipe Right
+        UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc]
+                                                initWithTarget:self action:@selector(handleSwipeRight:)];
+        
+        swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+        [[moviePlayerController view] addGestureRecognizer:swipeRight];
+        [swipeRight release];
+        
         // add the loading view to movie player
         loadingActivity = [[UIActivityIndicatorView alloc] init];
         loadingActivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
@@ -183,30 +198,32 @@
  
 - (void) layoutSubviews {
     [super layoutSubviews];
-    moviePlayer.frame = CGRectMake((self.frame.size.width - 580)/2, (self.frame.size.height - 435)/ 2, 580, 435);
-    closeButton.frame = CGRectMake(moviePlayer.frame.size.width - 37, 4, 32, 32);
-    titleLabel.frame = CGRectMake(10, 0, moviePlayer.frame.size.width - 47, 40);
-    topSeparator.frame = CGRectMake(0, 40, moviePlayer.frame.size.width, 1);
-    // faviconBackground.frame = CGRectMake(0, moviePlayer.frame.size.height - 40, 40, 40);
-    favicon.frame = CGRectMake(10, moviePlayer.frame.size.height - 40, 20, 20);
-    likeButton.frame = CGRectMake(moviePlayer.frame.size.width - 35, moviePlayer.frame.size.height - 42, 25, 25);
-    saveButton.frame = CGRectMake(moviePlayer.frame.size.width - 70, moviePlayer.frame.size.height - 42, 25, 25);
-    description.frame = CGRectMake(50, moviePlayer.frame.size.height - 45, 
-                                   (moviePlayer.frame.size.width - (/*faviconBackground.frame.size.width*/40 + likeButton.frame.size.width + saveButton.frame.size.width + 40)), 
-                                   30);
-    bottomSeparator.frame = CGRectMake(0, moviePlayer.frame.size.height - 50, moviePlayer.frame.size.width, 1);
-    
-    prevButton.frame = CGRectMake(moviePlayer.frame.origin.x - 37, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
-    nextButton.frame = CGRectMake(moviePlayer.frame.origin.x + moviePlayer.frame.size.width + 10, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
-    
-    moviePlayerController.view.frame = CGRectMake(10, 50, moviePlayer.frame.size.width - 20, moviePlayer.frame.size.height - 110);
-    loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
-                                            ((moviePlayerController.view.frame.size.height - 100) / 2), 
-                                            100, 100);
-    countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
-    
-    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);
-    // videosListView.frame = CGRectMake(0, (self.frame.size.height - 111), self.frame.size.width, 110);
+    if (!DeviceUtils.isIphone) {
+        moviePlayer.frame = CGRectMake((self.frame.size.width - 580)/2, (self.frame.size.height - 435)/ 2, 580, 435);
+        closeButton.frame = CGRectMake(moviePlayer.frame.size.width - 37, 4, 32, 32);
+        titleLabel.frame = CGRectMake(10, 0, moviePlayer.frame.size.width - 47, 40);
+        topSeparator.frame = CGRectMake(0, 40, moviePlayer.frame.size.width, 1);
+        // faviconBackground.frame = CGRectMake(0, moviePlayer.frame.size.height - 40, 40, 40);
+        favicon.frame = CGRectMake(10, moviePlayer.frame.size.height - 40, 20, 20);
+        likeButton.frame = CGRectMake(moviePlayer.frame.size.width - 35, moviePlayer.frame.size.height - 42, 25, 25);
+        saveButton.frame = CGRectMake(moviePlayer.frame.size.width - 70, moviePlayer.frame.size.height - 42, 25, 25);
+        description.frame = CGRectMake(50, moviePlayer.frame.size.height - 45, 
+                                       (moviePlayer.frame.size.width - (/*faviconBackground.frame.size.width*/40 + likeButton.frame.size.width + saveButton.frame.size.width + 40)), 
+                                       30);
+        bottomSeparator.frame = CGRectMake(0, moviePlayer.frame.size.height - 50, moviePlayer.frame.size.width, 1);
+        
+        prevButton.frame = CGRectMake(moviePlayer.frame.origin.x - 37, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
+        nextButton.frame = CGRectMake(moviePlayer.frame.origin.x + moviePlayer.frame.size.width + 10, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
+        
+        moviePlayerController.view.frame = CGRectMake(10, 50, moviePlayer.frame.size.width - 20, moviePlayer.frame.size.height - 110);
+        loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
+                                           ((moviePlayerController.view.frame.size.height - 100) / 2), 
+                                           100, 100);
+        countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
+        
+        errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);
+        // videosListView.frame = CGRectMake(0, (self.frame.size.height - 111), self.frame.size.width, 110);
+    }
 }
 
 - (void) dealloc {
@@ -292,11 +309,20 @@
 - (void) updateCountdown: (NSNumber*)value {
     int countDownTime = [value intValue];
     if (countDownTime > 0) {
-        countdown.text = [NSString stringWithFormat:@"%d", countDownTime];
+        if (isFullScreenMode) {
+            fullScreenCountdown.text = [NSString stringWithFormat:@"%d", countDownTime];
+        } else {
+            countdown.text = [NSString stringWithFormat:@"%d", countDownTime];
+        }
         [self performSelector:@selector(updateCountdown:) withObject:[NSNumber numberWithInt:(countDownTime -1)] afterDelay:1.0];
     } else {
-        countdown.hidden = YES;
-        errorMessage.hidden = YES;
+        if (isFullScreenMode) {
+            fullScreenCountdown.hidden = YES;
+            fullScreenErrorMessage.hidden = YES;
+        } else {
+            countdown.hidden = YES;
+            errorMessage.hidden = YES;
+        }
         [self performSelectorOnMainThread:@selector(onNextButtonClicked:) withObject:nil waitUntilDone:NO];
     }
 }
@@ -387,10 +413,18 @@
 - (void) showErrorMessage:(NSString*) message {
     [self performSelector:@selector(onPlaybackError) withObject:[NSNumber numberWithInt:4] afterDelay:1.0];
     
-    errorMessage.text = message;
-    errorMessage.hidden = NO;
-    countdown.hidden = NO;
-    countdown.text = @"5";
+    if (isFullScreenMode) {
+        fullScreenErrorMessage.text = message;
+        fullScreenErrorMessage.hidden = NO;
+        fullScreenCountdown.hidden = NO;
+        fullScreenCountdown.text = @"5";
+    } else {
+        errorMessage.text = message;
+        errorMessage.hidden = NO;
+        countdown.hidden = NO;
+        countdown.text = @"5";
+    }
+    
     [self performSelector:@selector(updateCountdown:) withObject:[NSNumber numberWithInt:4] afterDelay:1.0];
 }
 
@@ -905,11 +939,26 @@
     }
     fullScreenModeView = [[window subviews] objectAtIndex:0];
     
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc]
+                                           initWithTarget:self action:@selector(handleSwipeLeft:)];
+    
+    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [fullScreenModeView addGestureRecognizer:swipeLeft];
+    [swipeLeft release];
+    
+    // Swipe Right
+    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc]
+                                            initWithTarget:self action:@selector(handleSwipeRight:)];
+    
+    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+    [fullScreenModeView addGestureRecognizer:swipeRight];
+    [swipeRight release];
+    
     // add the loading view to movie player
     fullScreenLoadingActivity = [[UIActivityIndicatorView alloc] init];
     fullScreenLoadingActivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     [fullScreenLoadingActivity setHidesWhenStopped:YES];
-    fullScreenLoadingActivity.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    fullScreenLoadingActivity.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenModeView addSubview:fullScreenLoadingActivity];
     [fullScreenModeView bringSubviewToFront:fullScreenLoadingActivity];
     
@@ -917,29 +966,63 @@
     fullScreenCountdown = [[UILabel alloc] init];
     fullScreenCountdown.textColor = [UIColor whiteColor];
     fullScreenCountdown.backgroundColor = [UIColor clearColor];
-    fullScreenCountdown.font = [UIFont systemFontOfSize:25];
     fullScreenCountdown.textAlignment = UITextAlignmentCenter;
     fullScreenCountdown.numberOfLines = 1;
     fullScreenCountdown.hidden = YES;
+    fullScreenCountdown.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenLoadingActivity addSubview:fullScreenCountdown];
     
     // add the error message to movie player
     fullScreenErrorMessage = [[UILabel alloc] init];
     fullScreenErrorMessage.textColor = [UIColor whiteColor];
     fullScreenErrorMessage.backgroundColor = [UIColor clearColor];
-    fullScreenErrorMessage.font = [UIFont systemFontOfSize:20];
     fullScreenErrorMessage.textAlignment = UITextAlignmentCenter;
     fullScreenErrorMessage.numberOfLines = 3;
     fullScreenErrorMessage.hidden = YES;
+    fullScreenErrorMessage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenModeView addSubview:fullScreenErrorMessage];
     
     // adjust the positions
-    fullScreenLoadingActivity.frame = CGRectMake(((fullScreenModeView.frame.size.width) / 2), 
-                                       ((fullScreenModeView.frame.size.height) / 2), 
-                                       100, 100);
-    fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 20)/ 2), ((fullScreenLoadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
+    if (DeviceUtils.isIphone) {
+        UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        if (UIInterfaceOrientationIsLandscape(orientation)) {
+            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.height - 75) / 2), 
+                                                         ((window.frame.size.width - 75) / 2), 
+                                                         75, 75);
+        } else {
+            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.width - 75) / 2), 
+                                                         ((window.frame.size.height - 75) / 2), 
+                                                         75, 75);
+        }
+        
+        fullScreenCountdown.font = [UIFont systemFontOfSize: 18];
+        fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 15)/ 2), ((fullScreenLoadingActivity.frame.size.height - 15) / 2), 15, 15);
+        
+        fullScreenErrorMessage.font = [UIFont systemFontOfSize:15];
+        fullScreenErrorMessage.frame = CGRectMake(0, 10, fullScreenModeView.frame.size.width, 75);
+    } else {
+        UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        if (UIInterfaceOrientationIsLandscape(orientation)) {
+            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.height - 150) / 2), 
+                                                         ((window.frame.size.width - 150) / 2), 
+                                                         150, 150);
+            
+            fullScreenErrorMessage.frame = CGRectMake(0, (fullScreenLoadingActivity.frame.origin.y - 200) , fullScreenModeView.frame.size.height, 150);
+        } else {
+            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.width - 150) / 2), 
+                                                         ((window.frame.size.height - 150) / 2), 
+                                                         150, 150);
+            
+            fullScreenErrorMessage.frame = CGRectMake(0, fullScreenLoadingActivity.frame.origin.y - 200, fullScreenModeView.frame.size.width, 100);
+        }
+        
+        fullScreenCountdown.font = [UIFont systemFontOfSize: 25];
+        fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 20)/ 2), ((fullScreenLoadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
+        
+        fullScreenErrorMessage.font = [UIFont systemFontOfSize:30];
+        
+    }
     
-    fullScreenErrorMessage.frame = CGRectMake(0, 10, fullScreenModeView.frame.size.width, 100);
 }
 
 -(void) willExitFullScreenMode: (NSNotification*) aNotification {
@@ -955,11 +1038,19 @@
     [fullScreenLoadingActivity release];
     [fullScreenErrorMessage release];
     
+    wasPlayingInFullScreenMode = (moviePlayerController.playbackState == MPMoviePlaybackStatePlaying);
+    
     isFullScreenMode = false;
 }
 
 - (void) onEmbededMode: (NSNotification*) aNotification {
-    [moviePlayerController play];
+    if (DeviceUtils.isIphone) {
+        [self closePlayer];
+    } else {
+        if (wasPlayingInFullScreenMode) {
+            [moviePlayerController play];
+        }
+    }
     
     /*loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
                                         ((moviePlayerController.view.frame.size.height - 100) / 2), 
@@ -1025,8 +1116,19 @@
         if (shouldPerformActionOnTouchGesture) {
             [self onCloseButtonClicked:nil];
         }
+    } 
+    else if ([gestureRecognizer isKindOfClass:[UISwipeGestureRecognizer class]]) { // SWIPE Gesture
+        LOG_DEBUG(@"Swipe gesture from base calass gesture recognizer.");
     }
     return YES;
+}
+
+- (void)handleSwipeLeft:(UISwipeGestureRecognizer *)recognizer {
+    [self onNextButtonClicked:nil];
+}
+
+- (void)handleSwipeRight:(UISwipeGestureRecognizer *)recognizer {
+    [self onPreviousButtonClicked:nil];
 }
 
 - (void) onVideoFinished:(NSNotification*)aNotification {
@@ -1106,6 +1208,10 @@
  * play video
  */
 - (void) playVideo:(VideoObject*) videoObject {
+    
+    if (DeviceUtils.isIphone && !isFullScreenMode) {
+        [moviePlayerController setFullscreen:YES animated:YES];
+    }
     
     // show the loading indicator
     if (isFullScreenMode) {
@@ -1202,6 +1308,9 @@
         if (fullScreenLoadingActivity != nil) {
             [fullScreenLoadingActivity stopAnimating]; 
         }
+        
+        [moviePlayerController setFullscreen:NO animated:NO];
+        wasPlayingInFullScreenMode = false;
     } else {
         [loadingActivity stopAnimating];
     }

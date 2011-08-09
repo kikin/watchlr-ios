@@ -37,6 +37,7 @@
     UIActivityIndicatorView* fullScreenLoadingActivity;
     UILabel* fullScreenCountdown;
     UILabel* fullScreenErrorMessage;
+    bool wasPlayingInFullScreenMode;
 
     // UIView* moviePlayerNativeControlView;
     // UIView* videosListView;

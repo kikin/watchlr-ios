@@ -12,7 +12,7 @@
 
 @interface VideoListRequest : JsonRequest
 
-- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)index;
+- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)pageStart withCount:(int)videosCount;
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

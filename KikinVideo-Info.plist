@@ -10,10 +10,15 @@
 	<array/>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>watchlr_icon.png</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>Icon.png</string>
+		<string>Icon-Small.png</string>
+		<string>Icon-72.png</string>
+		<string>Icon-Small-50.png</string>
+	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.kikin.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.${PRODUCT_NAME:rfc1034identifier}.ios</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -25,14 +30,16 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb142118469191927</string>
+				<string>fb220283271338035</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.1</string>
+	<string>1.2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIPrerenderedIcon</key>

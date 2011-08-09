@@ -127,7 +127,12 @@
     [self.view bringSubviewToFront:topToolbar];
     
     loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    loadingView.frame = CGRectMake((self.view.frame.size.width - 150) / 2, (self.view.frame.size.height - 150) / 2, 150, 150);
+    if (DeviceUtils.isIphone) {
+        loadingView.frame = CGRectMake((self.view.frame.size.width - 50) / 2, (self.view.frame.size.height - 50) / 2, 50, 50);
+    } else {
+        loadingView.frame = CGRectMake((self.view.frame.size.width - 100) / 2, (self.view.frame.size.height - 100) / 2, 100, 100);
+    }
+    
     loadingView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
     [loadingView startAnimating];
     [self.view addSubview:loadingView];
@@ -225,6 +230,10 @@
 
 - (void) onVideoPlaybackFinished {
     [self onVideoPlayerNextButtonClicked];
+}
+
+- (void) closePlayer {
+    [videoPlayerView closePlayer];
 }
 
 - (void) showUserProfile {
@@ -562,46 +571,13 @@
 	}
 }
 
-
-- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(NSIndexPath*)indexPath {
-	return UITableViewCellEditingStyleDelete;
-}
-
 /*- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }*/
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-	return YES;
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	// unselect row
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (deleteVideoRequest == nil) {
-		// create a delete request if not already done
-		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
-		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
-		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
-	}
-	
-	// get the video item
-	if (indexPath.row < videos.count) {
-		VideoObject* video = [videos objectAtIndex:indexPath.row];
-		
-		// cancel any current request
-		if ([deleteVideoRequest isRequesting]) {
-			[deleteVideoRequest cancelRequest];
-		}
-		
-		// LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
-		
-		// do the request
-		[deleteVideoRequest doDeleteVideoRequest:video];
-	}
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KikinVideoAppDelegate : NSObject <UIApplicationDelegate> {
+@interface KikinVideoAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> {
 	NSDate* startDate;
     UIWindow* window;
 }

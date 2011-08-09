@@ -32,9 +32,15 @@
     return YES;
 }
 
-/*- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     LOG_DEBUG(@"Get called in handleOpen url.");
-	LoginViewController* loginViewController = (LoginViewController*)viewController;
+	LoginViewController* loginViewController = (LoginViewController*)window.rootViewController;
+    return [loginViewController.facebook handleOpenURL:url]; 
+}
+
+/*- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    LOG_DEBUG(@"Get called in handleOpen url.");
+	LoginViewController* loginViewController = (LoginViewController*)window.rootViewController;
     return [loginViewController.facebook handleOpenURL:url]; 
 }*/
 
@@ -92,11 +98,16 @@
     // tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [tabBarController setSelectedViewController:savedVideosViewController];
     
+    tabBarController.delegate = self;
+    
     // set the tabbed view as the root view
     window.rootViewController = tabBarController;
 }
 
-
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
+    [((KikinVideoViewController*)tabBarController.selectedViewController) closePlayer];
+    return YES;
+}
 
 - (void) onLogout {
     // set the login view as the root view.

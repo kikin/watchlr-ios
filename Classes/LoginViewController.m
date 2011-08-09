@@ -14,6 +14,8 @@
 
 @synthesize onLoginSuccessCallback;
 
+const char* FB_APP_ID = "220283271338035";
+
 - (void)loadView {
 	// create the view
 	UIView* view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
@@ -52,7 +54,7 @@
 	}
 	
 	// create the facebook object for connection
-	facebook = [[Facebook alloc] initWithAppId:@"220283271338035"];
+	facebook = [[Facebook alloc] initWithAppId:[NSString stringWithCString:FB_APP_ID encoding:NSUTF8StringEncoding]];
 	
 	// look if the user is already loggedIn
 	UserObject* user = [UserObject getUser];
@@ -84,6 +86,7 @@
 	facebook.sessionDelegate = self;
 	[facebook removeAllCookies];
     NSArray* permissions = [NSArray arrayWithObjects:@"offline_access", @"publish_stream", @"read_stream", @"email", nil];
+//    [facebook authorize:permissions delegate:self];
     [facebook authorize:permissions WithFBAppAuth:YES safariAuth:NO];
 //	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
 }

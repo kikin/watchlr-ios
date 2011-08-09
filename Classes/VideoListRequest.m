@@ -12,7 +12,7 @@
 
 @implementation VideoListRequest
 
-- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)pageIndex {
+- (void) doGetVideoListRequest:(BOOL)likedVideosOnly startingAt:(int)pageStart withCount:(int)videosCount {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	// LOG_DEBUG(@"sessionId = %@", sessionId);
@@ -22,10 +22,11 @@
 	[params setObject:sessionId forKey:@"session_id"];
     [params setObject:@"html5" forKey:@"type"];
     [params setObject:(likedVideosOnly ? @"true" : @"false") forKey:@"likes"];
+    [params setObject:[NSString stringWithFormat:@"%d", videosCount] forKey:@"count"];
     
     // send the page index only if you are loading more videos
-    if (pageIndex > -1) {
-        [params setObject:[NSString stringWithFormat:@"%d", pageIndex] forKey:@"page"];
+    if (pageStart > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", pageStart] forKey:@"page"];
     }
 	
 	// do request
