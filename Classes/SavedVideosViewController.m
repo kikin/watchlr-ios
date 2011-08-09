@@ -18,10 +18,10 @@
 	
     // request video lsit
     isRefreshing = true;
-	[self doVideoListRequest:-1];
+	[self doVideoListRequest:-1 withVideosCount:10];
 }
 
-- (void) doVideoListRequest:(int)startIndex {
+- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
 	// get the list of videos
 	if (videoListRequest == nil) {
 		videoListRequest = [[VideoListRequest alloc] init];
@@ -31,18 +31,18 @@
 	if ([videoListRequest isRequesting]) {
 		[videoListRequest cancelRequest];
 	}
-	[videoListRequest doGetVideoListRequest:NO startingAt:startIndex withCount:10];
+	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
 }
 
 - (void) onClickRefresh {
     isRefreshing = true;
-	[self doVideoListRequest: -1];
+	[self doVideoListRequest: -1 withVideosCount:(lastPageRequested * 10)];
 }
 
 - (void) onLoadMoreData {
     if (!loadedAllVideos) {
         isRefreshing = false;
-        [self doVideoListRequest: (lastPageRequested + 1)];
+        [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
     } else {
         loadMoreState = LOADED;
     }
@@ -51,7 +51,7 @@
 - (void) onApplicationBecomeActive: (NSNotification*)notification {
     // LOG_DEBUG(@"Changing orientation");
     isRefreshing = true;
-	[self doVideoListRequest: -1];
+	[self doVideoListRequest: -1 withVideosCount:10];
 }
 
 - (void) updateList:(NSArray*)videosList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)videoCount {
@@ -76,6 +76,10 @@
         }
         
     } else if (isRefreshing) {
+        // We are doing this odd logic intead of replacing all the video elements 
+        // because we don't want to make extra calls to fetch thumbnail and favicon, 
+        // everytime user refreshes their list or switch between tabs
+        
         // user wants to refresh the list
         // insert only those videos which are never inserted
         NSUInteger firstMatchedVideoIndex = NSNotFound;

@@ -74,6 +74,10 @@
         }
         
     } else if (isRefreshing) {
+        // We are doing this odd logic intead of replacing all the video elements 
+        // because we don't want to make extra calls to fetch thumbnail and favicon, 
+        // everytime user refreshes their list or switch between tabs
+        
         // user wants to refresh the list
         // insert only those videos which are never inserted
         NSUInteger firstMatchedVideoIndex = NSNotFound;

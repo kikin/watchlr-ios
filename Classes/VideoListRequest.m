@@ -22,7 +22,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
     [params setObject:@"html5" forKey:@"type"];
     [params setObject:(likedVideosOnly ? @"true" : @"false") forKey:@"likes"];
-    [params setObject:[NSString stringWithFormat:@"%d", videosCount] forKey:@"count"];
+    [params setObject:[NSString stringWithFormat:@"%d", (videosCount > 0 ? videosCount : 10)] forKey:@"count"];
     
     // send the page index only if you are loading more videos
     if (pageStart > -1) {

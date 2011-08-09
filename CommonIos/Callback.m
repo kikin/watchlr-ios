@@ -31,8 +31,7 @@
 }
 
 + (id) create: (id)object selector:(SEL)selector {
-	Callback* callback = [[Callback alloc] init:object selector:selector];
-	[callback autorelease];
+	Callback* callback = [[[Callback alloc] init:object selector:selector] autorelease];
 	return callback;
 }
 

@@ -50,7 +50,7 @@
 }
 
 - (void) dealloc {
-    [thumbnailImage release];
+    // [thumbnailImage release];
     thumbnailImage = nil;
     thumbnailUrl = nil;
     

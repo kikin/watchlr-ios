@@ -74,11 +74,12 @@
 @property(retain) Callback* onUnlikeButtonClickedCallback;
 @property(retain) Callback* onSaveButtonClickedCallback;
 @property(retain) Callback* onPlaybackErrorCallback;
+@property()       bool isFullScreenMode;
 
 - (void) playVideo:(VideoObject*) videoObject;
 - (void) onVideoRequestFailed:(NSString*) errorMessage;
 - (void) onVideoRequestSuccess:(VideoResponse*) aResponse;
 - (void) closePlayer;
-- (void) onAllVideosPlayed;
+- (void) onAllVideosPlayed:(bool)nextButtonClicked;
 
 @end

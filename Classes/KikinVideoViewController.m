@@ -209,7 +209,7 @@
             }
         }
     } else {
-        [videoPlayerView onAllVideosPlayed];
+        [videoPlayerView onAllVideosPlayed:true];
     }
 }
 
@@ -221,6 +221,8 @@
         // LOG_DEBUG(@"previous idx = %ld %ld", idx, videoObject);
         [self playVideo:[videos objectAtIndex:idx]];
         
+    } else {
+        [videoPlayerView onAllVideosPlayed: false];
     }
 }
 
@@ -290,10 +292,12 @@
 }
 
 - (void) didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    if (!userSettingsView.hidden) {
-        userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, topToolbar.frame.size.height, userSettingsView.frame.size.width, userSettingsView.frame.size.height);
-        // [userSettingsView showUserSettings];
+    if (!videoPlayerView.isFullScreenMode) {
+        [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+        if (!userSettingsView.hidden) {
+            userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, topToolbar.frame.size.height, userSettingsView.frame.size.width, userSettingsView.frame.size.height);
+            // [userSettingsView showUserSettings];
+        }
     }
 }
 
@@ -308,14 +312,14 @@
 }
 
 - (void)viewDidUnload {
-	
+	[super viewDidUnload];
 }
 
 - (void)dealloc {
     LOG_DEBUG(@"Dealloc called.");
     
 	// stop observing events
-	[[NSNotificationCenter defaultCenter] removeObserver:self];	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 
 	// release memory
 	[videos release];

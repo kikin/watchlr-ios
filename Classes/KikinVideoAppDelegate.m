@@ -105,7 +105,15 @@
 }
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
-    [((KikinVideoViewController*)tabBarController.selectedViewController) closePlayer];
+    // perform the actions only when user selects the different tab.
+    LOG_DEBUG(@"selected tab name:%@", tabBarController.selectedViewController.tabBarItem.title);
+    LOG_DEBUG(@"tab name:%@", viewController.tabBarItem.title);
+    if (viewController != tabBarController.selectedViewController) {
+        
+        [((KikinVideoViewController*)tabBarController.selectedViewController) closePlayer];
+        [((KikinVideoViewController*)viewController) onClickRefresh];
+    }
+    
     return YES;
 }
 

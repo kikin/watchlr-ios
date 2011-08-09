@@ -15,6 +15,6 @@
 	bool isRefreshing;
 }
 
-- (void) doVideoListRequest:(int)startIndex;
+- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount;
 
 @end

@@ -100,6 +100,7 @@
 }
 
 - (void) onThumbnailImageLoaded:(UIImage*)thumbnailImage {
+     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (thumbnailImage == nil) {
         thumbnailImage = [UIImage imageNamed:@"default_video_icon"];
     }
@@ -107,9 +108,11 @@
     if (![[NSThread currentThread] isCancelled]) {
         [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:thumbnailImage waitUntilDone:YES];
     }
+    [pool release];
 }
 
 - (void) onFaviconImageLoaded:(UIImage*)faviconImage {
+     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (faviconImage != nil) {
         if (![[NSThread currentThread] isCancelled]) {
             [faviconImageView performSelectorOnMainThread:@selector(setImage:) withObject:faviconImage waitUntilDone:YES];
@@ -118,6 +121,7 @@
     } else {
         faviconImageView.hidden = YES;
     }
+    [pool release];
 }
 
 - (void) loadImage {
@@ -267,12 +271,17 @@
 	// update image
 	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
 	
-	if (imageThread && ![imageThread isFinished]) {
-		[imageThread cancel];
+	if (imageThread) {
+        if (![imageThread isFinished]) {
+            [imageThread cancel];
+        }
+        
 		[imageThread release];
 	}
-	imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage) object:nil];
+    
+    imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage) object:nil];
 	[imageThread start];
+    [self loadImage];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

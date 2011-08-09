@@ -129,12 +129,13 @@
 // ---------------------------------------------------------
 - (void) onAddVideoRequestSuccess: (AddVideoResponse*)response {
 	if (response.success) {
+        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 		if (![[NSThread currentThread] isCancelled]) {
             
             videoObject.saved = true;
             addVideoImageView.hidden = YES;
         }
-		
+		[pool release];
 	} else {
 		LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
 	}

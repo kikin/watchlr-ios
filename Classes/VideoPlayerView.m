@@ -13,7 +13,7 @@
 
 @implementation VideoPlayerView
 
-@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback;
+@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback, isFullScreenMode;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -198,7 +198,7 @@
  
 - (void) layoutSubviews {
     [super layoutSubviews];
-    if (!DeviceUtils.isIphone) {
+    if (!DeviceUtils.isIphone && !isFullScreenMode) {
         moviePlayer.frame = CGRectMake((self.frame.size.width - 580)/2, (self.frame.size.height - 435)/ 2, 580, 435);
         closeButton.frame = CGRectMake(moviePlayer.frame.size.width - 37, 4, 32, 32);
         titleLabel.frame = CGRectMake(10, 0, moviePlayer.frame.size.width - 47, 40);
@@ -228,7 +228,15 @@
 
 - (void) dealloc {
     // stop listening notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayerController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:moviePlayerController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackStateDidChangeNotification object:moviePlayerController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerDidEnterFullscreenNotification object:moviePlayerController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerWillExitFullscreenNotification object:moviePlayerController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerDidExitFullscreenNotification object:moviePlayerController];
+    
+    moviePlayerController.initialPlaybackTime = -1;
+    [moviePlayerController.view removeFromSuperview];
     
     [video release];
     
@@ -365,12 +373,15 @@
  * Play the video with given url and initial position.
  */
 -(void) play:(NSString*)videoUrl withInitialPlaybackTime:(double)seekTime {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (![[NSThread currentThread] isCancelled]) {
         hasUserInitiatedVideoFinished = false;
         moviePlayerController.contentURL = [NSURL URLWithString:videoUrl];
         moviePlayerController.initialPlaybackTime = seekTime;
         [moviePlayerController performSelectorOnMainThread:@selector(play) withObject:nil waitUntilDone:NO];
     }
+    
+    [pool release];
 }
 
 /*
@@ -780,22 +791,22 @@
 /*
  * Find the movie player native controls view.
  */
-/*- (bool) findMoviePlayerNativeControlView:(UIView*)view {
-    // LOG_DEBUG(@"Movie palyer class name: %@", NSStringFromClass([view class]));
+/*- (UIView*) findMoviePlayerNativeControlView:(UIView*)view {
+    LOG_DEBUG(@"Movie palyer class name: %@", NSStringFromClass([view class]));
     if([view isKindOfClass:NSClassFromString(@"MPInlineVideoOverlay")]) {
         //Add any additional controls you want to have fade with the standard controls here
-        moviePlayerNativeControlView = view;
         LOG_DEBUG(@"Found native controller view.");
-        return true;
+        return view;
     } else {
         for(UIView *child in [view subviews]) {
-            if ([self findMoviePlayerNativeControlView:child]) {
-                return true;
+            UIView* nativeControllerView = [self findMoviePlayerNativeControlView:child];
+            if (nativeControllerView != nil) {
+                return nativeControllerView;
             }
         }
     }
     
-    return false;
+    return nil;
 }*/
 
 /**
@@ -812,6 +823,41 @@
     }
     
     [pool release];
+}
+
+- (void) hideErrorMessage {
+    if (isFullScreenMode) {
+        if (fullScreenErrorMessage != nil && fullScreenErrorMessage.hidden == NO) {
+            [fullScreenErrorMessage setHidden:YES];
+        }
+        
+        if (fullScreenCountdown != nil && fullScreenCountdown.hidden == NO) {
+            [fullScreenCountdown setHidden:YES];
+        }
+    } else {
+        if (errorMessage != nil && errorMessage.hidden == NO) {
+            [errorMessage setHidden:YES];
+        }
+        
+        if (countdown != nil && countdown.hidden == NO) {
+            [countdown setHidden:YES];
+        }
+    }
+}
+
+- (void) hideLoadingActivity {
+    if (isFullScreenMode) {
+        if (fullScreenLoadingActivity != nil) {
+            [fullScreenLoadingActivity stopAnimating]; 
+        }
+    } else {
+        [loadingActivity stopAnimating];
+    }
+}
+
+- (void) stopCountdown {
+    [UIApplication cancelPreviousPerformRequestsWithTarget:self];
+    [self hideErrorMessage];
 }
 
 // -------------------------------------------------------------------------
@@ -843,12 +889,6 @@
             [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
         }
     }
-}
-
-- (void) stopCountdown {
-    [UIApplication cancelPreviousPerformRequestsWithTarget:self];
-    countdown.hidden = YES;
-    errorMessage.hidden = YES;
 }
 
 // -------------------------------------------------------------------------
@@ -1026,9 +1066,7 @@
 }
 
 -(void) willExitFullScreenMode: (NSNotification*) aNotification {
-    if ([fullScreenLoadingActivity isAnimating]) {
-        [fullScreenLoadingActivity stopAnimating];
-    }
+    
     
     [fullScreenCountdown removeFromSuperview];
     [fullScreenLoadingActivity removeFromSuperview];
@@ -1124,11 +1162,37 @@
 }
 
 - (void)handleSwipeLeft:(UISwipeGestureRecognizer *)recognizer {
-    [self onNextButtonClicked:nil];
+    // If user swipes on the scrubber to backward the movie
+    // we think its a next button swipe
+    
+    // We have to do this wierd magic over here
+    // as we don't know the moviePlayer controller view
+    // or the bounds of movie player controller view.
+    UIView* moviePlayerView = (isFullScreenMode ? fullScreenModeView : moviePlayerController.view);
+    CGPoint touchLocation = [recognizer locationInView:moviePlayerView];
+    CGRect viewRect = [moviePlayerView bounds];
+    viewRect.origin.y = viewRect.size.height * (isFullScreenMode ? .1 : 0);
+    viewRect.size.height *= (isFullScreenMode ? .7 : .9); 
+    if (CGRectContainsPoint(viewRect, touchLocation)) {
+        [self onNextButtonClicked:nil];
+    }   
 }
 
 - (void)handleSwipeRight:(UISwipeGestureRecognizer *)recognizer {
-    [self onPreviousButtonClicked:nil];
+    // If user swipes on the scrubber to forward the movie
+    // we think its a previous button swipe
+    
+    // We have to do this wierd magic over here
+    // as we don't know the moviePlayer controller view
+    // or the bounds of movie player controller view.
+    UIView* moviePlayerView = (isFullScreenMode ? fullScreenModeView : moviePlayerController.view);
+    CGPoint touchLocation = [recognizer locationInView:moviePlayerView];
+    CGRect viewRect = [moviePlayerView bounds];
+    viewRect.origin.y = viewRect.size.height * (isFullScreenMode ? .1 : 0);
+    viewRect.size.height *= (isFullScreenMode ? .7 : .9); 
+    if (CGRectContainsPoint(viewRect, touchLocation)) {
+        [self onPreviousButtonClicked:nil];
+    }
 }
 
 - (void) onVideoFinished:(NSNotification*)aNotification {
@@ -1150,13 +1214,8 @@
 - (void) onVideoLoadingStateChange:(NSNotification*) aNotification {
     // LOG_DEBUG(@"Movie player load state: %d", moviePlayerController.loadState);
     if (moviePlayerController.loadState == MPMovieLoadStatePlayable) {
-        if (isFullScreenMode) {
-            if (fullScreenLoadingActivity != nil) {
-                [fullScreenLoadingActivity stopAnimating]; 
-            }
-        } else {
-            [loadingActivity stopAnimating];
-        }
+        [self hideLoadingActivity];
+        [self hideErrorMessage];
         
         // [self showCustomControls];
         // [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
@@ -1213,6 +1272,9 @@
         [moviePlayerController setFullscreen:YES animated:YES];
     }
     
+    // hide error message displayed if any
+    [self hideErrorMessage];
+    
     // show the loading indicator
     if (isFullScreenMode) {
         if (fullScreenLoadingActivity != nil) {
@@ -1247,10 +1309,8 @@
     }
     
     // set the favicon
-    NSThread* thread = [[[NSThread alloc] initWithTarget:self selector:@selector(loadImages) object:nil] autorelease];
-    [thread start];
-    
-    
+    [self performSelectorInBackground:@selector(loadImages) withObject:nil];
+
     // reset all the variables
     isYoutubeVideo = false;
     isVimeoVideo = false;
@@ -1302,18 +1362,18 @@
     }
 }
 
-- (void) onAllVideosPlayed {
+- (void) onAllVideosPlayed:(bool)nextButtonClicked {
     // show the loading indicator
+    [self hideLoadingActivity];
+    [self hideErrorMessage];
+    
     if (isFullScreenMode) {
-        if (fullScreenLoadingActivity != nil) {
-            [fullScreenLoadingActivity stopAnimating]; 
-        }
-        
         [moviePlayerController setFullscreen:NO animated:NO];
         wasPlayingInFullScreenMode = false;
-    } else {
-        [loadingActivity stopAnimating];
     }
+    
+    errorMessage.text = (nextButtonClicked ? @"You have reached at the \nend of your playlist." : @"You have reached at the \nstart of your playlist.");
+    errorMessage.hidden = NO;
 }
 
 @end

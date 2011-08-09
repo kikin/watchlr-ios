@@ -86,9 +86,7 @@ const char* FB_APP_ID = "220283271338035";
 	facebook.sessionDelegate = self;
 	[facebook removeAllCookies];
     NSArray* permissions = [NSArray arrayWithObjects:@"offline_access", @"publish_stream", @"read_stream", @"email", nil];
-//    [facebook authorize:permissions delegate:self];
-    [facebook authorize:permissions WithFBAppAuth:YES safariAuth:NO];
-//	[facebook authorizeWithFBAppAuth:YES safariAuth:NO];
+    [facebook authorize:permissions WithFBAppAuth:NO safariAuth:NO];
 }
 
 - (Facebook*) facebook {
@@ -188,6 +186,7 @@ const char* FB_APP_ID = "220283271338035";
 	[connectMainView release];
 	[errorMainView release];
 	[loadingMainView release];
+    [facebook release];
     [super dealloc];
 }
 
