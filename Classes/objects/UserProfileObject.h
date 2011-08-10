@@ -27,9 +27,11 @@
 // User preferences object
 @interface UserPreferences : NSObject {
 	int syndicate;
+    int follow_email;
 }
 
 @property()			int syndicate;
+@property()         int follow_email;
 
 - (id) initFromDictionnary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
@@ -39,9 +41,8 @@
 // User Profile object
 @interface UserProfileObject : NSObject {
 	int likes;
-    int watched;
-    int saved;
-    int queued;
+    int watches;
+    int saves;
     NSString* name;
     NSString* userName;
     NSString* pictureUrl;
@@ -51,9 +52,8 @@
 }
 
 @property()			int likes;
-@property()			int watched;
-@property()			int saved;
-@property()			int queued;
+@property()			int watches;
+@property()			int saves;
 @property(retain)	NSString* name;
 @property(retain)	NSString* userName;
 @property(retain)	NSString* pictureUrl;

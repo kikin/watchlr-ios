@@ -44,16 +44,18 @@
 // -----------------------------------------------------------
 @implementation UserPreferences
 
-@synthesize syndicate;
+@synthesize syndicate, follow_email;
 
 - (id) initFromDictionnary: (NSDictionary*)data { 
     self.syndicate = [[data objectForKey:@"syndicate"] intValue];
+    self.follow_email = [[data objectForKey:@"follow_email"] intValue];
     return self;
 }
 
 - (NSDictionary*) toDictionary {
     NSMutableDictionary* userPreferences = [[[NSMutableDictionary alloc] init] autorelease];
     [userPreferences setObject:[[NSNumber numberWithInt:self.syndicate] stringValue] forKey:@"syndicate"];
+    [userPreferences setObject:[[NSNumber numberWithInt:self.follow_email] stringValue] forKey:@"follow_email"];
     return userPreferences;
 }
 
@@ -69,14 +71,13 @@
 
 @implementation UserProfileObject
 
-@synthesize likes, watched, saved, queued, name, userName, pictureUrl, email, notifications, preferences;
+@synthesize likes, watches, saves, name, userName, pictureUrl, email, notifications, preferences;
 
 - (id) initFromDictionnary: (NSDictionary*)data {
-	// get data from this video
-	self.likes = [[data objectForKey:@"likes"] intValue];
-    self.watched = [[data objectForKey:@"watched"] intValue];
-    self.saved = [[data objectForKey:@"saved"] intValue];
-    self.queued = [[data objectForKey:@"queued"] intValue];
+	// get data
+    self.likes = [[data objectForKey:@"likes"] intValue];
+    self.watches = [[data objectForKey:@"watches"] intValue];
+    self.saves = [[data objectForKey:@"saves"] intValue];
 	self.name = [data objectForKey:@"name"] != [NSNull null] ? [data objectForKey:@"name"] : nil;
     self.userName = [data objectForKey:@"username"] != [NSNull null] ? [data objectForKey:@"username"] : nil;
     self.pictureUrl = [data objectForKey:@"picture"] != [NSNull null] ? [data objectForKey:@"picture"] : nil;
@@ -91,9 +92,8 @@
     NSMutableDictionary* userProfile = [[[NSMutableDictionary alloc] init] autorelease];
     
     [userProfile setObject:[[NSNumber numberWithInt:self.likes] stringValue] forKey:@"likes"];
-    [userProfile setObject:[[NSNumber numberWithInt:self.watched] stringValue] forKey:@"watched"];
-    [userProfile setObject:[[NSNumber numberWithInt:self.saved] stringValue] forKey:@"saved"];
-    [userProfile setObject:[[NSNumber numberWithInt:self.queued] stringValue] forKey:@"queued"];
+    [userProfile setObject:[[NSNumber numberWithInt:self.watches] stringValue] forKey:@"watches"];
+    [userProfile setObject:[[NSNumber numberWithInt:self.saves] stringValue] forKey:@"saves"];
     
     [userProfile setObject:self.name forKey:@"name"];
     [userProfile setObject:self.userName forKey:@"username"];

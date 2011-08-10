@@ -22,7 +22,7 @@
     [params setObject:@"1.0" forKey:@"version"];
     
     // do request	
-	[self doGetRequest:url params:params];
+	// [self doGetRequest:url params:params];
 }
 
 - (void) doTrackActionRequest:(NSString*)action forVideoId:(int)vid from:(NSString*)tab {

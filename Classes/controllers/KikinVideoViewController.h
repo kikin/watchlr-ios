@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PlayerViewController.h"
 #import "DeleteVideoRequest.h"
 #import "LikeVideoRequest.h"
 #import "UnlikeVideoRequest.h"
