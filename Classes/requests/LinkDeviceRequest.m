@@ -9,7 +9,7 @@
 #include <CommonCrypto/CommonDigest.h>
 
 #import "LinkDeviceRequest.h"
-
+#import "Request.h"
 
 @implementation LinkDeviceRequest
 
@@ -104,12 +104,12 @@ NSString* md5Digest(const void *data, CC_LONG length)
     NSString* key = [NSString stringWithString:@"1020Amsterdam"];
     NSString* encryptedFacebookAccessToken = [self obfuscate:facebookAccessToken withKey:key];
     LOG_DEBUG(@"encryptedFacebookAccessToken:%@", encryptedFacebookAccessToken);
-    NSString* reqUrl = [NSString stringWithFormat:@"http://www.watchlr.com/api/auth/swap?id=%@&token=%@&secret=%@", facebookId, encryptedFacebookAccessToken, key];
+    NSString* reqUrl = [NSString stringWithFormat:@"%@/api/auth/swap?id=%@&token=%@&secret=%@", WATCHLR_COM_URL, facebookId, encryptedFacebookAccessToken, key];
     LOG_DEBUG(@"reqUrl:%@", reqUrl);
     NSString* md5Checksum = md5Digest([reqUrl UTF8String], [reqUrl lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     LOG_DEBUG(@"md5Checksum:%@", md5Checksum);
     
-    NSString* requestUrl = [NSString stringWithFormat:@"http://www.watchlr.com/api/auth/swap?id=%@&token=%@&checksum=%@", facebookId, encryptedFacebookAccessToken, md5Checksum];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/swap?id=%@&token=%@&checksum=%@", WATCHLR_COM_URL, facebookId, encryptedFacebookAccessToken, md5Checksum];
     LOG_DEBUG(@"requestUrl:%@", requestUrl);
     [self doGetRequest:requestUrl params:nil];
 	

@@ -24,7 +24,7 @@
 			
 			// get all the videos
 			if (count > 0) {
-				activities = [[response objectForKey:@"user_activities"] retain];
+				activities = [[response objectForKey:@"activity_list"] retain];
 			}
 		}
 	}

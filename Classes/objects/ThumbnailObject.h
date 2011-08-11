@@ -25,7 +25,7 @@
 @property(retain)	UIImage* thumbnailImage;
 @property(retain)   Callback* onThumbnailImageLoaded;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 
 
 @end

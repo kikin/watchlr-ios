@@ -15,7 +15,7 @@
 
 @synthesize welcome, firstLike, emptyq;
 
-- (id) initFromDictionnary: (NSDictionary*)data { 
+- (id) initFromDictionary: (NSDictionary*)data { 
     self.welcome = [[data objectForKey:@"welcome"] intValue];
     self.firstLike = [[data objectForKey:@"firstlike"] intValue];
     self.emptyq = [[data objectForKey:@"emptyq"] intValue];
@@ -46,7 +46,7 @@
 
 @synthesize syndicate, follow_email;
 
-- (id) initFromDictionnary: (NSDictionary*)data { 
+- (id) initFromDictionary: (NSDictionary*)data { 
     self.syndicate = [[data objectForKey:@"syndicate"] intValue];
     self.follow_email = [[data objectForKey:@"follow_email"] intValue];
     return self;
@@ -71,9 +71,9 @@
 
 @implementation UserProfileObject
 
-@synthesize likes, watches, saves, name, userName, pictureUrl, email, notifications, preferences;
+@synthesize likes, watches, saves, pictureImageLoaded, name, userName, pictureUrl, pictureImage, email, notifications, preferences;
 
-- (id) initFromDictionnary: (NSDictionary*)data {
+- (id) initFromDictionary: (NSDictionary*)data {
 	// get data
     self.likes = [[data objectForKey:@"likes"] intValue];
     self.watches = [[data objectForKey:@"watches"] intValue];
@@ -82,8 +82,11 @@
     self.userName = [data objectForKey:@"username"] != [NSNull null] ? [data objectForKey:@"username"] : nil;
     self.pictureUrl = [data objectForKey:@"picture"] != [NSNull null] ? [data objectForKey:@"picture"] : nil;
     self.email = [data objectForKey:@"email"] != [NSNull null] ? [data objectForKey:@"email"] : nil;
-    self.notifications = [data objectForKey:@"notifications"] != [NSNull null] ? [[UserNotification alloc] initFromDictionnary:[data objectForKey:@"notifications"]] : nil;
-    self.preferences = [data objectForKey:@"preferences"] != [NSNull null] ? [[UserPreferences alloc] initFromDictionnary:[data objectForKey:@"preferences"]] : nil;
+    self.notifications = [data objectForKey:@"notifications"] != [NSNull null] ? [[UserNotification alloc] initFromDictionary:[data objectForKey:@"notifications"]] : nil;
+    self.preferences = [data objectForKey:@"preferences"] != [NSNull null] ? [[UserPreferences alloc] initFromDictionary:[data objectForKey:@"preferences"]] : nil;
+    
+    self.pictureImage = nil;
+    self.pictureImageLoaded = false;
 	
     return self;
 }
@@ -106,6 +109,27 @@
     return userProfile;
 }
 
+- (void) loadUserImage:(Callback*)onUserImageLoaded {
+    
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    
+    NSURL* url = [NSURL URLWithString:self.pictureUrl];
+    NSData* data = [NSData dataWithContentsOfURL:url];
+    if (data != nil) {
+        // set thumbnail image
+        pictureImage = [[UIImage alloc] initWithData:data];
+    }
+    
+    pictureImageLoaded = true;
+    
+    if (onUserImageLoaded != nil) {
+        [onUserImageLoaded execute:pictureImage];
+        onUserImageLoaded = nil;
+    }
+    
+    [pool release];
+}
+
 - (void) dealloc {
 	
     self.name = nil;
@@ -114,6 +138,7 @@
 	self.email = nil;
 	self.notifications = nil;
     self.preferences = nil;
+    self.pictureImageLoaded = nil;
     
     [super dealloc];
 }

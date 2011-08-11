@@ -20,7 +20,7 @@
 @property(retain)	NSString* action;
 @property(retain)	UserProfileObject* userProfile;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end

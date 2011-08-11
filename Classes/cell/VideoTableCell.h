@@ -34,7 +34,8 @@
 @property(retain) Callback* likeVideoCallback;
 @property(retain) Callback* unlikeVideoCallback;
 
-- (void)setVideoObject: (VideoObject*)video;
+- (void) setVideoObject: (VideoObject*)video;
+- (void) updateLikeButton: (VideoObject*)video;
 - (void) loadImage;
 
 @end

@@ -19,7 +19,7 @@
 			NSDictionary* response = [jsonObject objectForKey:@"result"];
 			
 			// create our video array
-			userProfile = [[UserProfileObject alloc] initFromDictionnary:response];
+			userProfile = [[UserProfileObject alloc] initFromDictionary:response];
 		}
 	}
 	return self;

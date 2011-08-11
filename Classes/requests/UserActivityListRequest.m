@@ -9,6 +9,7 @@
 #import "UserActivityListRequest.h"
 #import "UserActivityListResponse.h"
 #import "UserObject.h"
+#import "Request.h"
 
 @implementation UserActivityListRequest
 
@@ -31,7 +32,8 @@
     }
 	
 	// do request
-	[self doGetRequest:@"http://dev.watchlr.com/api/activity" params:params];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/activity", WATCHLR_COM_URL];
+	[self doGetRequest:requestUrl params:params];
 	
 	// release memory
 	[params release];

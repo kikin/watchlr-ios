@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CommonIos/Callback.h"
 
 // UserNotification object
 @interface UserNotification : NSObject {
@@ -19,7 +20,7 @@
 @property()			int firstLike;
 @property()			int emptyq;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end
@@ -33,7 +34,7 @@
 @property()			int syndicate;
 @property()         int follow_email;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end
@@ -43,10 +44,14 @@
 	int likes;
     int watches;
     int saves;
+    bool pictureImageLoaded;
+    
     NSString* name;
     NSString* userName;
     NSString* pictureUrl;
     NSString* email;
+    UIImage*  pictureImage;
+    
     UserNotification* notifications; //{"welcome": 1, "firstlike": 1, "emptyq": 1}, 
     UserPreferences* preferences; //{"syndicate": 1}}
 }
@@ -54,14 +59,17 @@
 @property()			int likes;
 @property()			int watches;
 @property()			int saves;
+@property()         bool pictureImageLoaded;
 @property(retain)	NSString* name;
 @property(retain)	NSString* userName;
 @property(retain)	NSString* pictureUrl;
 @property(retain)	NSString* email;
+@property(retain)   UIImage*  pictureImage;
 @property(retain)	UserNotification* notifications;
 @property(retain)	UserPreferences* preferences;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
+- (void) loadUserImage:(Callback*)onUserImageLoaded;
 
 @end

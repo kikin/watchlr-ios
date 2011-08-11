@@ -146,23 +146,6 @@
 
 - (void) playVideo:(VideoObject *)videoObject {
     if (videoObject != nil) {
-        /*PlayerViewController* playerViewController = [[PlayerViewController alloc] init];
-        playerViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        [self presentModalViewController:playerViewController animated:YES];
-        [playerViewController setVideo:videoObject];
-        [playerViewController release];*/
-        /*if (videoPlayerView.hidden == YES) {
-            [self.view bringSubviewToFront:videoPlayerView];
-            videoPlayerView.hidden = NO;
-            [UIView animateWithDuration:0.2 animations:^(void) {
-                videoPlayerView.frame = CGRectMake((self.view.frame.size.width - 580)/2, (self.view.frame.size.height - 365)/ 2, 580, 365);
-            } completion:^(BOOL finished) {
-                [videoPlayerView playVideo:videoObject];
-            }];
-        } else {
-            [videoPlayerView playVideo:videoObject];
-        }*/
-        
         bool isLeanback = true;
         
         if (videoPlayerView.hidden == YES) {
@@ -462,7 +445,7 @@
             // Update data for the cell
             // LOG_DEBUG(@"Updating video object.");
             VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
-            [cell setVideoObject: videoObject];
+            [cell updateLikeButton: videoObject];
         }
         [videosTable endUpdates];
         
@@ -481,8 +464,7 @@
 	if (response.success) {
         VideoObject* videoObject = response.videoObject;
         NSUInteger idx = [videos indexOfObject:videoObject];
-		// LOG_DEBUG(@"unlike idx = %ld %ld", idx, videoObject);
-        videoObject.likes -= 1;
+		videoObject.likes -= 1;
         videoObject.liked = false;
         [videos replaceObjectAtIndex:idx withObject:videoObject];
         
@@ -493,14 +475,14 @@
             // Update data for the cell
             // LOG_DEBUG(@"Updating video object.");
             VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
-            [cell setVideoObject: videoObject];
+            [cell updateLikeButton: videoObject];
         }
         [videosTable endUpdates];
         
         [self trackAction:@"unlike" forVideo:videoObject.videoId];
         
     } else {
-        LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
+        LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
     }
 }
 
@@ -508,16 +490,16 @@
 	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
 }
 
-- (void) onAddVideoRequestSuccess: (UnlikeVideoResponse*)response {
+/*- (void) onAddVideoRequestSuccess: (AddVideoResponse*)response {
 	if (response.success) {
         [self trackAction:@"save" forVideo:response.videoObject.videoId];
 	} else {
-		LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
+		LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
 	}
-}
+}*/
 
 - (void) onAddVideoRequestFailed: (NSString*)errorMessage {		
-	LOG_ERROR(@"failed to unlike video: %@", errorMessage);
+	LOG_ERROR(@"failed to save video: %@", errorMessage);
 }
 
 - (void) onDeleteRequestSuccess: (DeleteVideoResponse*)response {
@@ -583,37 +565,6 @@
 	// unselect row
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
 }
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"VideoTableCell";
-	
-	// try to reuse an id
-    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        // Create the cell
-        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
-		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
-        cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
-        cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
-    }
-	
-	if (indexPath.row < videos.count) {
-		// Update data for the cell
-		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
-		[cell setVideoObject: videoObject];
-        
-        if (indexPath.row == (videos.count - 1)) {
-            if (loadMoreState != LOADING) {
-                LOG_DEBUG(@"Loading more data");
-                loadMoreState = LOADING;
-                [self onLoadMoreData];
-            }
-        }
-	}
-	
-    return cell;
-}
-
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
     if (scrollView.contentOffset.y < 0 && scrollView.contentOffset.y > -60) {

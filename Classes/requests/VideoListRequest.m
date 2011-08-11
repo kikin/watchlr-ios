@@ -9,6 +9,7 @@
 #import "VideoListRequest.h"
 #import "VideoListResponse.h"
 #import "UserObject.h"
+#import "Request.h"
 
 @implementation VideoListRequest
 
@@ -30,7 +31,8 @@
     }
 	
 	// do request
-	[self doGetRequest:@"http://www.watchlr.com/api/list" params:params];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/list", WATCHLR_COM_URL];
+	[self doGetRequest:requestUrl params:params];
 	
 	// release memory
 	[params release];

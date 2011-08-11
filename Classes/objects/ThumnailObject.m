@@ -32,7 +32,7 @@
     [pool release];
 }
 
-- (id) initFromDictionnary: (NSDictionary*)data {
+- (id) initFromDictionary: (NSDictionary*)data {
     // LOG_DEBUG(@"Creating thumbnail object");
 	// get data from this video
 	self.height = [[data objectForKey:@"height"] intValue];

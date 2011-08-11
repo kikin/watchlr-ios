@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import "SavedVideosViewController.h"
 #import "LikedVideosViewController.h"
+#import "ActivityViewController.h"
 #import "UserObject.h"
 #import <CommonIos/DeviceUtils.h>
 #import <CommonIos/Callback.h>
@@ -92,11 +93,17 @@
     likedVideosViewController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Liked" image:likedTabImage tag:1] autorelease];
     likedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
+    // create activity videos tab
+    ActivityViewController* activitiesViewController = [[[ActivityViewController alloc] initWithNibName:@"ActivitiesView" bundle:nil] autorelease];
+    UIImage* activityTabImage = [UIImage imageNamed:@"77-ekg.png"];
+    activitiesViewController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Activities" image:activityTabImage tag:1] autorelease];
+    activitiesViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
+    
     // create the tabbed view
     UITabBarController* tabBarController = [[[UITabBarController alloc] init] autorelease];
-    [tabBarController setViewControllers:[NSArray arrayWithObjects:savedVideosViewController, likedVideosViewController, nil] animated:YES];
+    [tabBarController setViewControllers:[NSArray arrayWithObjects:activitiesViewController, savedVideosViewController, likedVideosViewController, nil] animated:YES];
     // tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [tabBarController setSelectedViewController:savedVideosViewController];
+    [tabBarController setSelectedViewController:activitiesViewController];
     
     tabBarController.delegate = self;
     
@@ -106,8 +113,6 @@
 
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
     // perform the actions only when user selects the different tab.
-    LOG_DEBUG(@"selected tab name:%@", tabBarController.selectedViewController.tabBarItem.title);
-    LOG_DEBUG(@"tab name:%@", viewController.tabBarItem.title);
     if (viewController != tabBarController.selectedViewController) {
         
         [((KikinVideoViewController*)tabBarController.selectedViewController) closePlayer];

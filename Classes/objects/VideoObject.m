@@ -10,9 +10,9 @@
 
 @implementation VideoObject
 
-@synthesize videoId, title, description, thumbnail, videoUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek;
+@synthesize videoId, title, description, thumbnail, videoUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek, savedInCurrentTab;
 
-- (id) initFromDictionnary: (NSDictionary*)data {
+- (id) initFromDictionary: (NSDictionary*)data {
     // LOG_DEBUG(@"Creating new video object");
 	// get data from this video
 	self.videoId = [[data objectForKey:@"id"] intValue];
@@ -27,19 +27,26 @@
     
     NSDictionary* thumbnailDict = [data objectForKey:@"thumbnail"] != [NSNull null] ? [data objectForKey:@"thumbnail"] : nil;
     if (thumbnailDict != nil) {
-        thumbnail = [[ThumbnailObject alloc] initFromDictionnary:thumbnailDict];
+        thumbnail = [[ThumbnailObject alloc] initFromDictionary:thumbnailDict];
     }
     
     NSDictionary* sourceDict = [data objectForKey:@"source"] != [NSNull null] ? [data objectForKey:@"source"] : nil;
     if (sourceDict != nil) {
-        videoSource = [[SourceObject alloc] initFromDictionnary:sourceDict];
+        videoSource = [[SourceObject alloc] initFromDictionary:sourceDict];
     }
     
     // set default values
-	if (title == nil) self.title = @"No title";
+	if (title == nil) self.title = @"";
 	if (description == nil) self.description = @"";
 	
 	return self;
+}
+
+- (void) updateFromDictionary: (NSDictionary*)data {
+    self.liked = [[data objectForKey:@"liked"] boolValue];
+    self.likes = [[data objectForKey:@"likes"] intValue];
+    self.saved = [[data objectForKey:@"saved"] boolValue];
+    self.seek = [[data objectForKey:@"seek"] doubleValue];
 }
 
 - (void) dealloc {

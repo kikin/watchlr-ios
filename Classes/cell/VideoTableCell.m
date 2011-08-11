@@ -181,10 +181,6 @@
     [pool release];
 }
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-	[super setEditing:editing animated:animated];
-}
-
 - (void) fixSize {
 	if (DeviceUtils.isIphone) {
         
@@ -271,7 +267,7 @@
 	// update image
 	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
 	
-	if (imageThread) {
+	/*if (imageThread) {
         if (![imageThread isFinished]) {
             [imageThread cancel];
         }
@@ -280,12 +276,28 @@
 	}
     
     imageThread = [[NSThread alloc] initWithTarget:self selector:@selector(loadImage) object:nil];
-	[imageThread start];
+	[imageThread start];*/
     [self loadImage];
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
+- (void) updateLikeButton: (VideoObject*)video {
+    if (videoObject) [videoObject release];
+	videoObject = [video retain];
+    
+    if (videoObject.likes > 0) {
+        likesLabel.hidden = NO;
+        likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
+    } else {
+        likesLabel.hidden = YES;
+    }
+    
+    if (videoObject.liked) {
+        likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_red.png"] waitUntilDone:YES];
+    } else {
+        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_grey.png"] waitUntilDone:YES];
+    }
 }
 
 - (void) layoutSubviews {
@@ -324,7 +336,9 @@
 }
 
 - (void)dealloc {
-	[imageThread release];
+    if (imageThread)
+        [imageThread release];
+    
     [videoImageView release];
     [playButtonImage release];
     [titleLabel release];

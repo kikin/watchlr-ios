@@ -6,23 +6,27 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "LikedVideosViewController.h"
-#import "VideoTableCell.h"
+#import "ActivityViewController.h"
+#import "ActivityTableCell.h"
+#import "ActivityObject.h"
 
-@implementation LikedVideosViewController
+@implementation ActivityViewController
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     [super loadView];
+    
+    videosTable.rowHeight = DeviceUtils.isIphone ? 100 : 180;
 	
-	// request video list
+    // request video lsit
     isRefreshing = true;
-	[self doVideoListRequest:-1 withVideosCount:10];
+	[self doUserActivityListRequest:NO startingAt:-1 withCount:10];
 }
 
 - (void)dealloc {
 	// release memory
-	[videoListRequest release];
+	[activities release];
+    [activityListRequest release];
     [super dealloc];
 }
 
@@ -30,22 +34,25 @@
 //                             Private Functions
 // --------------------------------------------------------------------------------
 
-- (void) updateList:(NSArray*)videosList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)videoCount {
+- (void) updateList:(NSArray*)activitiesList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)activityCount {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
-    if (videos == nil) {
+    if (activities == nil) {
         // This is the first time we are loading videos
         // we should create the new videos list element.
         videos = [[NSMutableArray alloc] init];
+        activities = [[NSMutableArray alloc] init];
         
-        for (NSDictionary* videoDic in videosList) {
+        for (NSDictionary* activityDic in activitiesList) {
             // create video from dictionnary
-            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:videoDic] autorelease];
-            [videos addObject:videoObject];
+            ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:activityDic] autorelease];
+            [activities addObject:activity];
+            activity.video.savedInCurrentTab = false;
+            [videos addObject:activity.video];
         }
         
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((activityCount % 10) == 0) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -58,54 +65,63 @@
         
         // user wants to refresh the list
         // insert only those videos which are never inserted
-        NSUInteger firstMatchedVideoIndex = NSNotFound;
-        if ([videos count] > 0) {
-            for (int i = 0; i < [videos count]; i++) {
-                VideoObject* video = [videos objectAtIndex:i];
-                firstMatchedVideoIndex = [videosList indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                    if ([[(NSDictionary*)(obj) objectForKey:@"id"] intValue] == video.videoId) {
+        NSUInteger firstMatchedActicityIndex = NSNotFound;
+        if ([activities count] > 0) {
+            for (int i = 0; i < [activities count]; i++) {
+                ActivityObject* activity = [activities objectAtIndex:i];
+                firstMatchedActicityIndex = [activitiesList indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                    NSDictionary* video = [obj objectForKey:@"video"];
+                    if ([[video objectForKey:@"id"] intValue] == activity.video.videoId) {
                         *stop = YES;
                         return YES;
                     }
                     return NO;
                 }];
                 
-                if (firstMatchedVideoIndex != NSNotFound) {
+                if (firstMatchedActicityIndex != NSNotFound) {
                     break;
                 }
                 
-                [videos removeObject:video];
+                [activities removeObject:activity];
+                [videos removeObjectAtIndex:i];
                 i--;
             }
             
         }
         
-        if (firstMatchedVideoIndex != NSNotFound) {
+        if (firstMatchedActicityIndex != NSNotFound) {
             // add all the videos to the list that were not present before
-            for (int i = 0; i < firstMatchedVideoIndex; i++) {
+            for (int i = 0; i < firstMatchedActicityIndex; i++) {
                 // create video from dictionnary
-                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:[videosList objectAtIndex:i]] autorelease];
-                [videos insertObject:videoObject atIndex:i];
+                ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:[activitiesList objectAtIndex:i]] autorelease];
+                [activities insertObject:activity atIndex:i];
+                activity.video.savedInCurrentTab = false;
+                [videos insertObject:activity.video atIndex:i];
             }
             
-            int lastSavedVideoListItemProcessedIndex = [videos count];
-            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; i < [videosList count];) {
-                NSDictionary* newVideoListItem = (NSDictionary*)[videosList objectAtIndex:i];
-                VideoObject* savedVideoListItem = (VideoObject*)[videos objectAtIndex:j];
+            int lastActicvityItemProcessedIndex = [activities count];
+            for (int i = firstMatchedActicityIndex, j = firstMatchedActicityIndex; i < [activitiesList count];) {
+                NSDictionary* newActivityItem = (NSDictionary*)[activitiesList objectAtIndex:i];
+                ActivityObject* activityListItem = (ActivityObject*)[activities objectAtIndex:j];
                 
-                if ([[newVideoListItem objectForKey:@"id"] intValue] == savedVideoListItem.videoId) {
-                    [savedVideoListItem updateFromDictionary:newVideoListItem];
+                NSDictionary* newActivityVideo = [newActivityItem objectForKey:@"video"];
+                if ([[newActivityVideo objectForKey:@"id"] intValue] == activityListItem.video.videoId) {
+                    [activityListItem updateFromDictionary:newActivityItem];
+                    activityListItem.video.savedInCurrentTab = false;
+                    [videos replaceObjectAtIndex:j withObject:activityListItem.video];
                     j++;
                     i++;
                 } else {
-                    [videos removeObject:savedVideoListItem];
+                    [activities removeObject:activityListItem];
+                    [videos removeObjectAtIndex:j];
                 }
                 
-                lastSavedVideoListItemProcessedIndex = j;
+                lastActicvityItemProcessedIndex = j;
             }
             
-            if (lastSavedVideoListItemProcessedIndex < [videos count]) {
-                NSRange range = NSMakeRange(lastSavedVideoListItemProcessedIndex, ([videos count] - lastSavedVideoListItemProcessedIndex));
+            if (lastActicvityItemProcessedIndex < [activities count]) {
+                NSRange range = NSMakeRange(lastActicvityItemProcessedIndex, ([activities count] - lastActicvityItemProcessedIndex));
+                [activities removeObjectsInRange:range];
                 [videos removeObjectsInRange:range];
                 loadedAllVideos = false;
             }
@@ -125,22 +141,24 @@
         
     } else { 
         // Appending the videos retreived to the list
-        for (NSDictionary* videoDic in videosList) {
+        for (NSDictionary* activityDic in activitiesList) {
             // create video from dictionnary
-            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:videoDic] autorelease];
-            [videos addObject:videoObject];
+            ActivityObject* activityObject = [[[ActivityObject alloc] initFromDictionary:activityDic] autorelease];
+            [activities addObject:activityObject];
+            activityObject.video.savedInCurrentTab = false;
+            [videos addObject:activityObject.video];
         }
         
         loadMoreState = LOADED;
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((activityCount % 10) == 0) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
         }
     }
     
-    // LOG_DEBUG(@"Sending message to main thread to update videos list");
+    //LOG_DEBUG(@"Sending message to main thread to update videos list");
     [videosTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
     
     loadMoreState = LOAD_MORE_NONE;
@@ -158,40 +176,42 @@
 }
 
 - (void) updateListWrapper: (NSDictionary*)args {
-    [self updateList:[args objectForKey:@"videosList"] withLastPageRequested:[[args objectForKey:@"pageNumber"] integerValue] andNumberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
+    [self updateList:[args objectForKey:@"activitiesList"] withLastPageRequested:[[args objectForKey:@"pageNumber"] integerValue] andNumberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
 }
 
 // --------------------------------------------------------------------------------
 //                                  Callbacks
 // --------------------------------------------------------------------------------
-- (void) onApplicationBecomeActive: (NSNotification*)notification {
-    isRefreshing = true;
-	[self doVideoListRequest: -1 withVideosCount:10];
-}
 
 - (void) onClickRefresh {
     isRefreshing = true;
-	[self doVideoListRequest:-1 withVideosCount:(lastPageRequested * 10)];
+	[self doUserActivityListRequest:NO startingAt:-1 withCount:(lastPageRequested * 10)];
 }
 
 - (void) onLoadMoreData {
     if (!loadedAllVideos) {
         isRefreshing = false;
-        [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
+        [self doUserActivityListRequest:NO startingAt:(lastPageRequested + 1) withCount:10];
     } else {
         loadMoreState = LOADED;
     }
+}
+
+- (void) onApplicationBecomeActive: (NSNotification*)notification {
+    // LOG_DEBUG(@"Changing orientation");
+    isRefreshing = true;
+	[self doUserActivityListRequest:NO startingAt:-1 withCount:10];
 }
 
 // --------------------------------------------------------------------------------
 //                             Request Callbacks
 // --------------------------------------------------------------------------------
 
-- (void) onListRequestSuccess: (VideoListResponse*)response {
+- (void) onListRequestSuccess: (UserActivityListResponse*)response {
     if (response.success) {
 		// LOG_DEBUG(@"list request success");
         NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [response videos], @"videosList",
+                              [response activities], @"activitiesList",
                               [NSNumber numberWithInt:[response page]], @"pageNumber",
                               [NSNumber numberWithInt:[response count]], @"videoCount",
                               nil];
@@ -240,28 +260,58 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
+// Overriding base class method
+- (void) onAddVideoRequestSuccess: (AddVideoResponse*)response {
+//     [super onAddVideoRequestSuccess:response]; 
+	if (response.success) {
+        VideoObject* videoObject = response.videoObject;
+        NSUInteger idx = [videos indexOfObject:videoObject];
+		videoObject.saved = true;
+        ActivityObject* activity = (ActivityObject*)[activities objectAtIndex:idx];
+        activity.video = videoObject;
+        [activities replaceObjectAtIndex:idx withObject:activity];
+        [videos replaceObjectAtIndex:idx withObject:videoObject];
+        
+		
+		[videosTable beginUpdates];
+		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+        if (index.row < activities.count) {
+            // Update data for the cell
+            // LOG_DEBUG(@"Updating video object.");
+            ActivityTableCell* cell = (ActivityTableCell*)[videosTable cellForRowAtIndexPath:index];
+            [cell updateSaveButton:activity];
+        }
+        [videosTable endUpdates];
+        
+        [self trackAction:@"save" forVideo:response.videoObject.videoId];
+    } else {
+        LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
+    }
+}
+
 // --------------------------------------------------------------------------------
-// TableView delegates/datasource
+//                      TableView delegates/datasource
 // --------------------------------------------------------------------------------
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"VideoTableCell";
 	
 	// try to reuse an id
-    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    ActivityTableCell* cell = (ActivityTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         // Create the cell
-        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[[ActivityTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
 		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
         cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
         cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
+        cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
     }
 	
-	if (indexPath.row < videos.count) {
+	if (indexPath.row < activities.count) {
 		// Update data for the cell
-		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
-		[cell setVideoObject: videoObject];
+		ActivityObject* activity = [activities objectAtIndex:indexPath.row];
+		[cell setActivityObject: activity];
         
-        if (indexPath.row == (videos.count - 1)) {
+        if (indexPath.row == (activities.count - 2)) {
             if (loadMoreState != LOADING) {
                 LOG_DEBUG(@"Loading more data");
                 loadMoreState = LOADING;
@@ -276,17 +326,20 @@
 // --------------------------------------------------------------------------------
 //                          Public Functions
 // --------------------------------------------------------------------------------
-- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
+
+- (void) doUserActivityListRequest:(BOOL)facebookVideosOnly startingAt:(int)pageStart withCount:(int)videosCount {
 	// get the list of videos
-	if (videoListRequest == nil) {
-		videoListRequest = [[VideoListRequest alloc] init];
-		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
-		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
+	if (activityListRequest == nil) {
+		activityListRequest = [[UserActivityListRequest alloc] init];
+		activityListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
+		activityListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
 	}
-	if ([videoListRequest isRequesting]) {
-		[videoListRequest cancelRequest];
+	if ([activityListRequest isRequesting]) {
+		[activityListRequest cancelRequest];
 	}
-	[videoListRequest doGetVideoListRequest:YES startingAt:pageStart withCount:videosCount];	
+	[activityListRequest doGetUserActicityListRequest:NO startingAt:pageStart withCount:videosCount];	
 }
+
+
 
 @end

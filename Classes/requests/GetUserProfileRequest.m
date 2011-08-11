@@ -8,6 +8,7 @@
 
 #import "GetUserProfileRequest.h"
 #import "UserObject.h"
+#import "Request.h"
 
 @implementation GetUserProfileRequest
 
@@ -20,7 +21,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:videoObject.videoUrl forKey:@"url"];
 	
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://www.watchlr.com/api/auth/profile"];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
     
 	// do request	
 	[self doGetRequest:requestUrl params:params];

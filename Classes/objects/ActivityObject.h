@@ -23,7 +23,8 @@
 @property(retain)	NSMutableArray* userActivities;
 @property(retain)   VideoObject* video;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
+- (void) updateFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end

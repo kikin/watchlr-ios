@@ -15,10 +15,10 @@
 
 @synthesize timestamp, action, userProfile;
 
-- (id) initFromDictionnary: (NSDictionary*)data { 
+- (id) initFromDictionary: (NSDictionary*)data { 
     self.timestamp = [[data objectForKey:@"timestamp"] longValue];
     self.action = [data objectForKey:@"action"] != [NSNull null] ? [data objectForKey:@"action"] : nil;
-    self.userProfile = [data objectForKey:@"user"] != [NSNull null] ? [[UserProfileObject alloc] initFromDictionnary:[data objectForKey:@"user"]] : nil;
+    self.userProfile = [data objectForKey:@"user"] != [NSNull null] ? [[UserProfileObject alloc] initFromDictionary:[data objectForKey:@"user"]] : nil;
     
     return self;
 }

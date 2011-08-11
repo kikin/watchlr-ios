@@ -8,6 +8,7 @@
 
 #import "LikeVideoRequest.h"
 #import "UserObject.h"
+#import "Request.h"
 
 @implementation LikeVideoRequest
 
@@ -23,7 +24,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:videoObject.videoUrl forKey:@"url"];
     
-    NSString* requestUrl = [NSString stringWithUTF8String:"http://www.watchlr.com/api/like/"];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/like/", WATCHLR_COM_URL];
     requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
 	
 	// do request	

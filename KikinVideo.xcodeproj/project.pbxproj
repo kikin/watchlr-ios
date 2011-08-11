@@ -86,6 +86,8 @@
 		26EA181B13F2FEED00291CAC /* whiteArrowUp.png in Resources */ = {isa = PBXBuildFile; fileRef = 26EA180813F2FEED00291CAC /* whiteArrowUp.png */; };
 		26EA181C13F2FEED00291CAC /* x_grey.png in Resources */ = {isa = PBXBuildFile; fileRef = 26EA180913F2FEED00291CAC /* x_grey.png */; };
 		26EA181F13F2FF5800291CAC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA181E13F2FF5800291CAC /* main.m */; };
+		26EA182113F30A2F00291CAC /* ActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA182013F30A2F00291CAC /* ActivityViewController.m */; };
+		26EA182413F30AB300291CAC /* ActivityTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA182313F30AB300291CAC /* ActivityTableCell.m */; };
 		288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765070DF74369002DB57D /* CoreGraphics.framework */; };
 		357A09911316AEF30050C2CA /* 01-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A08C91316AEF30050C2CA /* 01-refresh.png */; };
 		357A09921316AEF30050C2CA /* 02-redo.png in Resources */ = {isa = PBXBuildFile; fileRef = 357A08CA1316AEF30050C2CA /* 02-redo.png */; };
@@ -452,6 +454,11 @@
 		26EA180913F2FEED00291CAC /* x_grey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = x_grey.png; path = images/x_grey.png; sourceTree = "<group>"; };
 		26EA181D13F2FF5800291CAC /* KikinVideo_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KikinVideo_Prefix.pch; path = Classes/KikinVideo_Prefix.pch; sourceTree = "<group>"; };
 		26EA181E13F2FF5800291CAC /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/main.m; sourceTree = "<group>"; };
+		26EA182013F30A2F00291CAC /* ActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActivityViewController.m; path = controllers/ActivityViewController.m; sourceTree = "<group>"; };
+		26EA182213F30A3600291CAC /* ActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivityViewController.h; path = controllers/ActivityViewController.h; sourceTree = "<group>"; };
+		26EA182313F30AB300291CAC /* ActivityTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActivityTableCell.m; path = cell/ActivityTableCell.m; sourceTree = "<group>"; };
+		26EA182513F30ABA00291CAC /* ActivityTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivityTableCell.h; path = cell/ActivityTableCell.h; sourceTree = "<group>"; };
+		26EA182613F31F0900291CAC /* Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Request.h; path = requests/Request.h; sourceTree = "<group>"; };
 		288765070DF74369002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		357A08C91316AEF30050C2CA /* 01-refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "01-refresh.png"; sourceTree = "<group>"; };
 		357A08CA1316AEF30050C2CA /* 02-redo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "02-redo.png"; sourceTree = "<group>"; };
@@ -679,14 +686,14 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				3559B4F61374375D00D6D892 /* ui */,
 				3591040A1365F0CE0000A814 /* cell */,
-				359102851365D1E50000A814 /* utils */,
-				357A194B131823E10050C2CA /* files */,
 				357A16DB1317FBFA0050C2CA /* controllers */,
-				357A120113171A400050C2CA /* responses */,
-				357A0CEC1316F1560050C2CA /* requests */,
+				357A194B131823E10050C2CA /* files */,
 				357A0C861316E9F60050C2CA /* objects */,
+				357A0CEC1316F1560050C2CA /* requests */,
+				357A120113171A400050C2CA /* responses */,
+				3559B4F61374375D00D6D892 /* ui */,
+				359102851365D1E50000A814 /* utils */,
 				1D3623240D0F684500981E51 /* KikinVideoAppDelegate.h */,
 				1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */,
 			);
@@ -741,6 +748,7 @@
 		2699392C13A9B86300672FD5 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				26EA182013F30A2F00291CAC /* ActivityViewController.m */,
 				26EA178D13F2FB8F00291CAC /* FeedbackViewController.m */,
 				26EA178E13F2FB8F00291CAC /* KikinVideoViewController.m */,
 				26EA178F13F2FB8F00291CAC /* LikedVideosViewController.m */,
@@ -753,6 +761,7 @@
 		2699392D13A9B87600672FD5 /* headers */ = {
 			isa = PBXGroup;
 			children = (
+				26EA182213F30A3600291CAC /* ActivityViewController.h */,
 				26EA178813F2FB8100291CAC /* FeedbackViewController.h */,
 				26EA178913F2FB8100291CAC /* KikinVideoViewController.h */,
 				26EA178A13F2FB8100291CAC /* LikedVideosViewController.h */,
@@ -765,6 +774,7 @@
 		2699392E13A9B89100672FD5 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				26EA182313F30AB300291CAC /* ActivityTableCell.m */,
 				26EA177B13F2FA3900291CAC /* LikedVideoTableCell.m */,
 				26EA177C13F2FA3900291CAC /* VideoTableCell.m */,
 			);
@@ -774,6 +784,7 @@
 		2699392F13A9B89E00672FD5 /* headers */ = {
 			isa = PBXGroup;
 			children = (
+				26EA182513F30ABA00291CAC /* ActivityTableCell.h */,
 				26EA177913F2FA2E00291CAC /* LikedVideoTableCell.h */,
 				26EA177A13F2FA2E00291CAC /* VideoTableCell.h */,
 			);
@@ -926,6 +937,7 @@
 				26EA17C013F2FD0500291CAC /* GetUserProfileRequest.h */,
 				26EA17C113F2FD0500291CAC /* LikeVideoRequest.h */,
 				26EA17C213F2FD0500291CAC /* LinkDeviceRequest.h */,
+				26EA182613F31F0900291CAC /* Request.h */,
 				26EA17C313F2FD0500291CAC /* SaveUserProfileRequest.h */,
 				26EA17C413F2FD0500291CAC /* SeekVideoRequest.h */,
 				26EA17C513F2FD0500291CAC /* TrackerRequest.h */,
@@ -1699,6 +1711,8 @@
 				26EA17F513F2FD9F00291CAC /* UserProfileObject.m in Sources */,
 				26EA17F613F2FD9F00291CAC /* VideoObject.m in Sources */,
 				26EA181F13F2FF5800291CAC /* main.m in Sources */,
+				26EA182113F30A2F00291CAC /* ActivityViewController.m in Sources */,
+				26EA182413F30AB300291CAC /* ActivityTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

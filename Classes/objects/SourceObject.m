@@ -31,7 +31,7 @@
     [pool release];
 }
 
-- (id) initFromDictionnary: (NSDictionary*)data {
+- (id) initFromDictionary: (NSDictionary*)data {
 	// get data from this video
 	self.name = [data objectForKey:@"name"] != [NSNull null] ? [data objectForKey:@"name"] : nil;
 	self.favicon = [data objectForKey:@"favicon"] != [NSNull null] ? [data objectForKey:@"favicon"] : nil;

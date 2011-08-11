@@ -26,6 +26,6 @@
 @property()         bool isFaviconImageLoaded;
 @property(retain)   Callback* onFaviconImageLoaded;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
 
 @end

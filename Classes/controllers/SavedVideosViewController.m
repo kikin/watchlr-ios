@@ -21,38 +21,15 @@
 	[self doVideoListRequest:-1 withVideosCount:10];
 }
 
-- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
-	// get the list of videos
-	if (videoListRequest == nil) {
-		videoListRequest = [[VideoListRequest alloc] init];
-		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
-		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
-	}
-	if ([videoListRequest isRequesting]) {
-		[videoListRequest cancelRequest];
-	}
-	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
+- (void)dealloc {
+	// release memory
+	[videoListRequest release];
+    [super dealloc];
 }
 
-- (void) onClickRefresh {
-    isRefreshing = true;
-	[self doVideoListRequest: -1 withVideosCount:(lastPageRequested * 10)];
-}
-
-- (void) onLoadMoreData {
-    if (!loadedAllVideos) {
-        isRefreshing = false;
-        [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
-    } else {
-        loadMoreState = LOADED;
-    }
-}
-
-- (void) onApplicationBecomeActive: (NSNotification*)notification {
-    // LOG_DEBUG(@"Changing orientation");
-    isRefreshing = true;
-	[self doVideoListRequest: -1 withVideosCount:10];
-}
+// --------------------------------------------------------------------------------
+//                             Private Functions
+// --------------------------------------------------------------------------------
 
 - (void) updateList:(NSArray*)videosList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)videoCount {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -64,7 +41,7 @@
         
         for (NSDictionary* videoDic in videosList) {
             // create video from dictionnary
-            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:videoDic] autorelease];
             [videos addObject:videoObject];
         }
         
@@ -108,7 +85,7 @@
             // add all the videos to the list that were not present before
             for (int i = 0; i < firstMatchedVideoIndex; i++) {
                 // create video from dictionnary
-                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:[videosList objectAtIndex:i]] autorelease];
+                VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:[videosList objectAtIndex:i]] autorelease];
                 [videos insertObject:videoObject atIndex:i];
             }
             
@@ -118,8 +95,7 @@
                 VideoObject* savedVideoListItem = (VideoObject*)[videos objectAtIndex:j];
                 
                 if ([[newVideoListItem objectForKey:@"id"] intValue] == savedVideoListItem.videoId) {
-                    savedVideoListItem.likes = [[newVideoListItem objectForKey:@"likes"] intValue];
-                    savedVideoListItem.liked = [[newVideoListItem objectForKey:@"liked"] boolValue];
+                    [savedVideoListItem updateFromDictionary:newVideoListItem];
                     j++;
                     i++;
                 } else {
@@ -152,7 +128,7 @@
         // Appending the videos retreived to the list
         for (NSDictionary* videoDic in videosList) {
             // create video from dictionnary
-            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionnary:videoDic] autorelease];
+            VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:videoDic] autorelease];
             [videos addObject:videoObject];
         }
         
@@ -185,6 +161,34 @@
 - (void) updateListWrapper: (NSDictionary*)args {
     [self updateList:[args objectForKey:@"videosList"] withLastPageRequested:[[args objectForKey:@"pageNumber"] integerValue] andNumberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
 }
+
+// --------------------------------------------------------------------------------
+//                                  Callbacks
+// --------------------------------------------------------------------------------
+
+- (void) onApplicationBecomeActive: (NSNotification*)notification {
+    // LOG_DEBUG(@"Changing orientation");
+    isRefreshing = true;
+	[self doVideoListRequest: -1 withVideosCount:10];
+}
+
+- (void) onClickRefresh {
+    isRefreshing = true;
+	[self doVideoListRequest: -1 withVideosCount:(lastPageRequested * 10)];
+}
+
+- (void) onLoadMoreData {
+    if (!loadedAllVideos) {
+        isRefreshing = false;
+        [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
+    } else {
+        loadMoreState = LOADED;
+    }
+}
+
+// --------------------------------------------------------------------------------
+//                             Request Callbacks
+// --------------------------------------------------------------------------------
 
 - (void) onListRequestSuccess: (VideoListResponse*)response {
     if (response.success) {
@@ -239,6 +243,10 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
+// --------------------------------------------------------------------------------
+//                       TableView delegates/datasource
+// --------------------------------------------------------------------------------
+
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return @"Remove";
 }
@@ -275,11 +283,51 @@
 	}
 }
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"VideoTableCell";
+	
+	// try to reuse an id
+    VideoTableCell* cell = (VideoTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        // Create the cell
+        cell = [[[VideoTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
+		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+        cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
+        cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
+    }
+	
+	if (indexPath.row < videos.count) {
+		// Update data for the cell
+		VideoObject* videoObject = [videos objectAtIndex:indexPath.row];
+		[cell setVideoObject: videoObject];
+        
+        if (indexPath.row == (videos.count - 1)) {
+            if (loadMoreState != LOADING) {
+                LOG_DEBUG(@"Loading more data");
+                loadMoreState = LOADING;
+                [self onLoadMoreData];
+            }
+        }
+	}
+	
+    return cell;
+}
 
-- (void)dealloc {
-	// release memory
-	[videoListRequest release];
-    [super dealloc];
+// --------------------------------------------------------------------------------
+//                          Public Functions
+// --------------------------------------------------------------------------------
+
+- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
+	// get the list of videos
+	if (videoListRequest == nil) {
+		videoListRequest = [[VideoListRequest alloc] init];
+		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
+		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
+	}
+	if ([videoListRequest isRequesting]) {
+		[videoListRequest cancelRequest];
+	}
+	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
 }
 
 @end

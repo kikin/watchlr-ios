@@ -15,16 +15,16 @@
 
 @synthesize timestamp, activity_heading, userActivities, video;
 
-- (id) initFromDictionnary: (NSDictionary*)data { 
+- (id) initFromDictionary: (NSDictionary*)data { 
     self.timestamp = [[data objectForKey:@"timestamp"] longValue];
     self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
-    self.video = [data objectForKey:@"video"] != [NSNull null] ? [[VideoObject alloc] initFromDictionnary:[data objectForKey:@"video"]] : nil;
+    self.video = [data objectForKey:@"video"] != [NSNull null] ? [[VideoObject alloc] initFromDictionary:[data objectForKey:@"video"]] : nil;
     
     NSArray* userActivitiesList = [data objectForKey:@"user_activities"];
     if (userActivitiesList != nil) {
         self.userActivities = [[NSMutableArray alloc] init];
         for (NSDictionary* userActivity in userActivitiesList) {
-            UserActivityObject* userActivityObject = [[[UserActivityObject alloc] initFromDictionnary:userActivity] autorelease];
+            UserActivityObject* userActivityObject = [[[UserActivityObject alloc] initFromDictionary:userActivity] autorelease];
             [self.userActivities addObject:userActivityObject];
         }
     } else {
@@ -32,6 +32,26 @@
     }
     
     return self;
+}
+
+- (void) updateFromDictionary: (NSDictionary*)data { 
+    self.timestamp = [[data objectForKey:@"timestamp"] longValue];
+    self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
+    if ([data objectForKey:@"video"] != [NSNull null]) {
+        [self.video updateFromDictionary:[data objectForKey:@"video"]];
+    }
+    
+    // release the previous list of user activities object and create the new one.
+    [self.userActivities release];
+    self.userActivities = nil;
+    NSArray* userActivitiesList = [data objectForKey:@"user_activities"];
+    if (userActivitiesList != nil) {
+        self.userActivities = [[NSMutableArray alloc] init];
+        for (NSDictionary* userActivity in userActivitiesList) {
+            UserActivityObject* userActivityObject = [[[UserActivityObject alloc] initFromDictionary:userActivity] autorelease];
+            [self.userActivities addObject:userActivityObject];
+        }
+    }
 }
 
 - (NSDictionary*) toDictionary {

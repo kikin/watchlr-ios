@@ -9,6 +9,7 @@
 #import "SeekVideoRequest.h"
 #import "UserObject.h"
 #import "SeekVideoResponse.h"
+#import "Request.h"
 
 @implementation SeekVideoRequest
 
@@ -21,7 +22,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
     
-    NSString* requestUrl = [NSString stringWithFormat:@"http://www.watchlr.com/api/seek/%d", video.videoId];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d", WATCHLR_COM_URL, video.videoId];
     // requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
 	
 	// do request	
@@ -40,7 +41,7 @@
 	[params setObject:sessionId forKey:@"session_id"];
 	// [params setObject:[NSNumber numberWithInt: video.videoId] forKey:@"id"];
     
-    NSString* requestUrl = [NSString stringWithFormat:@"http://www.watchlr.com/api/seek/%d/%@", video.videoId, seekTime];
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d/%@", WATCHLR_COM_URL, video.videoId, seekTime];
     // requestUrl = [requestUrl stringByAppendingString:[[NSNumber numberWithInt: video.videoId] stringValue]];
     
     LOG_DEBUG(@"Making seek request with URL: %@", requestUrl);

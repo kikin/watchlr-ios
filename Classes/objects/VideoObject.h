@@ -18,11 +18,12 @@
 	NSString*           embedUrl;
 	NSString*           videoUrl;
 	ThumbnailObject*	thumbnail;
-    SourceObject*	videoSource;
+    SourceObject*       videoSource;
     NSString*           htmlCode;
     bool                liked;
     bool                saved;
     double              seek;
+    bool                savedInCurrentTab;
 }
 
 @property()			int videoId;
@@ -37,7 +38,9 @@
 @property()			bool liked;
 @property()			bool saved;
 @property()         double seek;
+@property()         bool savedInCurrentTab;
 
-- (id) initFromDictionnary: (NSDictionary*)data;
+- (id) initFromDictionary: (NSDictionary*)data;
+- (void) updateFromDictionary: (NSDictionary*)data;
 
 @end
