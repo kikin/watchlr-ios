@@ -8,16 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <CommonIos/JsonRequest.h>
-#import "AddVideoResponse.h"
-#import "VideoObject.h"
 
-@interface AddVideoRequest : JsonRequest {
+@interface UserProfileRequest : JsonRequest {
 
 }
 
-- (void) doAddVideoRequest:(VideoObject*)video;
+- (void) getUserProfile;
+- (void) updateUserProfile:(NSDictionary*)userProfile;
 - (id) processReceivedString: (NSString*)receivedString;
-
-@property(retain) VideoObject* videoObject;
 
 @end

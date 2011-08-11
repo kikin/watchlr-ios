@@ -7,7 +7,6 @@
 //
 
 #import "LikedVideoTableCell.h"
-#import "LikeVideoResponse.h"
 
 @implementation LikedVideoTableCell
 
@@ -92,7 +91,7 @@
 - (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
     
-    for (UITouch *myTouch in touches)
+    /*for (UITouch *myTouch in touches)
     {
         CGPoint touchLocation = [myTouch locationInView:self];
         
@@ -115,34 +114,12 @@
             // do the request
             [addVideoRequest doAddVideoRequest:videoObject];
         }
-    }
+    }*/
 }
 
 - (void)dealloc {
 	[addVideoImageView release];
-    [addVideoRequest release];
-	[super dealloc];
-}
-
-// ---------------------------------------------------------
-//                  Request Callbacks                       
-// ---------------------------------------------------------
-- (void) onAddVideoRequestSuccess: (AddVideoResponse*)response {
-	if (response.success) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-		if (![[NSThread currentThread] isCancelled]) {
-            
-            videoObject.saved = true;
-            addVideoImageView.hidden = YES;
-        }
-		[pool release];
-	} else {
-		LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
-	}
-}
-
-- (void) onAddVideoRequestFailed: (NSString*)errorMessage {		
-	LOG_ERROR(@"failed to save video: %@", errorMessage);
+    [super dealloc];
 }
 
 @end

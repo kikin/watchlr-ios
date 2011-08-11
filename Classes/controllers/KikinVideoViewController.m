@@ -13,6 +13,10 @@
 #import "VideoPlayerView.h"
 #import "VideoTableCell.h"
 
+#import "VideoRequest.h"
+#import "VideoResponse.h"
+#import "TrackerRequest.h"
+
 @implementation KikinVideoToolBar
 
 - (void) layoutSubviews {
@@ -358,98 +362,62 @@
 }
 
 - (void) onVideoLiked:(VideoObject*)videoObject {
-    if (likeVideoRequest == nil) {
-        // create a delete request if not already done
-        likeVideoRequest = [[LikeVideoRequest alloc] init];
-        likeVideoRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
-        likeVideoRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
-    }
-    
-    
-    // cancel any current request
-    if ([likeVideoRequest isRequesting]) {
-        [likeVideoRequest cancelRequest];
-    }
-    
-    // do the request
-    [likeVideoRequest doLikeVideoRequest:videoObject];
+    VideoRequest* likeRequest = [[[VideoRequest alloc] init] autorelease];
+    likeRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
+    likeRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
+    [likeRequest likeVideo:videoObject];
 }
 
 - (void) onVideoUnliked:(VideoObject*)videoObject {
-    if (unlikeVideoRequest == nil) {
-        // create a delete request if not already done
-        unlikeVideoRequest = [[UnlikeVideoRequest alloc] init];
-        unlikeVideoRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
-        unlikeVideoRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
-    }
-    
-    
-    // cancel any current request
-    if ([unlikeVideoRequest isRequesting]) {
-        [unlikeVideoRequest cancelRequest];
-    }
-    
-    // do the request
-    [unlikeVideoRequest doUnlikeVideoRequest:videoObject];
+    VideoRequest* unlikeRequest = [[[VideoRequest alloc] init] autorelease];
+    unlikeRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
+    unlikeRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
+    [unlikeRequest unlikeVideo:videoObject];
 }
 
 - (void) onVideoSaved:(VideoObject*)videoObject {
-    if (addVideoRequest == nil) {
-        // create a delete request if not already done
-        addVideoRequest = [[AddVideoRequest alloc] init];
-        addVideoRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
-        addVideoRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
-    }
-    
-    
-    // cancel any current request
-    if ([addVideoRequest isRequesting]) {
-        [addVideoRequest cancelRequest];
-    }
-    
-    // do the request
-    [addVideoRequest doAddVideoRequest:videoObject];
+    VideoRequest* saveRequest = [[[VideoRequest alloc] init] autorelease];
+    saveRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
+    saveRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
+    [saveRequest addVideo:videoObject];
 }
 
 - (void) onVideoRemoved:(VideoObject*)videoObject {
-    if (deleteVideoRequest == nil) {
-        // create a delete request if not already done
-        deleteVideoRequest = [[DeleteVideoRequest alloc] init];
-        deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
-        deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
-    }
-    
-    
-    // cancel any current request
-    if ([deleteVideoRequest isRequesting]) {
-        [deleteVideoRequest cancelRequest];
-    }
-    
-    // do the request
-    [deleteVideoRequest doDeleteVideoRequest:videoObject];
+    VideoRequest* removeRequest = [[[VideoRequest alloc] init] autorelease];
+    removeRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
+    removeRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
+    [removeRequest deleteVideo:videoObject];
 }
 
-- (void) onLikeVideoRequestSuccess: (LikeVideoResponse*)response {
+- (void) onLikeVideoRequestSuccess: (VideoResponse*)response {
 	if (response.success) {
-        VideoObject* videoObject = response.videoObject;
-        NSUInteger idx = [videos indexOfObject:videoObject];
-		// LOG_DEBUG(@"like idx = %ld %ld", idx, videoObject);
-        videoObject.likes += 1;
-        videoObject.liked = true;
-        [videos replaceObjectAtIndex:idx withObject:videoObject];
-        
-		
-		[videosTable beginUpdates];
-		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
-        if (index.row < videos.count) {
-            // Update data for the cell
-            // LOG_DEBUG(@"Updating video object.");
-            VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
-            [cell updateLikeButton: videoObject];
+        int videoId = [[response.videoResponse objectForKey:@"id"] intValue];
+        NSUInteger idx =[videos indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if (((VideoObject*)obj).videoId == videoId) {
+                *stop = YES;
+                return YES;
+            }
+            return NO;
+        }];
+
+        if (idx != NSNotFound) {
+            VideoObject* videoObject = [videos objectAtIndex:idx];
+            [videoObject updateFromDictionary:response.videoResponse];
+            [videos replaceObjectAtIndex:idx withObject:videoObject];
+            
+            
+            [videosTable beginUpdates];
+            NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+            if (index.row < videos.count) {
+                // Update data for the cell
+                // LOG_DEBUG(@"Updating video object.");
+                VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
+                [cell updateLikeButton: videoObject];
+            }
+            [videosTable endUpdates];
         }
-        [videosTable endUpdates];
         
-        [self trackAction:@"like" forVideo:videoObject.videoId];
+        [self trackAction:@"like" forVideo:videoId];
         
 	} else {
 		LOG_ERROR(@"request success but failed to like video: %@", response.errorMessage);
@@ -460,26 +428,35 @@
 	LOG_ERROR(@"failed to like video: %@", errorMessage);
 }
 
-- (void) onUnlikeVideoRequestSuccess: (UnlikeVideoResponse*)response {
+- (void) onUnlikeVideoRequestSuccess: (VideoResponse*)response {
 	if (response.success) {
-        VideoObject* videoObject = response.videoObject;
-        NSUInteger idx = [videos indexOfObject:videoObject];
-		videoObject.likes -= 1;
-        videoObject.liked = false;
-        [videos replaceObjectAtIndex:idx withObject:videoObject];
+        int videoId = [[response.videoResponse objectForKey:@"id"] intValue];
+        NSUInteger idx =[videos indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if (((VideoObject*)obj).videoId == videoId) {
+                *stop = YES;
+                return YES;
+            }
+            return NO;
+        }];
         
-		
-		[videosTable beginUpdates];
-		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
-        if (index.row < videos.count) {
-            // Update data for the cell
-            // LOG_DEBUG(@"Updating video object.");
-            VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
-            [cell updateLikeButton: videoObject];
+        if (idx != NSNotFound) {
+            VideoObject* videoObject = [videos objectAtIndex:idx];
+            [videoObject updateFromDictionary:response.videoResponse];
+            [videos replaceObjectAtIndex:idx withObject:videoObject];
+            
+            
+            [videosTable beginUpdates];
+            NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+            if (index.row < videos.count) {
+                // Update data for the cell
+                // LOG_DEBUG(@"Updating video object.");
+                VideoTableCell* cell = (VideoTableCell*)[videosTable cellForRowAtIndexPath:index];
+                [cell updateLikeButton: videoObject];
+            }
+            [videosTable endUpdates];
         }
-        [videosTable endUpdates];
         
-        [self trackAction:@"unlike" forVideo:videoObject.videoId];
+        [self trackAction:@"unlike" forVideo:videoId];
         
     } else {
         LOG_ERROR(@"request success but failed to unlike video: %@", response.errorMessage);
@@ -502,20 +479,27 @@
 	LOG_ERROR(@"failed to save video: %@", errorMessage);
 }
 
-- (void) onDeleteRequestSuccess: (DeleteVideoResponse*)response {
+- (void) onDeleteRequestSuccess: (VideoResponse*)response {
 	if (response.success) {
-		VideoObject* videoObject = response.videoObject;
-		
-		NSUInteger idx = [videos indexOfObject:videoObject];
-		// LOG_DEBUG(@"delete idx = %ld %ld", idx, videoObject);
-		[videos removeObjectAtIndex:idx];
-		
-		[videosTable beginUpdates];
-		NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-		[videosTable deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-						   withRowAnimation:UITableViewRowAnimationFade];
-		[videosTable endUpdates];
-        [self trackAction:@"remove" forVideo:videoObject.videoId];
+		int videoId = [[response.videoResponse objectForKey:@"id"] intValue];
+        NSUInteger idx =[videos indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if (((VideoObject*)obj).videoId == videoId) {
+                *stop = YES;
+                return YES;
+            }
+            return NO;
+        }];
+        
+        if (idx != NSNotFound) {
+            [videos removeObjectAtIndex:idx];
+            
+            [videosTable beginUpdates];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+            [videosTable deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                               withRowAnimation:UITableViewRowAnimationFade];
+            [videosTable endUpdates];
+        }
+        [self trackAction:@"remove" forVideo:videoId];
 	} else {
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to delete this video: %@", response.errorMessage];
 		
@@ -564,6 +548,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	// unselect row
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {

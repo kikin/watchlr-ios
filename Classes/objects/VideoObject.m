@@ -20,10 +20,10 @@
 	self.description = [data objectForKey:@"description"] != [NSNull null] ? [data objectForKey:@"description"] : nil;
 	self.videoUrl = [data objectForKey:@"url"] != [NSNull null] ? [data objectForKey:@"url"] : nil;
 	self.htmlCode = [data objectForKey:@"html"] != [NSNull null] ? [data objectForKey:@"html"] : nil;
-    self.liked = [[data objectForKey:@"liked"] boolValue];
-    self.likes = [[data objectForKey:@"likes"] intValue];
-    self.saved = [[data objectForKey:@"saved"] boolValue];
-    self.seek = [[data objectForKey:@"seek"] doubleValue];
+    self.liked = [data objectForKey:@"liked"] != [NSNull null] ? [[data objectForKey:@"liked"] boolValue] : false;
+    self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : 0;
+    self.saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : false;
+    self.seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : 0.0;
     
     NSDictionary* thumbnailDict = [data objectForKey:@"thumbnail"] != [NSNull null] ? [data objectForKey:@"thumbnail"] : nil;
     if (thumbnailDict != nil) {
@@ -43,10 +43,10 @@
 }
 
 - (void) updateFromDictionary: (NSDictionary*)data {
-    self.liked = [[data objectForKey:@"liked"] boolValue];
-    self.likes = [[data objectForKey:@"likes"] intValue];
-    self.saved = [[data objectForKey:@"saved"] boolValue];
-    self.seek = [[data objectForKey:@"seek"] doubleValue];
+    self.liked = [data objectForKey:@"liked"] != [NSNull null] ? [[data objectForKey:@"liked"] boolValue] : self.liked;
+    self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : self.likes;
+    self.saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : self.saved;
+    self.seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : self.seek;
 }
 
 - (void) dealloc {

@@ -46,7 +46,7 @@
         }
         
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -90,7 +90,9 @@
             }
             
             int lastSavedVideoListItemProcessedIndex = [videos count];
-            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; i < [videosList count];) {
+            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; 
+                 (i < [videosList count] && j < [videos count]);) 
+            {
                 NSDictionary* newVideoListItem = (NSDictionary*)[videosList objectAtIndex:i];
                 VideoObject* savedVideoListItem = (VideoObject*)[videos objectAtIndex:j];
                 
@@ -108,6 +110,15 @@
             if (lastSavedVideoListItemProcessedIndex < [videos count]) {
                 NSRange range = NSMakeRange(lastSavedVideoListItemProcessedIndex, ([videos count] - lastSavedVideoListItemProcessedIndex));
                 [videos removeObjectsInRange:range];
+                loadedAllVideos = false;
+            }
+            
+            if (lastSavedVideoListItemProcessedIndex < [videosList count]) {
+                for (int i = lastSavedVideoListItemProcessedIndex; i < [videosList count]; i++) {
+                    // create video from dictionnary
+                    VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:[videosList objectAtIndex:i]] autorelease];
+                    [videos insertObject:videoObject atIndex:i];
+                }
                 loadedAllVideos = false;
             }
         }
@@ -134,7 +145,7 @@
         
         loadMoreState = LOADED;
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -260,26 +271,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (deleteVideoRequest == nil) {
-		// create a delete request if not already done
-		deleteVideoRequest = [[DeleteVideoRequest alloc] init];
-		deleteVideoRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
-		deleteVideoRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
-	}
-	
 	// get the video item
 	if (indexPath.row < videos.count) {
 		VideoObject* video = [videos objectAtIndex:indexPath.row];
-		
-		// cancel any current request
-		if ([deleteVideoRequest isRequesting]) {
-			[deleteVideoRequest cancelRequest];
-		}
-		
-		// LOG_DEBUG(@"delete idx = %ld %ld", indexPath.row, video);
-		
-		// do the request
-		[deleteVideoRequest doDeleteVideoRequest:video];
+		[self onVideoRemoved:video];
 	}
 }
 

@@ -45,7 +45,7 @@
         }
         
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -89,7 +89,9 @@
             }
             
             int lastSavedVideoListItemProcessedIndex = [videos count];
-            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; i < [videosList count];) {
+            for (int i = firstMatchedVideoIndex, j = firstMatchedVideoIndex; 
+                 (i < [videosList count] && j < [videos count]);) 
+            {
                 NSDictionary* newVideoListItem = (NSDictionary*)[videosList objectAtIndex:i];
                 VideoObject* savedVideoListItem = (VideoObject*)[videos objectAtIndex:j];
                 
@@ -107,6 +109,15 @@
             if (lastSavedVideoListItemProcessedIndex < [videos count]) {
                 NSRange range = NSMakeRange(lastSavedVideoListItemProcessedIndex, ([videos count] - lastSavedVideoListItemProcessedIndex));
                 [videos removeObjectsInRange:range];
+                loadedAllVideos = false;
+            }
+            
+            if (lastSavedVideoListItemProcessedIndex < [videosList count]) {
+                for (int i = lastSavedVideoListItemProcessedIndex; i < [videosList count]; i++) {
+                    // create video from dictionnary
+                    VideoObject* videoObject = [[[VideoObject alloc] initFromDictionary:[videosList objectAtIndex:i]] autorelease];
+                    [videos insertObject:videoObject atIndex:i];
+                }
                 loadedAllVideos = false;
             }
         }
@@ -133,7 +144,7 @@
         
         loadMoreState = LOADED;
         lastPageRequested = pageNumber;
-        if ((videoCount % 10) == 0) {
+        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            

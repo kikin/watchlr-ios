@@ -7,14 +7,9 @@
 //
 
 #import "VideoTableCell.h"
-#import "AddVideoRequest.h"
 
 @interface LikedVideoTableCell : VideoTableCell {
     UIImageView* addVideoImageView;
-    AddVideoRequest* addVideoRequest;
 }
-
-- (void) onAddVideoRequestSuccess: (AddVideoResponse*)response;
-- (void) onAddVideoRequestFailed: (NSString*)errorMessage;
 
 @end

@@ -9,6 +9,9 @@
 #import "UserProfileView.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import "UserProfileRequest.h"
+#import "UserProfileResponse.h"
+
 @implementation UserProfileView
 
 - (id)initWithFrame:(CGRect)frame {
@@ -269,11 +272,6 @@
     [saveButton release];
     [cancelButton release];
     
-    [getUserProfileRequest release];
-    [getUserProfileResponse release];
-    [saveUserProfileRequest release];
-    [saveUserProfileResponse release];
-    
     if (loadingView != nil) {
         [loadingView release];
     }
@@ -308,25 +306,19 @@
 //                      Requests
 // -------------------------------------------------
 -(void) doGetUserProfileRequest {
-    // get the list of videos
-	if (getUserProfileRequest == nil) {
-		getUserProfileRequest = [[GetUserProfileRequest alloc] init];
-		getUserProfileRequest.errorCallback = [Callback create:self selector:@selector(onGetUserProfileRequestFailed:)];
-		getUserProfileRequest.successCallback = [Callback create:self selector:@selector(onGetUserProfileRequestSuccess:)];
-	}
-	if ([getUserProfileRequest isRequesting]) {
-		[getUserProfileRequest cancelRequest];
-	}
-    
-	[getUserProfileRequest doGetUserProfileRequest];	
+    UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
+    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onGetUserProfileRequestFailed:)];
+    userProfileRequest.successCallback = [Callback create:self selector:@selector(onGetUserProfileRequestSuccess:)];
+	[userProfileRequest getUserProfile];	
 }
 
-- (void) onGetUserProfileRequestSuccess: (GetUserProfileResponse*)response {
+- (void) onGetUserProfileRequestSuccess: (UserProfileResponse*)response {
 	if (response.success) {
+        if (userProfile != nil) [userProfile release];
 		// save response and get videos
-		getUserProfileResponse = [response retain];
-        userProfile = getUserProfileResponse.userProfile;
+		userProfile = response.userProfile;
         if (userProfile != nil) {
+            [userProfile retain];
             nameLabel.text = userProfile.name;
             [self loadUserProfileImage:userProfile.pictureUrl];
             userNameTextView.text = userProfile.userName;
@@ -377,23 +369,15 @@
 }
 
 -(void) doSaveUserProfileRequest:(NSDictionary*)data {
-    // get the list of videos
-	if (saveUserProfileRequest == nil) {
-		saveUserProfileRequest = [[SaveUserProfileRequest alloc] init];
-		saveUserProfileRequest.errorCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestFailed:)];
-		saveUserProfileRequest.successCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestSuccess:)];
-	}
-	if ([saveUserProfileRequest isRequesting]) {
-		[saveUserProfileRequest cancelRequest];
-	}
-    
-	[saveUserProfileRequest doSaveUserProfileRequest:data];
+    UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
+    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestFailed:)];
+    userProfileRequest.successCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestSuccess:)];
+	[userProfileRequest updateUserProfile:data];
 }
 
--(void) onSaveUserProfileRequestSuccess: (SaveUserProfileResponse*)response {
+-(void) onSaveUserProfileRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
 		// save response and get videos
-		saveUserProfileResponse = [response retain];
         [self setHidden:YES];
 		
 		// LOG_DEBUG(@"save user profile request success");

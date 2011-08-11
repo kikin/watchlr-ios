@@ -7,15 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VideoObject.h"
 #import "DefaultResponse.h"
+#include "UserProfileObject.h"
 
-@interface AddVideoResponse : DefaultResponse {
+@interface UserProfileResponse : DefaultResponse {
 
 }
 
 - (id) initWithResponse: (NSDictionary*)jsonObject;
 
-@property(retain) VideoObject* videoObject;
+@property(retain) UserProfileObject* userProfile;
 
 @end

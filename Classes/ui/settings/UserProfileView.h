@@ -7,10 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GetUserProfileRequest.h"
-#import "GetUserProfileResponse.h"
-#import "SaveUserProfileRequest.h"
-#import "SaveUserProfileResponse.h"
 #import "UserProfileObject.h"
 #import "LoadingMainView.h"
 
@@ -27,12 +23,6 @@
     UIButton* cancelButton;
     
     LoadingMainView* loadingView;
-    
-    GetUserProfileRequest* getUserProfileRequest;
-    GetUserProfileResponse* getUserProfileResponse;
-    SaveUserProfileRequest* saveUserProfileRequest;
-    SaveUserProfileResponse* saveUserProfileResponse;
-    
     UserProfileObject* userProfile;
     bool checked;
 }
@@ -40,12 +30,7 @@
 -(void) showUserProfile;
 
 -(void) doGetUserProfileRequest;
--(void) onGetUserProfileRequestSuccess: (GetUserProfileResponse*)response;
--(void) onGetUserProfileRequestFailed: (NSString*)errorMessage;
-
 -(void) doSaveUserProfileRequest:(NSDictionary*)data;
--(void) onSaveUserProfileRequestSuccess: (SaveUserProfileResponse*)response;
--(void) onSaveUserProfileRequestFailed: (NSString*)errorMessage;
 
 -(void) textFieldWillBeginEditing:(NSNotification*)aNotification;
 -(void) textFieldDidEditing:(NSNotification*)aNotification;

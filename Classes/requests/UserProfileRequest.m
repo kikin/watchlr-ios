@@ -6,20 +6,37 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "SaveUserProfileRequest.h"
+#import "UserProfileRequest.h"
+#import "UserProfileResponse.h"
 #import "UserObject.h"
 #import "Request.h"
 
-@implementation SaveUserProfileRequest
+@implementation UserProfileRequest
 
-- (void) doSaveUserProfileRequest:(NSDictionary*)userProfile {
+- (void) getUserProfile {
+	// get current userId
+	NSString* sessionId = [UserObject getUser].sessionId;
+	
+    // build params list
+	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+	[params setObject:sessionId forKey:@"session_id"];
+	
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
+    
+	// do request	
+	[self doGetRequest:requestUrl params:params];
+	
+	// release memory
+	[params release];
+}
+
+- (void) updateUserProfile:(NSDictionary*)userProfile {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] initWithDictionary:userProfile];
     [params setObject:sessionId forKey:@"session_id"];
-    // [params setObject:videoObject.videoUrl forKey:@"url"];
     
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
     
@@ -36,7 +53,7 @@
 	id jsonObject = [super processReceivedString:receivedString];
 	
 	// create the response
-	SaveUserProfileResponse* response = [[[SaveUserProfileResponse alloc] initWithResponse:jsonObject] autorelease];
+	UserProfileResponse* response = [[[UserProfileResponse alloc] initWithResponse:jsonObject] autorelease];
 	
 	return response;
 }

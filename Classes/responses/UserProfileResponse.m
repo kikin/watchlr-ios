@@ -6,9 +6,9 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "GetUserProfileResponse.h"
+#import "UserProfileResponse.h"
 
-@implementation GetUserProfileResponse
+@implementation UserProfileResponse
 
 @synthesize userProfile;
 

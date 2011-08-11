@@ -1,20 +1,21 @@
 //
-//  VideoListResponse.h
+//  LinkDeviceResponse.h
 //  KikinVideo
 //
-//  Created by ludovic cabre on 2/24/11.
+//  Created by ludovic cabre on 2/25/11.
 //  Copyright 2011 kikin. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import "VideoObject.h"
 #import "DefaultResponse.h"
 
-@interface VideoResponse : NSObject {
-    NSString* responseBody;
+@interface VideoResponse : DefaultResponse {
+    NSDictionary* videoResponse;
 }
 
-@property(retain) NSString* responseBody;
+@property(retain) NSDictionary* videoResponse;
 
-- (id) initWithResponse:(NSString*) aResponseBody;
+- (id) initWithResponse: (NSDictionary*)jsonObject;
 
 @end

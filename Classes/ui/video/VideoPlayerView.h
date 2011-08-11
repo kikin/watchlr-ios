@@ -9,9 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import "VideoObject.h"
-#import "VideoRequest.h"
-#import "VideoResponse.h"
-#import "SeekVideoRequest.h"
 
 @interface VideoPlayerView : UIView<UIGestureRecognizerDelegate> {
     UIView* moviePlayer;
@@ -43,7 +40,6 @@
     // UIView* videosListView;
     
     VideoObject* video;
-    SeekVideoRequest* seekRequest;
     
     Callback* onVideoFinishedCallback;
     Callback* onCloseButtonClickedCallback;
@@ -77,8 +73,6 @@
 @property()       bool isFullScreenMode;
 
 - (void) playVideo:(VideoObject*) videoObject;
-- (void) onVideoRequestFailed:(NSString*) errorMessage;
-- (void) onVideoRequestSuccess:(VideoResponse*) aResponse;
 - (void) closePlayer;
 - (void) onAllVideosPlayed:(bool)nextButtonClicked;
 

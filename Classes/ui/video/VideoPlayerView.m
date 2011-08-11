@@ -9,7 +9,10 @@
 #import "VideoPlayerView.h"
 #import "SourceObject.h"
 #import <QuartzCore/QuartzCore.h>
-#import "SeekVideoResponse.h"
+#import "VideoRequest.h"
+#import "VideoResponse.h"
+#import "GetRequest.h"
+#import "GetResponse.h"
 
 @implementation VideoPlayerView
 
@@ -261,8 +264,6 @@
     
     // [videosListView release];
     
-    [seekRequest release];
-    
     [onLikeButtonClickedCallback release];
     [onNextButtonClickedCallback release];
     [onPreviousButtonClickedCallback release];
@@ -288,17 +289,9 @@
 - (void) updatePauseTime:(NSNumber*)pauseTime {
     // NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     // if request object is never created, create it
-    if (seekRequest == nil) {
-        seekRequest = [[SeekVideoRequest alloc] init];
-        seekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
-        seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
-    }
-    
-    // if any of the current request is going on
-    // cancel the request and start the new request.
-    if ([seekRequest isRequesting]) {
-        [seekRequest cancelRequest];
-    }
+    VideoRequest* updateSeekRequest = [[[VideoRequest alloc] init] autorelease];
+    updateSeekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
+    updateSeekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
     
     // convert the pause time in string with 2 decimal digits.
     // It seems if you send anything more than 2 decimal digits
@@ -306,7 +299,7 @@
     NSString* videoPauseTime = [NSString stringWithFormat:@"%.2f", [pauseTime floatValue]];
     video.seek = [pauseTime doubleValue];
     shouldPlayVideo = false;
-    [seekRequest doSeekVideoRequest:video andTime:videoPauseTime];
+    [updateSeekRequest updateSeekTime:videoPauseTime forVideo:video];
     LOG_DEBUG(@"Get called in update pause time.");
     // [pool release];
 }
@@ -401,20 +394,12 @@
         [self play:videoUrl withInitialPlaybackTime:0.0];
     } else {
         // if request object is never created, create it
-        if (seekRequest == nil) {
-            seekRequest = [[SeekVideoRequest alloc] init];
-            seekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
-            seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
-        }
-        
-        // if any of the current request is going on
-        // cancel the request and start the new request.
-        if ([seekRequest isRequesting]) {
-            [seekRequest cancelRequest];
-        }
+        VideoRequest* seekRequest = [[[VideoRequest alloc] init] autorelease];
+        seekRequest.successCallback = [Callback create:self selector:@selector(onSeekRequestSuccess:)];
+        seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
         
         shouldPlayVideo = true;
-        [seekRequest doSeekVideoRequest:video];
+        [seekRequest getSeekTime:video];
     }
 }
 
@@ -564,7 +549,7 @@
 - (void) getVideoMetaData: (NSString*) videoSrc {
     // If request object is never created, create it
     
-    VideoRequest *metadataRequest = [[[VideoRequest alloc] init] autorelease];
+    GetRequest *metadataRequest = [[[GetRequest alloc] init] autorelease];
     metadataRequest.errorCallback = [Callback create:self selector:@selector(onVideoRequestFailed:)];
     metadataRequest.successCallback = [Callback create:self selector:@selector(onVideoRequestSuccess:)];
     
@@ -863,11 +848,12 @@
 // -------------------------------------------------------------------------
 //                       Request callback functions
 // -------------------------------------------------------------------------
-- (void) onSeekRequestSuccess:(SeekVideoResponse*)response {
-    double seekTime = video.seek;
+- (void) onSeekRequestSuccess:(VideoResponse*)response {
     if (response.success) {
-        seekTime = response.seekTime;
+        [video updateFromDictionary:response.videoResponse];
     }
+    
+    double seekTime = video.seek;
     
     if (shouldPlayVideo) {
         if (currentlyPlayingVideoUrl != NULL) {
@@ -880,7 +866,7 @@
     }
 }
 
-- (void) onSeekRequestFailure:(SeekVideoResponse*)response {
+- (void) onSeekRequestFailure:(VideoResponse*)response {
     if (shouldPlayVideo) {
         if (currentlyPlayingVideoUrl != NULL) {
             [self play:currentlyPlayingVideoUrl withInitialPlaybackTime:video.seek];
@@ -1247,7 +1233,7 @@
     // LOG_DEBUG(@"Error while fetching the page. Reason:%@", errorMessage);
 }
 
-- (void) onVideoRequestSuccess:(VideoResponse*) aResponse {
+- (void) onVideoRequestSuccess:(GetResponse*) aResponse {
     if (isVimeoVideo) {
         // LOG_DEBUG(@"This is a vimeo video.");
         [self playVimeoVideo:aResponse.responseBody];

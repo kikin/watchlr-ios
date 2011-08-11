@@ -9,7 +9,6 @@
 #import "VideoTableCell.h"
 #import "ThumbnailObject.h"
 #import "SourceObject.h"
-#import "LikeVideoResponse.h"
 
 @implementation VideoTableCell
 

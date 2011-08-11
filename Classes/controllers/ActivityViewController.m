@@ -9,6 +9,7 @@
 #import "ActivityViewController.h"
 #import "ActivityTableCell.h"
 #import "ActivityObject.h"
+#import "VideoResponse.h"
 
 @implementation ActivityViewController
 
@@ -52,7 +53,7 @@
         }
         
         lastPageRequested = pageNumber;
-        if ((activityCount % 10) == 0) {
+        if ((activityCount != 0) && ((activityCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -100,7 +101,9 @@
             }
             
             int lastActicvityItemProcessedIndex = [activities count];
-            for (int i = firstMatchedActicityIndex, j = firstMatchedActicityIndex; i < [activitiesList count];) {
+            for (int i = firstMatchedActicityIndex, j = firstMatchedActicityIndex; 
+                 ((i < [activitiesList count]) && (j < [activities count]));) {
+                
                 NSDictionary* newActivityItem = (NSDictionary*)[activitiesList objectAtIndex:i];
                 ActivityObject* activityListItem = (ActivityObject*)[activities objectAtIndex:j];
                 
@@ -123,6 +126,17 @@
                 NSRange range = NSMakeRange(lastActicvityItemProcessedIndex, ([activities count] - lastActicvityItemProcessedIndex));
                 [activities removeObjectsInRange:range];
                 [videos removeObjectsInRange:range];
+                loadedAllVideos = false;
+            }
+            
+            if (lastActicvityItemProcessedIndex < [activitiesList count]) {
+                for (int i = lastActicvityItemProcessedIndex; i < [activitiesList count]; i++) {
+                    // create video from dictionnary
+                    ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:[activitiesList objectAtIndex:i]] autorelease];
+                    [activities insertObject:activity atIndex:i];
+                    activity.video.savedInCurrentTab = false;
+                    [videos insertObject:activity.video atIndex:i];
+                }
                 loadedAllVideos = false;
             }
         }
@@ -151,7 +165,7 @@
         
         loadMoreState = LOADED;
         lastPageRequested = pageNumber;
-        if ((activityCount % 10) == 0) {
+        if ((activityCount != 0) && ((activityCount % 10) == 0)) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -261,29 +275,38 @@
 }
 
 // Overriding base class method
-- (void) onAddVideoRequestSuccess: (AddVideoResponse*)response {
+- (void) onAddVideoRequestSuccess: (VideoResponse*)response {
 //     [super onAddVideoRequestSuccess:response]; 
 	if (response.success) {
-        VideoObject* videoObject = response.videoObject;
-        NSUInteger idx = [videos indexOfObject:videoObject];
-		videoObject.saved = true;
-        ActivityObject* activity = (ActivityObject*)[activities objectAtIndex:idx];
-        activity.video = videoObject;
-        [activities replaceObjectAtIndex:idx withObject:activity];
-        [videos replaceObjectAtIndex:idx withObject:videoObject];
+        int videoId = [[response.videoResponse objectForKey:@"id"] intValue];
+        NSUInteger idx =[videos indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            if (((VideoObject*)obj).videoId == videoId) {
+                *stop = YES;
+                return YES;
+            }
+            return NO;
+        }];
         
-		
-		[videosTable beginUpdates];
-		NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
-        if (index.row < activities.count) {
-            // Update data for the cell
-            // LOG_DEBUG(@"Updating video object.");
-            ActivityTableCell* cell = (ActivityTableCell*)[videosTable cellForRowAtIndexPath:index];
-            [cell updateSaveButton:activity];
+        if (idx != NSNotFound) {
+            VideoObject* videoObject = [videos objectAtIndex:idx];
+            ActivityObject* activity = (ActivityObject*)[activities objectAtIndex:idx];
+            activity.video = videoObject;
+            [activities replaceObjectAtIndex:idx withObject:activity];
+            [videos replaceObjectAtIndex:idx withObject:videoObject];
+            
+            
+            [videosTable beginUpdates];
+            NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+            if (index.row < activities.count) {
+                // Update data for the cell
+                // LOG_DEBUG(@"Updating video object.");
+                ActivityTableCell* cell = (ActivityTableCell*)[videosTable cellForRowAtIndexPath:index];
+                [cell updateSaveButton:activity];
+            }
+            [videosTable endUpdates];
         }
-        [videosTable endUpdates];
         
-        [self trackAction:@"save" forVideo:response.videoObject.videoId];
+        [self trackAction:@"save" forVideo:videoId];
     } else {
         LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
     }

@@ -7,11 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DeleteVideoRequest.h"
-#import "LikeVideoRequest.h"
-#import "UnlikeVideoRequest.h"
-#import "AddVideoRequest.h"
-#import "TrackerRequest.h"
 #import "UserProfileView.h"
 #import "UserSettingsView.h"
 #import "RefreshStatusView.h"
@@ -43,11 +38,6 @@ typedef enum {
 
 /** Video List View Controller. */
 @interface KikinVideoViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
-	LikeVideoRequest* likeVideoRequest;
-    UnlikeVideoRequest* unlikeVideoRequest;
-    AddVideoRequest* addVideoRequest;
-    DeleteVideoRequest* deleteVideoRequest;
-    
 	UITableView* videosTable;
     UIBarButtonItem* accountButton;
 	KikinVideoToolBar* topToolbar;
