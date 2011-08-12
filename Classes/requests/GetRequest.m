@@ -7,7 +7,7 @@
 //
 
 #import "GetRequest.h"
-#import "VideoResponse.h"
+#import "GetResponse.h"
 #import "UserObject.h"
 
 @implementation GetRequest
@@ -21,7 +21,7 @@
 
 - (id) processReceivedString: (NSString*)receivedString {
 	// create the response
-	VideoResponse* response = [[[VideoResponse alloc] initWithResponse:receivedString] autorelease];
+	GetResponse* response = [[[GetResponse alloc] initWithResponse:receivedString] autorelease];
 	
 	return response;
 }

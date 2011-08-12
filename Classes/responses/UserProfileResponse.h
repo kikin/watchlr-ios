@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "DefaultResponse.h"
-#include "UserProfileObject.h"
 
 @interface UserProfileResponse : DefaultResponse {
 
@@ -16,6 +15,6 @@
 
 - (id) initWithResponse: (NSDictionary*)jsonObject;
 
-@property(retain) UserProfileObject* userProfile;
+@property(retain) NSDictionary* userProfile;
 
 @end

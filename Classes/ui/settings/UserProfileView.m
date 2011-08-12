@@ -316,7 +316,7 @@
 	if (response.success) {
         if (userProfile != nil) [userProfile release];
 		// save response and get videos
-		userProfile = response.userProfile;
+		userProfile = [[UserProfileObject alloc] initFromDictionary:response.userProfile];
         if (userProfile != nil) {
             [userProfile retain];
             nameLabel.text = userProfile.name;

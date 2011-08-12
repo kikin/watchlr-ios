@@ -10,16 +10,33 @@
 #import "UserActivityObject.h"
 #import "VideoObject.h"
 
-// User activity object
+// -----------------------------------------------------------
+//                    Pair
+// -----------------------------------------------------------
+@interface ActivityStringPair: NSObject {
+    
+}
+
+@property(retain)   NSString*key;
+@property(retain)   NSString*value;
+
+@end
+
+
+// -----------------------------------------------------------
+//                    User activity object
+// -----------------------------------------------------------
 @interface ActivityObject : NSObject {
 	long                timestamp;
     NSString*           activity_heading;
+    NSArray*            activityHeadingLabelsList;
     NSMutableArray*     userActivities;
     VideoObject*        video;
 }
 
 @property()			long timestamp;
 @property(retain)	NSString* activity_heading;
+@property(retain)	NSArray* activityHeadingLabelsList;
 @property(retain)	NSMutableArray* userActivities;
 @property(retain)   VideoObject* video;
 

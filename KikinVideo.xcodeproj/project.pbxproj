@@ -10,6 +10,8 @@
 		1D3623260D0F684500981E51 /* KikinVideoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		260864CC13F46EDD0081C53C /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864CB13F46EDD0081C53C /* ProfileViewController.m */; };
+		260864D313F4A56E0081C53C /* UIActivityHeadingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */; };
 		26426DE613F2F732006FD0D1 /* ConnectMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE313F2F732006FD0D1 /* ConnectMainView.m */; };
 		26426DE713F2F732006FD0D1 /* ErrorMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE413F2F732006FD0D1 /* ErrorMainView.m */; };
 		26426DE813F2F732006FD0D1 /* LoadingMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE513F2F732006FD0D1 /* LoadingMainView.m */; };
@@ -317,6 +319,10 @@
 		1D3623250D0F684500981E51 /* KikinVideoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KikinVideoAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* watchlr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = watchlr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		260864CB13F46EDD0081C53C /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProfileViewController.m; path = controllers/ProfileViewController.m; sourceTree = "<group>"; };
+		260864CD13F46EE50081C53C /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileViewController.h; path = controllers/ProfileViewController.h; sourceTree = "<group>"; };
+		260864D113F4A5660081C53C /* UIActivityHeadingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIActivityHeadingLabel.h; path = ui/labels/UIActivityHeadingLabel.h; sourceTree = "<group>"; };
+		260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIActivityHeadingLabel.m; path = ui/labels/UIActivityHeadingLabel.m; sourceTree = "<group>"; };
 		26426DE013F2F722006FD0D1 /* ConnectMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectMainView.h; path = ui/loginview/ConnectMainView.h; sourceTree = "<group>"; };
 		26426DE113F2F722006FD0D1 /* ErrorMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorMainView.h; path = ui/loginview/ErrorMainView.h; sourceTree = "<group>"; };
 		26426DE213F2F722006FD0D1 /* LoadingMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingMainView.h; path = ui/loginview/LoadingMainView.h; sourceTree = "<group>"; };
@@ -678,6 +684,31 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		260864CE13F4A5210081C53C /* labels */ = {
+			isa = PBXGroup;
+			children = (
+				260864D013F4A54F0081C53C /* headers */,
+				260864CF13F4A52F0081C53C /* source */,
+			);
+			name = labels;
+			sourceTree = "<group>";
+		};
+		260864CF13F4A52F0081C53C /* source */ = {
+			isa = PBXGroup;
+			children = (
+				260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */,
+			);
+			name = source;
+			sourceTree = "<group>";
+		};
+		260864D013F4A54F0081C53C /* headers */ = {
+			isa = PBXGroup;
+			children = (
+				260864D113F4A5660081C53C /* UIActivityHeadingLabel.h */,
+			);
+			name = headers;
+			sourceTree = "<group>";
+		};
 		2699392213A99A0800672FD5 /* scroll */ = {
 			isa = PBXGroup;
 			children = (
@@ -723,6 +754,7 @@
 				26EA178E13F2FB8F00291CAC /* KikinVideoViewController.m */,
 				26EA178F13F2FB8F00291CAC /* LikedVideosViewController.m */,
 				26EA179013F2FB8F00291CAC /* LoginViewController.m */,
+				260864CB13F46EDD0081C53C /* ProfileViewController.m */,
 				26EA179113F2FB8F00291CAC /* SavedVideosViewController.m */,
 			);
 			name = source;
@@ -736,6 +768,7 @@
 				26EA178913F2FB8100291CAC /* KikinVideoViewController.h */,
 				26EA178A13F2FB8100291CAC /* LikedVideosViewController.h */,
 				26EA178B13F2FB8100291CAC /* LoginViewController.h */,
+				260864CD13F46EE50081C53C /* ProfileViewController.h */,
 				26EA178C13F2FB8100291CAC /* SavedVideosViewController.h */,
 			);
 			name = headers;
@@ -843,13 +876,13 @@
 		26AC590513A15D1D00750D2F /* headers */ = {
 			isa = PBXGroup;
 			children = (
-				26EA179713F2FC5300291CAC /* VideoResponse.h */,
 				26EA179813F2FC5300291CAC /* DefaultResponse.h */,
-				26EA179A13F2FC5300291CAC /* UserProfileResponse.h */,
 				26EA179C13F2FC5300291CAC /* LinkDeviceResponse.h */,
 				26EA179F13F2FC5300291CAC /* TrackerResponse.h */,
 				26EA17A113F2FC5300291CAC /* UserActivityListResponse.h */,
+				26EA179A13F2FC5300291CAC /* UserProfileResponse.h */,
 				26EA17A213F2FC5300291CAC /* VideoListResponse.h */,
+				26EA179713F2FC5300291CAC /* VideoResponse.h */,
 				26EA17A313F2FC5300291CAC /* GetResponse.h */,
 			);
 			name = headers;
@@ -858,13 +891,13 @@
 		26AC590613A15D4100750D2F /* source */ = {
 			isa = PBXGroup;
 			children = (
-				26EA17A413F2FC6600291CAC /* VideoResponse.m */,
 				26EA17A513F2FC6600291CAC /* DefaultResponse.m */,
-				26EA17A713F2FC6600291CAC /* UserProfileResponse.m */,
 				26EA17A913F2FC6600291CAC /* LinkDeviceResponse.m */,
 				26EA17AC13F2FC6600291CAC /* TrackerResponse.m */,
 				26EA17AE13F2FC6600291CAC /* UserActivityListResponse.m */,
+				26EA17A713F2FC6600291CAC /* UserProfileResponse.m */,
 				26EA17AF13F2FC6600291CAC /* VideoListResponse.m */,
+				26EA17A413F2FC6600291CAC /* VideoResponse.m */,
 				26EA17B013F2FC6600291CAC /* GetResponse.m */,
 			);
 			name = source;
@@ -873,12 +906,12 @@
 		26AC590713A15D5C00750D2F /* source */ = {
 			isa = PBXGroup;
 			children = (
-				26EA17CA13F2FD1800291CAC /* VideoRequest.m */,
-				26EA17CC13F2FD1800291CAC /* UserProfileRequest.m */,
 				26EA17CE13F2FD1800291CAC /* LinkDeviceRequest.m */,
 				26EA17D113F2FD1800291CAC /* TrackerRequest.m */,
 				26EA17D313F2FD1800291CAC /* UserActivityListRequest.m */,
+				26EA17CC13F2FD1800291CAC /* UserProfileRequest.m */,
 				26EA17D413F2FD1800291CAC /* VideoListRequest.m */,
+				26EA17CA13F2FD1800291CAC /* VideoRequest.m */,
 				26EA17D513F2FD1800291CAC /* GetRequest.m */,
 			);
 			name = source;
@@ -887,13 +920,13 @@
 		26AC590813A15D7500750D2F /* headers */ = {
 			isa = PBXGroup;
 			children = (
-				26EA17BE13F2FD0500291CAC /* VideoRequest.h */,
-				26EA17C013F2FD0500291CAC /* UserProfileRequest.h */,
 				26EA17C213F2FD0500291CAC /* LinkDeviceRequest.h */,
 				26EA182613F31F0900291CAC /* Request.h */,
 				26EA17C513F2FD0500291CAC /* TrackerRequest.h */,
 				264DBC3613F448B8003E6E7E /* UserActivityListRequest.h */,
+				26EA17C013F2FD0500291CAC /* UserProfileRequest.h */,
 				26EA17C813F2FD0500291CAC /* VideoListRequest.h */,
+				26EA17BE13F2FD0500291CAC /* VideoRequest.h */,
 				26EA17C913F2FD0500291CAC /* GetRequest.h */,
 			);
 			name = headers;
@@ -984,6 +1017,7 @@
 		3559B4F61374375D00D6D892 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				260864CE13F4A5210081C53C /* labels */,
 				3559B617137443B200D6D892 /* loginView */,
 				2699392213A99A0800672FD5 /* scroll */,
 				26E3FFE113A6705600F35642 /* settings */,
@@ -1653,6 +1687,8 @@
 				26EA181F13F2FF5800291CAC /* main.m in Sources */,
 				26EA182113F30A2F00291CAC /* ActivityViewController.m in Sources */,
 				26EA182413F30AB300291CAC /* ActivityTableCell.m in Sources */,
+				260864CC13F46EDD0081C53C /* ProfileViewController.m in Sources */,
+				260864D313F4A56E0081C53C /* UIActivityHeadingLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

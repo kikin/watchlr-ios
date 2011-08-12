@@ -8,23 +8,15 @@
 
 #import "VideoTableCell.h"
 #import "ActivityObject.h"
+#import "UIActivityHeadingLabel.h"
 
-/*@interface UIHtmlLabel:UIView {
-    NSString* link;
-    
-    UILabel* label1;
-    UILabel* label2;
-    UILabel* label3;
-}
-
-- (void) drawHtmlString:(NSString*)string;
-
-@end*/
-
-@interface ActivityTableCell : VideoTableCell<UIWebViewDelegate> {
+// ---------------------------------------------------------------------------
+//                         Activity table cell
+// ---------------------------------------------------------------------------
+@interface ActivityTableCell : VideoTableCell {
     UIImageView* addVideoImageView;
     UIImageView* userImageView;
-    UIWebView* activityHeading;
+    UIActicityHeadingLabel* activityHeading;
     
     ActivityObject* activityObject;
     Callback* addVideoCallback;

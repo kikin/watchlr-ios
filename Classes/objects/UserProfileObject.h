@@ -41,9 +41,12 @@
 
 // User Profile object
 @interface UserProfileObject : NSObject {
-	int likes;
+	int userId;
+    int likes;
     int watches;
     int saves;
+    int followers;
+    int following;
     bool pictureImageLoaded;
     
     NSString* name;
@@ -56,9 +59,12 @@
     UserPreferences* preferences; //{"syndicate": 1}}
 }
 
+@property()			int userId;
 @property()			int likes;
 @property()			int watches;
 @property()			int saves;
+@property()			int followers;
+@property()			int following;
 @property()         bool pictureImageLoaded;
 @property(retain)	NSString* name;
 @property(retain)	NSString* userName;

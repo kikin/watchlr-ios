@@ -71,17 +71,22 @@
 
 @implementation UserProfileObject
 
-@synthesize likes, watches, saves, pictureImageLoaded, name, userName, pictureUrl, pictureImage, email, notifications, preferences;
+@synthesize userId, likes, watches, saves, followers, following, pictureImageLoaded, name, userName, pictureUrl, pictureImage, email, notifications, preferences;
 
 - (id) initFromDictionary: (NSDictionary*)data {
 	// get data
-    self.likes = [[data objectForKey:@"likes"] intValue];
-    self.watches = [[data objectForKey:@"watches"] intValue];
-    self.saves = [[data objectForKey:@"saves"] intValue];
-	self.name = [data objectForKey:@"name"] != [NSNull null] ? [data objectForKey:@"name"] : nil;
+    self.userId = [data objectForKey:@"id"] != [NSNull null] ? [[data objectForKey:@"id"] intValue] : -1;
     self.userName = [data objectForKey:@"username"] != [NSNull null] ? [data objectForKey:@"username"] : nil;
+    self.name = [data objectForKey:@"name"] != [NSNull null] ? [data objectForKey:@"name"] : nil;
     self.pictureUrl = [data objectForKey:@"picture"] != [NSNull null] ? [data objectForKey:@"picture"] : nil;
     self.email = [data objectForKey:@"email"] != [NSNull null] ? [data objectForKey:@"email"] : nil;
+    
+    self.saves = [data objectForKey:@"saves"] != [NSNull null] ? [[data objectForKey:@"saves"] intValue] : 0;
+    self.watches = [data objectForKey:@"watches"] != [NSNull null] ? [[data objectForKey:@"watches"] intValue] : 0;
+    self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : 0;
+    self.followers = [data objectForKey:@"followers"] != [NSNull null] ? [[data objectForKey:@"followers"] intValue] : 0;
+    self.following = [data objectForKey:@"following"] != [NSNull null] ? [[data objectForKey:@"following"] intValue] : 0;
+    
     self.notifications = [data objectForKey:@"notifications"] != [NSNull null] ? [[UserNotification alloc] initFromDictionary:[data objectForKey:@"notifications"]] : nil;
     self.preferences = [data objectForKey:@"preferences"] != [NSNull null] ? [[UserPreferences alloc] initFromDictionary:[data objectForKey:@"preferences"]] : nil;
     
@@ -97,6 +102,9 @@
     [userProfile setObject:[[NSNumber numberWithInt:self.likes] stringValue] forKey:@"likes"];
     [userProfile setObject:[[NSNumber numberWithInt:self.watches] stringValue] forKey:@"watches"];
     [userProfile setObject:[[NSNumber numberWithInt:self.saves] stringValue] forKey:@"saves"];
+    if (self.userId > -1) { [userProfile setObject:[[NSNumber numberWithInt:self.userId] stringValue] forKey:@"id"]; }
+    [userProfile setObject:[[NSNumber numberWithInt:self.followers] stringValue] forKey:@"followers"];
+    [userProfile setObject:[[NSNumber numberWithInt:self.following] stringValue] forKey:@"following"];
     
     [userProfile setObject:self.name forKey:@"name"];
     [userProfile setObject:self.userName forKey:@"username"];

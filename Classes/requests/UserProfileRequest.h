@@ -15,6 +15,11 @@
 
 - (void) getUserProfile;
 - (void) updateUserProfile:(NSDictionary*)userProfile;
+- (void) getUserProfile:(NSString*)username;
+- (void) getPeopleUserFollows:(NSString*)username;
+- (void) getPeopleFollowingUser:(NSString*)username;
+- (void) getLikedVideosByUser:(NSString*)username;
+
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

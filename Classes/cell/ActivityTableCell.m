@@ -10,80 +10,6 @@
 #import "UserActivityObject.h"
 #import "CommonIos/Callback.h"
 
-
-/*@implementation UIHtmlLabel
-
-- (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
-        label1 = [[UILabel alloc] init];
-        label1.font = [UIFont systemFontOfSize:18];
-        label1.numberOfLines = 1;
-        label1.backgroundColor = [UIColor clearColor];
-        label1.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        [self addSubview:label1]; 
-        
-        label2 = [[UILabel alloc] init];
-        label2.font = [UIFont systemFontOfSize:18];
-        label2.numberOfLines = 1;
-        label2.backgroundColor = [UIColor clearColor];
-        label2.textColor = [UIColor blueColor];
-        label2.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        [self addSubview:label2]; 
-        
-        label3 = [[UILabel alloc] init];
-        label3.font = [UIFont systemFontOfSize:18];
-        label3.numberOfLines = 1;
-        label3.backgroundColor = [UIColor clearColor];
-        label3.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        [self addSubview:label3]; 
-    }
-    return self;
-}
-
-- (void) dealloc {
-    [label1 release];
-    [label2 release];
-    [label3 release];
-    
-    [super dealloc];
-}
-
-- (void) drawHtmlString:(NSString*)string {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    if (string != nil) {
-        NSRange range = [string rangeOfString:@"<a href="];
-        int x = 0;
-        if (!NSEqualRanges(range, NSMakeRange(NSNotFound, 0))) {
-            label1.text = [string substringToIndex:range.location];
-            label1.frame = CGRectMake(x, 0, ([label1.text length] * 11), self.frame.size.height);
-            x += [label1.text length] * 11;
-            
-            NSRange endRange = [string rangeOfString:@">"];
-            link = [string substringWithRange:NSMakeRange((range.location + range.length), (endRange.location - (range.location + range.length)))];
-            
-            range = [string rangeOfString:@"</a>"];
-            label2.text = [string substringWithRange:NSMakeRange((endRange.location + endRange.length), (range.location - (endRange.location + endRange.length)))];
-            label2.frame = CGRectMake(x, 0, ([label2.text length] * 11), self.frame.size.height);
-            x += [label2.text length] * 11;
-            
-            label3.text = [string substringFromIndex:(range.location + range.length)];
-            label3.frame = CGRectMake(x, 0, (self.frame.size.width - x), self.frame.size.height);
-        } else {
-            label1.text = string;
-            label1.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-            
-            label2.text = @"";
-            label2.frame = CGRectMake(self.frame.size.width, 0, 0, self.frame.size.height);
-            
-            label3.text = @"";
-            label3.frame = CGRectMake(self.frame.size.width, 0, 0, self.frame.size.height);
-        }
-    }
-    [pool release];
-}
-
-@end*/
-
 @implementation ActivityTableCell
 
 @synthesize addVideoCallback;
@@ -101,18 +27,9 @@
         [self addSubview:userImageView];
         
         // create heading activity
-        activityHeading = [[UIWebView alloc] init];
+        activityHeading = [[UIActicityHeadingLabel alloc] init];
         activityHeading.autoresizingMask = UIViewAutoresizingNone;
-        activityHeading.delegate = self;
         [self addSubview:activityHeading];
-        UIScrollView* sv = nil;
-        for(UIView* v in activityHeading.subviews){
-            if([v isKindOfClass:[UIScrollView class] ]){
-                sv = (UIScrollView*) v;
-                sv.scrollEnabled = NO;
-                sv.bounces = NO;
-            }
-        }
         
         // set size/positions
 		if (DeviceUtils.isIphone) {
@@ -208,18 +125,18 @@
         
     } else {
         int userImageAndOptionsWidth = 210;
-        int activityHeadinHeight = 30;
+        int activityHeadingHeight = 30;
         int thumbnailWidth = 245;
         int	faviconAndSourceHeight = 30;
         int titleHeight = 20;
         
         // set the size for activity heading
-        activityHeading.frame = CGRectMake(75, 7, (self.frame.size.width - userImageAndOptionsWidth), activityHeadinHeight);
+        activityHeading.frame = CGRectMake(75, 7, (self.frame.size.width - userImageAndOptionsWidth), activityHeadingHeight);
         
         // set the size for title label
         titleLabel.frame = CGRectMake(thumbnailWidth, videoImageView.frame.origin.y + 2, (self.frame.size.width - (thumbnailWidth + 20)), titleHeight);
         
-        descriptionLabel.frame = CGRectMake(thumbnailWidth, videoImageView.frame.origin.y + 10, (self.frame.size.width - (thumbnailWidth + 20)), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + activityHeadinHeight + 15)));
+        descriptionLabel.frame = CGRectMake(thumbnailWidth, videoImageView.frame.origin.y + 10, (self.frame.size.width - (thumbnailWidth + 20)), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + activityHeadingHeight + 15)));
         
         if (!videoObject.saved || videoObject.savedInCurrentTab) {
             // set the size for save/unsaved button
@@ -277,13 +194,12 @@
     
     [self setVideoObject:activityObject.video];
     
-//    LOG_DEBUG(@"System font family name:%@\nSystem font name:%@", titleLabel.font.familyName, titleLabel.font.fontName);
-    // set the activity heading
-    NSString *path = [[NSBundle mainBundle] bundlePath];
-    NSURL *baseURL = [NSURL fileURLWithPath:path];
-
-    NSString* htmlString = [NSString stringWithFormat:@"<html><head><style type=\"text/css\"> a {color:#2AACE1;text-decoration:none;cursor:pointer;} body {font-family:'Helvetica';font-size:18px}</style></head><body>%@</body></html>", activity.activity_heading];
-    [activityHeading loadHTMLString:htmlString baseURL:baseURL];
+    if (activity.activityHeadingLabelsList != nil && [activity.activityHeadingLabelsList count] > 0) {
+        activityHeading.hidden = NO;
+        [activityHeading renderActivityHeading:activity.activityHeadingLabelsList];
+    } else {
+        activityHeading.hidden = YES;
+    }
 
     // update image
     [self loadActivityCellImages];
@@ -300,22 +216,8 @@
     videoObject.savedInCurrentTab = true;
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSString* scheme = [[request URL] scheme];
-    if ([scheme caseInsensitiveCompare:@"file"] == NSOrderedSame) {
-        if (NSEqualRanges([[[request URL] path] rangeOfString:@"watchlr.app"], NSMakeRange(NSNotFound, 0))) {
-            LOG_DEBUG(@"open watchlr profile.");
-        } else {
-            return YES;
-        }
-    } else {
-        LOG_DEBUG(@"open facebook profile.");
-    }
-    return NO;
-}
-
 - (void)dealloc {
-    activityHeading.delegate = nil;
+    // activityHeading.delegate = nil;
     
     [addVideoImageView release];
     [userImageView release];

@@ -13,39 +13,62 @@
 
 @implementation UserProfileRequest
 
-- (void) getUserProfile {
-	// get current userId
-	NSString* sessionId = [UserObject getUser].sessionId;
-	
-    // build params list
-	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-	[params setObject:sessionId forKey:@"session_id"];
-	
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
+- (void) doUserProfileRequest:(NSString*)url withParams:(NSMutableDictionary*)params {
     
-	// do request	
-	[self doGetRequest:requestUrl params:params];
-	
-	// release memory
-	[params release];
+    // get current userId
+	NSString* sessionId = [UserObject getUser].sessionId;
+    
+    if (params == nil) {
+        params = [[NSMutableDictionary alloc] init];
+    } 
+    [params setObject:sessionId forKey:@"session_id"];
+    
+    
+    // do request	
+	[self doGetRequest:url params:params];
+    
+    // release params
+    [params release];
+}
+
+- (void) getUserProfile {
+	NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
+    [self doUserProfileRequest:requestUrl withParams:nil];
 }
 
 - (void) updateUserProfile:(NSDictionary*)userProfile {
-	// get current userId
-	NSString* sessionId = [UserObject getUser].sessionId;
-	
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] initWithDictionary:userProfile];
-    [params setObject:sessionId forKey:@"session_id"];
-    
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/auth/profile", WATCHLR_COM_URL];
-    
-    // do request	
-    [self doGetRequest:requestUrl params:params];
-    
-	
-	// release memory
-	[params release];
+    [self doUserProfileRequest:requestUrl withParams:params];
+}
+
+- (void) getUserProfile:(NSString*)username {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/user", WATCHLR_COM_URL];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setValue:username forKey:@"username"];
+    [self doUserProfileRequest:requestUrl withParams:params];
+}
+
+- (void) getPeopleUserFollows:(NSString*)username {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/followers", WATCHLR_COM_URL];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setValue:username forKey:@"username"];
+    [self doUserProfileRequest:requestUrl withParams:params];
+}
+
+- (void) getPeopleFollowingUser:(NSString*)username {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/following", WATCHLR_COM_URL];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setValue:username forKey:@"username"];
+    [self doUserProfileRequest:requestUrl withParams:params];
+}
+
+- (void) getLikedVideosByUser:(NSString*)username {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/liked_videos", WATCHLR_COM_URL];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setValue:username forKey:@"username"];
+    [self doUserProfileRequest:requestUrl withParams:params];
 }
 
 - (id) processReceivedString: (NSString*)receivedString {

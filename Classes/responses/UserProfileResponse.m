@@ -16,10 +16,8 @@
 	if ((self = [super initWithResponse:jsonObject])) {
 		if (super.success) {
 			// get the result in the thing
-			NSDictionary* response = [jsonObject objectForKey:@"result"];
-			
-			// create our video array
-			userProfile = [[UserProfileObject alloc] initFromDictionary:response];
+			userProfile = [jsonObject objectForKey:@"result"];
+            [userProfile retain];
 		}
 	}
 	return self;
