@@ -23,7 +23,6 @@
 	// create the toolbar
 	navigationBar = [[UINavigationBar alloc] init];
 	navigationBar.frame = CGRectMake(0, 0, view.frame.size.width, 42);
-	// navigationBar.topItem.title = @"Loading video..";
 	navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     navigationBar.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
 	[view addSubview:navigationBar];

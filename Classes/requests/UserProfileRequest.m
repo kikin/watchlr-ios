@@ -71,6 +71,16 @@
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
+- (void) followUser:(int) userId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/follow/%d", WATCHLR_COM_URL, userId];
+    [self doUserProfileRequest:requestUrl withParams:nil];
+}
+
+- (void) unfollowUser:(int) userId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/unfollow/%d", WATCHLR_COM_URL, userId];
+    [self doUserProfileRequest:requestUrl withParams:nil];
+}
+
 - (id) processReceivedString: (NSString*)receivedString {
 	// let the base parse the json
 	id jsonObject = [super processReceivedString:receivedString];

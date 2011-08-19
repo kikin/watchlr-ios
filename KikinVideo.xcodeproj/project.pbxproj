@@ -11,10 +11,21 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		260864CC13F46EDD0081C53C /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864CB13F46EDD0081C53C /* ProfileViewController.m */; };
-		260864D313F4A56E0081C53C /* UIActivityHeadingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */; };
-		26426DE613F2F732006FD0D1 /* ConnectMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE313F2F732006FD0D1 /* ConnectMainView.m */; };
-		26426DE713F2F732006FD0D1 /* ErrorMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE413F2F732006FD0D1 /* ErrorMainView.m */; };
-		26426DE813F2F732006FD0D1 /* LoadingMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26426DE513F2F732006FD0D1 /* LoadingMainView.m */; };
+		260864E513F4C3440081C53C /* UserTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864E413F4C3440081C53C /* UserTableCell.m */; };
+		260864FC13F5990D0081C53C /* ConnectMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F113F5990D0081C53C /* ConnectMainView.m */; };
+		260864FD13F5990D0081C53C /* ErrorMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F213F5990D0081C53C /* ErrorMainView.m */; };
+		260864FE13F5990D0081C53C /* LoadingMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F313F5990D0081C53C /* LoadingMainView.m */; };
+		260864FF13F5990D0081C53C /* RefreshStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F413F5990D0081C53C /* RefreshStatusView.m */; };
+		2608650013F5990D0081C53C /* UIActivityHeadingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F513F5990D0081C53C /* UIActivityHeadingLabel.m */; };
+		2608650113F5990D0081C53C /* UserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F613F5990D0081C53C /* UserListView.m */; };
+		2608650213F5990D0081C53C /* UserProfileSettingsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F713F5990D0081C53C /* UserProfileSettingsView.m */; };
+		2608650313F5990D0081C53C /* UserSettingsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F813F5990D0081C53C /* UserSettingsView.m */; };
+		2608650413F5990D0081C53C /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864F913F5990D0081C53C /* VideoPlayerView.m */; };
+		2608650513F5990D0081C53C /* VideosListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 260864FA13F5990D0081C53C /* VideosListView.m */; };
+		2608650813F5A5020081C53C /* SavedVideosListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608650713F5A5020081C53C /* SavedVideosListView.m */; };
+		2608650C13F5B7470081C53C /* ActivityListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608650B13F5B7470081C53C /* ActivityListView.m */; };
+		2608650F13F6366C0081C53C /* UserProfileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608650E13F6366C0081C53C /* UserProfileView.m */; };
+		2608651213FA17580081C53C /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608651113FA17580081C53C /* WebViewController.m */; };
 		265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */; };
 		269B6F6013AADF000019133D /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 269B6F5F13AADEFF0019133D /* Entitlements.plist */; };
 		269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269B6F6413ABB6880019133D /* MediaPlayer.framework */; };
@@ -23,16 +34,11 @@
 		26E2300813F0503B00DB6D0A /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300413F0503B00DB6D0A /* Icon-Small.png */; };
 		26E2300913F0503B00DB6D0A /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300513F0503B00DB6D0A /* Icon.png */; };
 		26E3FFDD13A4893C00F35642 /* libCommonIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E3FFDC13A4893C00F35642 /* libCommonIos.a */; };
-		26EA176F13F2F92400291CAC /* RefreshStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA176E13F2F92400291CAC /* RefreshStatusView.m */; };
-		26EA177413F2F97800291CAC /* UserProfileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177213F2F97800291CAC /* UserProfileView.m */; };
-		26EA177513F2F97800291CAC /* UserSettingsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177313F2F97800291CAC /* UserSettingsView.m */; };
-		26EA177813F2F9B300291CAC /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177713F2F9B300291CAC /* VideoPlayerView.m */; };
-		26EA177D13F2FA3900291CAC /* LikedVideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177B13F2FA3900291CAC /* LikedVideoTableCell.m */; };
 		26EA177E13F2FA3900291CAC /* VideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177C13F2FA3900291CAC /* VideoTableCell.m */; };
 		26EA178613F2FAEA00291CAC /* PListFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178413F2FAEA00291CAC /* PListFile.m */; };
 		26EA178713F2FAEA00291CAC /* UserDataFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178513F2FAEA00291CAC /* UserDataFile.m */; };
 		26EA179213F2FB8F00291CAC /* FeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178D13F2FB8F00291CAC /* FeedbackViewController.m */; };
-		26EA179313F2FB8F00291CAC /* KikinVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178E13F2FB8F00291CAC /* KikinVideoViewController.m */; };
+		26EA179313F2FB8F00291CAC /* WatchlrViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178E13F2FB8F00291CAC /* WatchlrViewController.m */; };
 		26EA179413F2FB8F00291CAC /* LikedVideosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178F13F2FB8F00291CAC /* LikedVideosViewController.m */; };
 		26EA179513F2FB8F00291CAC /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA179013F2FB8F00291CAC /* LoginViewController.m */; };
 		26EA179613F2FB8F00291CAC /* SavedVideosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA179113F2FB8F00291CAC /* SavedVideosViewController.m */; };
@@ -321,14 +327,36 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		260864CB13F46EDD0081C53C /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProfileViewController.m; path = controllers/ProfileViewController.m; sourceTree = "<group>"; };
 		260864CD13F46EE50081C53C /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileViewController.h; path = controllers/ProfileViewController.h; sourceTree = "<group>"; };
-		260864D113F4A5660081C53C /* UIActivityHeadingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIActivityHeadingLabel.h; path = ui/labels/UIActivityHeadingLabel.h; sourceTree = "<group>"; };
-		260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIActivityHeadingLabel.m; path = ui/labels/UIActivityHeadingLabel.m; sourceTree = "<group>"; };
-		26426DE013F2F722006FD0D1 /* ConnectMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectMainView.h; path = ui/loginview/ConnectMainView.h; sourceTree = "<group>"; };
-		26426DE113F2F722006FD0D1 /* ErrorMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorMainView.h; path = ui/loginview/ErrorMainView.h; sourceTree = "<group>"; };
-		26426DE213F2F722006FD0D1 /* LoadingMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingMainView.h; path = ui/loginview/LoadingMainView.h; sourceTree = "<group>"; };
-		26426DE313F2F732006FD0D1 /* ConnectMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConnectMainView.m; path = ui/loginview/ConnectMainView.m; sourceTree = "<group>"; };
-		26426DE413F2F732006FD0D1 /* ErrorMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ErrorMainView.m; path = ui/loginview/ErrorMainView.m; sourceTree = "<group>"; };
-		26426DE513F2F732006FD0D1 /* LoadingMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoadingMainView.m; path = ui/loginview/LoadingMainView.m; sourceTree = "<group>"; };
+		260864E313F4C3380081C53C /* UserTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserTableCell.h; path = cell/UserTableCell.h; sourceTree = "<group>"; };
+		260864E413F4C3440081C53C /* UserTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserTableCell.m; path = cell/UserTableCell.m; sourceTree = "<group>"; };
+		260864E613F598F50081C53C /* ConnectMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectMainView.h; path = ui/ConnectMainView.h; sourceTree = "<group>"; };
+		260864E713F598F50081C53C /* ErrorMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorMainView.h; path = ui/ErrorMainView.h; sourceTree = "<group>"; };
+		260864E813F598F50081C53C /* LoadingMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingMainView.h; path = ui/LoadingMainView.h; sourceTree = "<group>"; };
+		260864E913F598F50081C53C /* RefreshStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefreshStatusView.h; path = ui/RefreshStatusView.h; sourceTree = "<group>"; };
+		260864EA13F598F50081C53C /* UIActivityHeadingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIActivityHeadingLabel.h; path = ui/UIActivityHeadingLabel.h; sourceTree = "<group>"; };
+		260864EB13F598F50081C53C /* UserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserListView.h; path = ui/UserListView.h; sourceTree = "<group>"; };
+		260864EC13F598F50081C53C /* UserProfileSettingsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserProfileSettingsView.h; path = ui/UserProfileSettingsView.h; sourceTree = "<group>"; };
+		260864ED13F598F50081C53C /* UserSettingsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserSettingsView.h; path = ui/UserSettingsView.h; sourceTree = "<group>"; };
+		260864EE13F598F50081C53C /* VideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoPlayerView.h; path = ui/VideoPlayerView.h; sourceTree = "<group>"; };
+		260864EF13F598F50081C53C /* VideosListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideosListView.h; path = ui/VideosListView.h; sourceTree = "<group>"; };
+		260864F113F5990D0081C53C /* ConnectMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConnectMainView.m; path = ui/ConnectMainView.m; sourceTree = "<group>"; };
+		260864F213F5990D0081C53C /* ErrorMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ErrorMainView.m; path = ui/ErrorMainView.m; sourceTree = "<group>"; };
+		260864F313F5990D0081C53C /* LoadingMainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoadingMainView.m; path = ui/LoadingMainView.m; sourceTree = "<group>"; };
+		260864F413F5990D0081C53C /* RefreshStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RefreshStatusView.m; path = ui/RefreshStatusView.m; sourceTree = "<group>"; };
+		260864F513F5990D0081C53C /* UIActivityHeadingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIActivityHeadingLabel.m; path = ui/UIActivityHeadingLabel.m; sourceTree = "<group>"; };
+		260864F613F5990D0081C53C /* UserListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserListView.m; path = ui/UserListView.m; sourceTree = "<group>"; };
+		260864F713F5990D0081C53C /* UserProfileSettingsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserProfileSettingsView.m; path = ui/UserProfileSettingsView.m; sourceTree = "<group>"; };
+		260864F813F5990D0081C53C /* UserSettingsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserSettingsView.m; path = ui/UserSettingsView.m; sourceTree = "<group>"; };
+		260864F913F5990D0081C53C /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPlayerView.m; path = ui/VideoPlayerView.m; sourceTree = "<group>"; };
+		260864FA13F5990D0081C53C /* VideosListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideosListView.m; path = ui/VideosListView.m; sourceTree = "<group>"; };
+		2608650713F5A5020081C53C /* SavedVideosListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SavedVideosListView.m; path = ui/SavedVideosListView.m; sourceTree = "<group>"; };
+		2608650913F5A50D0081C53C /* SavedVideosListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SavedVideosListView.h; path = ui/SavedVideosListView.h; sourceTree = "<group>"; };
+		2608650A13F5B7410081C53C /* ActivityListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivityListView.h; path = ui/ActivityListView.h; sourceTree = "<group>"; };
+		2608650B13F5B7470081C53C /* ActivityListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActivityListView.m; path = ui/ActivityListView.m; sourceTree = "<group>"; };
+		2608650D13F636610081C53C /* UserProfileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserProfileView.h; path = ui/UserProfileView.h; sourceTree = "<group>"; };
+		2608650E13F6366C0081C53C /* UserProfileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserProfileView.m; path = ui/UserProfileView.m; sourceTree = "<group>"; };
+		2608651013FA17570081C53C /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewController.h; path = controllers/WebViewController.h; sourceTree = "<group>"; };
+		2608651113FA17580081C53C /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebViewController.m; path = controllers/WebViewController.m; sourceTree = "<group>"; };
 		264DBC3613F448B8003E6E7E /* UserActivityListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserActivityListRequest.h; path = requests/UserActivityListRequest.h; sourceTree = "<group>"; };
 		265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_icon.png; sourceTree = "<group>"; };
 		269B6F5F13AADEFF0019133D /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
@@ -339,17 +367,7 @@
 		26E2300513F0503B00DB6D0A /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		26E3FFCB13A4831E00F35642 /* CommonIos.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CommonIos.xcodeproj; path = CommonIos/CommonIos.xcodeproj; sourceTree = "<group>"; };
 		26E3FFDC13A4893C00F35642 /* libCommonIos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = libCommonIos.a; path = "/Users/kapilgoel/Projects/kikin-video-ios/CommonIos/build/Debug-iphoneos/libCommonIos.a"; sourceTree = "<absolute>"; };
-		26EA176D13F2F91B00291CAC /* RefreshStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefreshStatusView.h; path = ui/scroll/RefreshStatusView.h; sourceTree = "<group>"; };
-		26EA176E13F2F92400291CAC /* RefreshStatusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RefreshStatusView.m; path = ui/scroll/RefreshStatusView.m; sourceTree = "<group>"; };
-		26EA177013F2F96B00291CAC /* UserProfileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserProfileView.h; path = ui/settings/UserProfileView.h; sourceTree = "<group>"; };
-		26EA177113F2F96B00291CAC /* UserSettingsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserSettingsView.h; path = ui/settings/UserSettingsView.h; sourceTree = "<group>"; };
-		26EA177213F2F97800291CAC /* UserProfileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserProfileView.m; path = ui/settings/UserProfileView.m; sourceTree = "<group>"; };
-		26EA177313F2F97800291CAC /* UserSettingsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserSettingsView.m; path = ui/settings/UserSettingsView.m; sourceTree = "<group>"; };
-		26EA177613F2F9AC00291CAC /* VideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoPlayerView.h; path = ui/video/VideoPlayerView.h; sourceTree = "<group>"; };
-		26EA177713F2F9B300291CAC /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPlayerView.m; path = ui/video/VideoPlayerView.m; sourceTree = "<group>"; };
-		26EA177913F2FA2E00291CAC /* LikedVideoTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LikedVideoTableCell.h; path = cell/LikedVideoTableCell.h; sourceTree = "<group>"; };
 		26EA177A13F2FA2E00291CAC /* VideoTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoTableCell.h; path = cell/VideoTableCell.h; sourceTree = "<group>"; };
-		26EA177B13F2FA3900291CAC /* LikedVideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LikedVideoTableCell.m; path = cell/LikedVideoTableCell.m; sourceTree = "<group>"; };
 		26EA177C13F2FA3900291CAC /* VideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoTableCell.m; path = cell/VideoTableCell.m; sourceTree = "<group>"; };
 		26EA177F13F2FA7F00291CAC /* EventsLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventsLocation.h; path = utils/logger/EventsLocation.h; sourceTree = "<group>"; };
 		26EA178213F2FADF00291CAC /* PListFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PListFile.h; path = files/PListFile.h; sourceTree = "<group>"; };
@@ -357,12 +375,12 @@
 		26EA178413F2FAEA00291CAC /* PListFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PListFile.m; path = files/PListFile.m; sourceTree = "<group>"; };
 		26EA178513F2FAEA00291CAC /* UserDataFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserDataFile.m; path = files/UserDataFile.m; sourceTree = "<group>"; };
 		26EA178813F2FB8100291CAC /* FeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackViewController.h; path = controllers/FeedbackViewController.h; sourceTree = "<group>"; };
-		26EA178913F2FB8100291CAC /* KikinVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KikinVideoViewController.h; path = controllers/KikinVideoViewController.h; sourceTree = "<group>"; };
+		26EA178913F2FB8100291CAC /* WatchlrViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WatchlrViewController.h; path = controllers/WatchlrViewController.h; sourceTree = "<group>"; };
 		26EA178A13F2FB8100291CAC /* LikedVideosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LikedVideosViewController.h; path = controllers/LikedVideosViewController.h; sourceTree = "<group>"; };
 		26EA178B13F2FB8100291CAC /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = controllers/LoginViewController.h; sourceTree = "<group>"; };
 		26EA178C13F2FB8100291CAC /* SavedVideosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SavedVideosViewController.h; path = controllers/SavedVideosViewController.h; sourceTree = "<group>"; };
 		26EA178D13F2FB8F00291CAC /* FeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedbackViewController.m; path = controllers/FeedbackViewController.m; sourceTree = "<group>"; };
-		26EA178E13F2FB8F00291CAC /* KikinVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KikinVideoViewController.m; path = controllers/KikinVideoViewController.m; sourceTree = "<group>"; };
+		26EA178E13F2FB8F00291CAC /* WatchlrViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WatchlrViewController.m; path = controllers/WatchlrViewController.m; sourceTree = "<group>"; };
 		26EA178F13F2FB8F00291CAC /* LikedVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LikedVideosViewController.m; path = controllers/LikedVideosViewController.m; sourceTree = "<group>"; };
 		26EA179013F2FB8F00291CAC /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = controllers/LoginViewController.m; sourceTree = "<group>"; };
 		26EA179113F2FB8F00291CAC /* SavedVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SavedVideosViewController.m; path = controllers/SavedVideosViewController.m; sourceTree = "<group>"; };
@@ -684,19 +702,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		260864CE13F4A5210081C53C /* labels */ = {
-			isa = PBXGroup;
-			children = (
-				260864D013F4A54F0081C53C /* headers */,
-				260864CF13F4A52F0081C53C /* source */,
-			);
-			name = labels;
-			sourceTree = "<group>";
-		};
 		260864CF13F4A52F0081C53C /* source */ = {
 			isa = PBXGroup;
 			children = (
-				260864D213F4A56E0081C53C /* UIActivityHeadingLabel.m */,
+				2608650B13F5B7470081C53C /* ActivityListView.m */,
+				260864F113F5990D0081C53C /* ConnectMainView.m */,
+				260864F213F5990D0081C53C /* ErrorMainView.m */,
+				260864F313F5990D0081C53C /* LoadingMainView.m */,
+				260864F413F5990D0081C53C /* RefreshStatusView.m */,
+				2608650713F5A5020081C53C /* SavedVideosListView.m */,
+				260864F513F5990D0081C53C /* UIActivityHeadingLabel.m */,
+				260864F613F5990D0081C53C /* UserListView.m */,
+				260864F713F5990D0081C53C /* UserProfileSettingsView.m */,
+				2608650E13F6366C0081C53C /* UserProfileView.m */,
+				260864F813F5990D0081C53C /* UserSettingsView.m */,
+				260864F913F5990D0081C53C /* VideoPlayerView.m */,
+				260864FA13F5990D0081C53C /* VideosListView.m */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -704,18 +725,21 @@
 		260864D013F4A54F0081C53C /* headers */ = {
 			isa = PBXGroup;
 			children = (
-				260864D113F4A5660081C53C /* UIActivityHeadingLabel.h */,
+				2608650A13F5B7410081C53C /* ActivityListView.h */,
+				260864E613F598F50081C53C /* ConnectMainView.h */,
+				260864E713F598F50081C53C /* ErrorMainView.h */,
+				260864E813F598F50081C53C /* LoadingMainView.h */,
+				260864E913F598F50081C53C /* RefreshStatusView.h */,
+				2608650913F5A50D0081C53C /* SavedVideosListView.h */,
+				260864EA13F598F50081C53C /* UIActivityHeadingLabel.h */,
+				260864EB13F598F50081C53C /* UserListView.h */,
+				260864EC13F598F50081C53C /* UserProfileSettingsView.h */,
+				2608650D13F636610081C53C /* UserProfileView.h */,
+				260864ED13F598F50081C53C /* UserSettingsView.h */,
+				260864EE13F598F50081C53C /* VideoPlayerView.h */,
+				260864EF13F598F50081C53C /* VideosListView.h */,
 			);
 			name = headers;
-			sourceTree = "<group>";
-		};
-		2699392213A99A0800672FD5 /* scroll */ = {
-			isa = PBXGroup;
-			children = (
-				2699393113A9B8C400672FD5 /* headers */,
-				2699393013A9B8B800672FD5 /* source */,
-			);
-			name = scroll;
 			sourceTree = "<group>";
 		};
 		2699392A13A9B82500672FD5 /* headers */ = {
@@ -751,11 +775,12 @@
 			children = (
 				26EA182013F30A2F00291CAC /* ActivityViewController.m */,
 				26EA178D13F2FB8F00291CAC /* FeedbackViewController.m */,
-				26EA178E13F2FB8F00291CAC /* KikinVideoViewController.m */,
 				26EA178F13F2FB8F00291CAC /* LikedVideosViewController.m */,
 				26EA179013F2FB8F00291CAC /* LoginViewController.m */,
 				260864CB13F46EDD0081C53C /* ProfileViewController.m */,
 				26EA179113F2FB8F00291CAC /* SavedVideosViewController.m */,
+				26EA178E13F2FB8F00291CAC /* WatchlrViewController.m */,
+				2608651113FA17580081C53C /* WebViewController.m */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -765,11 +790,12 @@
 			children = (
 				26EA182213F30A3600291CAC /* ActivityViewController.h */,
 				26EA178813F2FB8100291CAC /* FeedbackViewController.h */,
-				26EA178913F2FB8100291CAC /* KikinVideoViewController.h */,
 				26EA178A13F2FB8100291CAC /* LikedVideosViewController.h */,
 				26EA178B13F2FB8100291CAC /* LoginViewController.h */,
 				260864CD13F46EE50081C53C /* ProfileViewController.h */,
 				26EA178C13F2FB8100291CAC /* SavedVideosViewController.h */,
+				26EA178913F2FB8100291CAC /* WatchlrViewController.h */,
+				2608651013FA17570081C53C /* WebViewController.h */,
 			);
 			name = headers;
 			sourceTree = "<group>";
@@ -778,7 +804,7 @@
 			isa = PBXGroup;
 			children = (
 				26EA182313F30AB300291CAC /* ActivityTableCell.m */,
-				26EA177B13F2FA3900291CAC /* LikedVideoTableCell.m */,
+				260864E413F4C3440081C53C /* UserTableCell.m */,
 				26EA177C13F2FA3900291CAC /* VideoTableCell.m */,
 			);
 			name = source;
@@ -788,89 +814,10 @@
 			isa = PBXGroup;
 			children = (
 				26EA182513F30ABA00291CAC /* ActivityTableCell.h */,
-				26EA177913F2FA2E00291CAC /* LikedVideoTableCell.h */,
+				260864E313F4C3380081C53C /* UserTableCell.h */,
 				26EA177A13F2FA2E00291CAC /* VideoTableCell.h */,
 			);
 			name = headers;
-			sourceTree = "<group>";
-		};
-		2699393013A9B8B800672FD5 /* source */ = {
-			isa = PBXGroup;
-			children = (
-				26EA176E13F2F92400291CAC /* RefreshStatusView.m */,
-			);
-			name = source;
-			sourceTree = "<group>";
-		};
-		2699393113A9B8C400672FD5 /* headers */ = {
-			isa = PBXGroup;
-			children = (
-				26EA176D13F2F91B00291CAC /* RefreshStatusView.h */,
-			);
-			name = headers;
-			sourceTree = "<group>";
-		};
-		2699393213A9B8D400672FD5 /* source */ = {
-			isa = PBXGroup;
-			children = (
-				26426DE313F2F732006FD0D1 /* ConnectMainView.m */,
-				26426DE413F2F732006FD0D1 /* ErrorMainView.m */,
-				26426DE513F2F732006FD0D1 /* LoadingMainView.m */,
-			);
-			name = source;
-			sourceTree = "<group>";
-		};
-		2699393313A9B8E500672FD5 /* headers */ = {
-			isa = PBXGroup;
-			children = (
-				26426DE013F2F722006FD0D1 /* ConnectMainView.h */,
-				26426DE113F2F722006FD0D1 /* ErrorMainView.h */,
-				26426DE213F2F722006FD0D1 /* LoadingMainView.h */,
-			);
-			name = headers;
-			sourceTree = "<group>";
-		};
-		2699393413A9B90900672FD5 /* source */ = {
-			isa = PBXGroup;
-			children = (
-				26EA177213F2F97800291CAC /* UserProfileView.m */,
-				26EA177313F2F97800291CAC /* UserSettingsView.m */,
-			);
-			name = source;
-			sourceTree = "<group>";
-		};
-		2699393513A9B92000672FD5 /* headers */ = {
-			isa = PBXGroup;
-			children = (
-				26EA177013F2F96B00291CAC /* UserProfileView.h */,
-				26EA177113F2F96B00291CAC /* UserSettingsView.h */,
-			);
-			name = headers;
-			sourceTree = "<group>";
-		};
-		269B6F6613ABB8AF0019133D /* video */ = {
-			isa = PBXGroup;
-			children = (
-				269B6F6713ABB8C80019133D /* headers */,
-				269B6F6813ABB8D40019133D /* source */,
-			);
-			name = video;
-			sourceTree = "<group>";
-		};
-		269B6F6713ABB8C80019133D /* headers */ = {
-			isa = PBXGroup;
-			children = (
-				26EA177613F2F9AC00291CAC /* VideoPlayerView.h */,
-			);
-			name = headers;
-			sourceTree = "<group>";
-		};
-		269B6F6813ABB8D40019133D /* source */ = {
-			isa = PBXGroup;
-			children = (
-				26EA177713F2F9B300291CAC /* VideoPlayerView.m */,
-			);
-			name = source;
 			sourceTree = "<group>";
 		};
 		26AC590513A15D1D00750D2F /* headers */ = {
@@ -938,15 +885,6 @@
 				26E3FFD313A4831E00F35642 /* libCommonIos.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		26E3FFE113A6705600F35642 /* settings */ = {
-			isa = PBXGroup;
-			children = (
-				2699393513A9B92000672FD5 /* headers */,
-				2699393413A9B90900672FD5 /* source */,
-			);
-			name = settings;
 			sourceTree = "<group>";
 		};
 		26EA178013F2FAC000291CAC /* source */ = {
@@ -1017,22 +955,10 @@
 		3559B4F61374375D00D6D892 /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				260864CE13F4A5210081C53C /* labels */,
-				3559B617137443B200D6D892 /* loginView */,
-				2699392213A99A0800672FD5 /* scroll */,
-				26E3FFE113A6705600F35642 /* settings */,
-				269B6F6613ABB8AF0019133D /* video */,
+				260864D013F4A54F0081C53C /* headers */,
+				260864CF13F4A52F0081C53C /* source */,
 			);
 			name = ui;
-			sourceTree = "<group>";
-		};
-		3559B617137443B200D6D892 /* loginView */ = {
-			isa = PBXGroup;
-			children = (
-				2699393313A9B8E500672FD5 /* headers */,
-				2699393213A9B8D400672FD5 /* source */,
-			);
-			name = loginView;
 			sourceTree = "<group>";
 		};
 		357A08C81316AEF30050C2CA /* icons */ = {
@@ -1646,19 +1572,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D3623260D0F684500981E51 /* KikinVideoAppDelegate.m in Sources */,
-				26426DE613F2F732006FD0D1 /* ConnectMainView.m in Sources */,
-				26426DE713F2F732006FD0D1 /* ErrorMainView.m in Sources */,
-				26426DE813F2F732006FD0D1 /* LoadingMainView.m in Sources */,
-				26EA176F13F2F92400291CAC /* RefreshStatusView.m in Sources */,
-				26EA177413F2F97800291CAC /* UserProfileView.m in Sources */,
-				26EA177513F2F97800291CAC /* UserSettingsView.m in Sources */,
-				26EA177813F2F9B300291CAC /* VideoPlayerView.m in Sources */,
-				26EA177D13F2FA3900291CAC /* LikedVideoTableCell.m in Sources */,
 				26EA177E13F2FA3900291CAC /* VideoTableCell.m in Sources */,
 				26EA178613F2FAEA00291CAC /* PListFile.m in Sources */,
 				26EA178713F2FAEA00291CAC /* UserDataFile.m in Sources */,
 				26EA179213F2FB8F00291CAC /* FeedbackViewController.m in Sources */,
-				26EA179313F2FB8F00291CAC /* KikinVideoViewController.m in Sources */,
+				26EA179313F2FB8F00291CAC /* WatchlrViewController.m in Sources */,
 				26EA179413F2FB8F00291CAC /* LikedVideosViewController.m in Sources */,
 				26EA179513F2FB8F00291CAC /* LoginViewController.m in Sources */,
 				26EA179613F2FB8F00291CAC /* SavedVideosViewController.m in Sources */,
@@ -1688,7 +1606,21 @@
 				26EA182113F30A2F00291CAC /* ActivityViewController.m in Sources */,
 				26EA182413F30AB300291CAC /* ActivityTableCell.m in Sources */,
 				260864CC13F46EDD0081C53C /* ProfileViewController.m in Sources */,
-				260864D313F4A56E0081C53C /* UIActivityHeadingLabel.m in Sources */,
+				260864E513F4C3440081C53C /* UserTableCell.m in Sources */,
+				260864FC13F5990D0081C53C /* ConnectMainView.m in Sources */,
+				260864FD13F5990D0081C53C /* ErrorMainView.m in Sources */,
+				260864FE13F5990D0081C53C /* LoadingMainView.m in Sources */,
+				260864FF13F5990D0081C53C /* RefreshStatusView.m in Sources */,
+				2608650013F5990D0081C53C /* UIActivityHeadingLabel.m in Sources */,
+				2608650113F5990D0081C53C /* UserListView.m in Sources */,
+				2608650213F5990D0081C53C /* UserProfileSettingsView.m in Sources */,
+				2608650313F5990D0081C53C /* UserSettingsView.m in Sources */,
+				2608650413F5990D0081C53C /* VideoPlayerView.m in Sources */,
+				2608650513F5990D0081C53C /* VideosListView.m in Sources */,
+				2608650813F5A5020081C53C /* SavedVideosListView.m in Sources */,
+				2608650C13F5B7470081C53C /* ActivityListView.m in Sources */,
+				2608650F13F6366C0081C53C /* UserProfileView.m in Sources */,
+				2608651213FA17580081C53C /* WebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

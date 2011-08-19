@@ -10,12 +10,14 @@
 #import "PListFile.h"
 
 @interface UserDataFile : PListFile {
-	NSString* userId;
+	NSString* sessionId;
+    int userId;
 }
 
 - (NSDictionary*) load;
 - (void) save;
 
-@property(retain) NSString* userId;
+@property(retain)   NSString* sessionId;
+@property()         int userId;
 
 @end

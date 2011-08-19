@@ -10,7 +10,7 @@
 
 @implementation UserDataFile
 
-@synthesize userId;
+@synthesize userId, sessionId;
 
 - (id) init {
 	if ((self = [super init:@"UserData"])) {
@@ -20,7 +20,7 @@
 }
 
 - (void) dealloc {
-	[userId release];
+	[sessionId release];
 	[super dealloc];
 }
 
@@ -28,7 +28,8 @@
 	// load data and fill up this object
 	NSDictionary* fileData = [super load];
 	if (fileData != nil) {
-		self.userId = [fileData objectForKey:@"userId"];
+		self.userId = [[fileData objectForKey:@"userId"] intValue];
+        self.sessionId = [fileData objectForKey:@"session_id"];
 	}
     return fileData;
 }
@@ -36,10 +37,12 @@
 - (void) save {
 	// create dictionnary and save it
 	NSMutableDictionary* fileData = [[NSMutableDictionary alloc] init];
-	if (userId != nil) {
-		[fileData setObject:userId forKey: @"userId"];
+	if (sessionId != nil) {
+		[fileData setObject:[[NSNumber numberWithInt:userId] stringValue] forKey: @"userId"];
+        [fileData setObject:sessionId forKey:@"session_id"];
 	}
-	[super save:fileData];
+	
+    [super save:fileData];
 	[fileData release];
 }
 

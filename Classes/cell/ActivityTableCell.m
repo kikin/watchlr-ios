@@ -12,16 +12,11 @@
 
 @implementation ActivityTableCell
 
-@synthesize addVideoCallback;
+@synthesize onUserNameClickedCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
-		// create the add button
-        addVideoImageView = [[UIImageView alloc] init];
-        addVideoImageView.autoresizingMask = UIViewAutoresizingNone;
-        [self addSubview:addVideoImageView];
-        
-        // create user image
+		// create user image
         userImageView = [[UIImageView alloc] init];
         userImageView.autoresizingMask = UIViewAutoresizingNone;
         [self addSubview:userImageView];
@@ -29,6 +24,7 @@
         // create heading activity
         activityHeading = [[UIActicityHeadingLabel alloc] init];
         activityHeading.autoresizingMask = UIViewAutoresizingNone;
+        activityHeading.onUsernameClicked = [Callback create:self selector:@selector(onUsernameClicked:)];
         [self addSubview:activityHeading];
         
         // set size/positions
@@ -54,6 +50,13 @@
     return self;
 }
 
+- (void) onUsernameClicked:(NSString*)userName {
+    LOG_DEBUG(@"User name clicked:%@", userName);
+    if (onUserNameClickedCallback != nil) {
+        [onUserNameClickedCallback execute:userName];
+    }
+}
+
 - (void) onUserImageLoaded:(UIImage*)userImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (userImage != nil) {
@@ -67,34 +70,28 @@
     [pool release];
 }
 
+- (void) downloadUserImage:(UserProfileObject*)userProfile {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"square"];
+    [pool release];
+}
 
 - (void) loadActivityCellImages {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
     if (![[NSThread currentThread] isCancelled]) {
-        // update like button
-        if (!videoObject.saved) {
-            [addVideoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"save_video.png"] waitUntilDone:YES];
-            addVideoImageView.hidden = NO;
-        } else if (videoObject.savedInCurrentTab) {
-            [addVideoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
-            addVideoImageView.hidden = NO;
+        UserProfileObject* userProfile = ((UserActivityObject*)[activityObject.userActivities objectAtIndex:0]).userProfile;
+        if (userProfile.squarePictureImage == nil) {
+            if (!userProfile.pictureImageLoaded) {
+                [self performSelectorInBackground:@selector(downloadUserImage:) withObject:userProfile];
+            } else {
+                userImageView.hidden = YES;
+            }
         } else {
-            addVideoImageView.hidden = NO;
-        }
-    }
-    
-    UserProfileObject* userProfile = ((UserActivityObject*)[activityObject.userActivities objectAtIndex:0]).userProfile;
-    if (userProfile.pictureImage == nil) {
-        if (!userProfile.pictureImageLoaded) {
-            [userProfile performSelectorInBackground:@selector(loadUserImage:) withObject:[Callback create:self selector:@selector(onUserImageLoaded:)]];
-        } else {
-            userImageView.hidden = YES;
-        }
-    } else {
-        if (![[NSThread currentThread] isCancelled]) {
-            [userImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.pictureImage waitUntilDone:YES];
-            addVideoImageView.hidden = NO;
+            if (![[NSThread currentThread] isCancelled]) {
+                [userImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.squarePictureImage waitUntilDone:YES];
+                userImageView.hidden = NO;
+            }
         }
     }
     
@@ -140,8 +137,8 @@
         
         if (!videoObject.saved || videoObject.savedInCurrentTab) {
             // set the size for save/unsaved button
-            addVideoImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
-            addVideoImageView.hidden = NO;
+            saveImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+            saveImageView.hidden = NO;
             
             // set the size for like/unlike button
             likeImageView.frame = CGRectMake((self.frame.size.width - 90), 10, 30, 30);
@@ -150,8 +147,7 @@
             likesLabel.frame = CGRectMake((self.frame.size.width - 150), 10, 55, 30);
         } else {
             // hide the add button
-            addVideoImageView.hidden = YES;
-            
+            saveImageView.hidden = YES;
             
             // set the size for likes label
             likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
@@ -169,23 +165,6 @@
     }
 }
 
-- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    [super touchesEnded:touches withEvent:event];
-    
-    for (UITouch *myTouch in touches)
-    {
-        CGPoint touchLocation = [myTouch locationInView:self];
-        
-        CGRect addVideoRect = [addVideoImageView bounds];
-        addVideoRect = [addVideoImageView convertRect:addVideoRect toView:self];
-        if (CGRectContainsPoint(addVideoRect, touchLocation)) {
-            if (addVideoCallback != nil) {
-                [addVideoCallback execute:videoObject];
-            }
-        }
-    }
-}
-                                           
 - (void) setActivityObject: (ActivityObject*)activity {
     
     // change acticity object
@@ -205,25 +184,12 @@
     [self loadActivityCellImages];
 }
 
-- (void) updateSaveButton: (ActivityObject*)activity {
-    if (activityObject) [activityObject release];
-    activityObject = [activity retain];
-    
-    if (videoObject) [videoObject release];
-    videoObject = [activity.video retain];
-    
-    [addVideoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
-    videoObject.savedInCurrentTab = true;
-}
-
 - (void)dealloc {
     // activityHeading.delegate = nil;
-    
-    [addVideoImageView release];
+    [onUserNameClickedCallback release];
     [userImageView release];
     [activityHeading release];
     [activityObject release];
-    [addVideoCallback release];
     
 	[super dealloc];
 }

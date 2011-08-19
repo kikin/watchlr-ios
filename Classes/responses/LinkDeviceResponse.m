@@ -10,11 +10,13 @@
 
 @implementation LinkDeviceResponse
 
+@synthesize response;
+
 - (id) initWithResponse: (NSDictionary*)jsonObject {
 	if ((self = [super initWithResponse:jsonObject])) {
 		if (success) {
 			// get data
-			sessionId = [[[jsonObject objectForKey:@"result"] objectForKey:@"session_id"] retain];
+			response = [[jsonObject objectForKey:@"result"] retain];
 			
 			// LOG_DEBUG(@"sessionId = %@", sessionId);
 		}
@@ -22,12 +24,8 @@
 	return self;
 }
 
-- (NSString*) sessionId {
-	return sessionId;
-}
-
 - (void) dealloc {
-	[sessionId release];
+	[response release];
 	[super dealloc];
 }
 

@@ -6,12 +6,15 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "KikinVideoViewController.h"
-#import "VideoListResponse.h"
+#import "WatchlrViewController.h"
 #import "VideoListRequest.h"
+#import "VideosListView.h"
 
-@interface LikedVideosViewController : KikinVideoViewController {
+@interface LikedVideosViewController : WatchlrViewController {
 	VideoListRequest* videoListRequest;
+    VideosListView* videosListView;
+    
+    int lastPageRequested;
     bool isRefreshing;
 }
 

@@ -71,7 +71,7 @@
 
 @implementation UserProfileObject
 
-@synthesize userId, likes, watches, saves, followers, following, pictureImageLoaded, name, userName, pictureUrl, pictureImage, email, notifications, preferences;
+@synthesize userId, likes, watches, saves, followersCount, followingCount, follower, following, pictureImageLoaded, name, userName, pictureUrl, squarePictureImage, smallPictureImage, normalPictureImage, largePictureImage, email, notifications, preferences;
 
 - (id) initFromDictionary: (NSDictionary*)data {
 	// get data
@@ -84,13 +84,18 @@
     self.saves = [data objectForKey:@"saves"] != [NSNull null] ? [[data objectForKey:@"saves"] intValue] : 0;
     self.watches = [data objectForKey:@"watches"] != [NSNull null] ? [[data objectForKey:@"watches"] intValue] : 0;
     self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : 0;
-    self.followers = [data objectForKey:@"followers"] != [NSNull null] ? [[data objectForKey:@"followers"] intValue] : 0;
-    self.following = [data objectForKey:@"following"] != [NSNull null] ? [[data objectForKey:@"following"] intValue] : 0;
+    self.followersCount = [data objectForKey:@"follower_count"] != [NSNull null] ? [[data objectForKey:@"follower_count"] intValue] : 0;
+    self.followingCount = [data objectForKey:@"following_count"] != [NSNull null] ? [[data objectForKey:@"following_count"] intValue] : 0;
+    self.follower = [data objectForKey:@"follower"] != [NSNull null] ? [[data objectForKey:@"follower"] boolValue] : 0;
+    self.following = [data objectForKey:@"following"] != [NSNull null] ? [[data objectForKey:@"following"] boolValue] : 0;
     
     self.notifications = [data objectForKey:@"notifications"] != [NSNull null] ? [[UserNotification alloc] initFromDictionary:[data objectForKey:@"notifications"]] : nil;
     self.preferences = [data objectForKey:@"preferences"] != [NSNull null] ? [[UserPreferences alloc] initFromDictionary:[data objectForKey:@"preferences"]] : nil;
     
-    self.pictureImage = nil;
+    self.squarePictureImage = nil;
+    self.smallPictureImage = nil;
+    self.normalPictureImage  = nil;
+    self.largePictureImage = nil;
     self.pictureImageLoaded = false;
 	
     return self;
@@ -103,8 +108,10 @@
     [userProfile setObject:[[NSNumber numberWithInt:self.watches] stringValue] forKey:@"watches"];
     [userProfile setObject:[[NSNumber numberWithInt:self.saves] stringValue] forKey:@"saves"];
     if (self.userId > -1) { [userProfile setObject:[[NSNumber numberWithInt:self.userId] stringValue] forKey:@"id"]; }
-    [userProfile setObject:[[NSNumber numberWithInt:self.followers] stringValue] forKey:@"followers"];
-    [userProfile setObject:[[NSNumber numberWithInt:self.following] stringValue] forKey:@"following"];
+    if (self.follower) { [userProfile setObject:@"true" forKey:@"follower"]; } else { [userProfile setObject:@"false" forKey:@"follower"]; }
+    if (self.following) { [userProfile setObject:@"true" forKey:@"following"]; } else { [userProfile setObject:@"false" forKey:@"following"]; }
+    [userProfile setObject:[[NSNumber numberWithInt:self.followersCount] stringValue] forKey:@"follower_count"];
+    [userProfile setObject:[[NSNumber numberWithInt:self.followingCount] stringValue] forKey:@"following_count"];
     
     [userProfile setObject:self.name forKey:@"name"];
     [userProfile setObject:self.userName forKey:@"username"];
@@ -117,21 +124,38 @@
     return userProfile;
 }
 
-- (void) loadUserImage:(Callback*)onUserImageLoaded {
+- (void) loadUserImage:(Callback*)onUserImageLoaded withSize:(NSString*)sizeType {
     
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
-    NSURL* url = [NSURL URLWithString:self.pictureUrl];
+    NSURL* url = [NSURL URLWithString:[self.pictureUrl stringByAppendingFormat:@"?type=%@", sizeType]];
     NSData* data = [NSData dataWithContentsOfURL:url];
-    if (data != nil) {
-        // set thumbnail image
-        pictureImage = [[UIImage alloc] initWithData:data];
-    }
-    
     pictureImageLoaded = true;
     
+    if (data != nil) {
+        // set thumbnail image
+        if ([sizeType caseInsensitiveCompare:@"square"] == NSOrderedSame) {
+            squarePictureImage = [[UIImage alloc] initWithData:data];
+        } else if ([sizeType caseInsensitiveCompare:@"small"] == NSOrderedSame) {
+            smallPictureImage = [[UIImage alloc] initWithData:data];
+        } else if ([sizeType caseInsensitiveCompare:@"normal"] == NSOrderedSame) {
+            normalPictureImage = [[UIImage alloc] initWithData:data];
+        } else if ([sizeType caseInsensitiveCompare:@"large"] == NSOrderedSame) {
+            largePictureImage = [[UIImage alloc] initWithData:data];
+        }
+    }
+    
     if (onUserImageLoaded != nil) {
-        [onUserImageLoaded execute:pictureImage];
+        if ([sizeType caseInsensitiveCompare:@"square"] == NSOrderedSame) {
+            [onUserImageLoaded execute:squarePictureImage];
+        } else if ([sizeType caseInsensitiveCompare:@"small"] == NSOrderedSame) {
+            [onUserImageLoaded execute:smallPictureImage];
+        } else if ([sizeType caseInsensitiveCompare:@"normal"] == NSOrderedSame) {
+            [onUserImageLoaded execute:normalPictureImage];
+        } else if ([sizeType caseInsensitiveCompare:@"large"] == NSOrderedSame) {
+            [onUserImageLoaded execute:largePictureImage];
+        }
+        
         onUserImageLoaded = nil;
     }
     
@@ -147,6 +171,10 @@
 	self.notifications = nil;
     self.preferences = nil;
     self.pictureImageLoaded = nil;
+    self.squarePictureImage = nil;
+    self.smallPictureImage = nil;
+    self.normalPictureImage = nil;
+    self.largePictureImage = nil;
     
     [super dealloc];
 }

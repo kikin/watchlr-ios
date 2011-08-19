@@ -13,18 +13,32 @@
 
 @implementation UserActivityListRequest
 
-- (void) doGetUserActicityListRequest:(BOOL)facebookVideosOnly startingAt:(int)pageStart withCount:(int)videosCount {
+- (void) doGetUserActicityListRequest:(ActivityType)activityType startingAt:(int)pageStart withCount:(int)videosCount {
 	// get current userId
 	NSString* sessionId = [UserObject getUser].sessionId;
 	// LOG_DEBUG(@"sessionId = %@", sessionId);
 	
-    // /api/activity[?type=[watchlr|facebook]][&since=<epoch>]
+    // /api/activity[?type=[watchlr|facebook]]
 	// build params list
 	NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
 	[params setObject:sessionId forKey:@"session_id"];
-    [params setObject:@"html5" forKey:@"type"];
-    [params setObject:(facebookVideosOnly ? @"facebook" : @"watchlr") forKey:@"type"];
     [params setObject:[NSString stringWithFormat:@"%d", (videosCount > 0 ? videosCount : 10)] forKey:@"count"];
+    
+    switch (activityType) {
+        case FACEBOOK_ONLY: {
+            [params setObject:@"facebook" forKey:@"type"];
+            break;
+        }
+            
+        case WATCHLR_ONLY: {
+            [params setObject:@"watchlr" forKey:@"type"];
+            break;
+        }
+            
+        default:
+            break;
+    }
+
     
     // send the page index only if you are loading more videos
     if (pageStart > -1) {

@@ -10,6 +10,8 @@
 #import "ActivityTableCell.h"
 #import "ActivityObject.h"
 #import "VideoResponse.h"
+#import "ProfileViewController.h"
+#import "WebViewController.h"
 
 @implementation ActivityViewController
 
@@ -17,204 +19,168 @@
 - (void)loadView {
     [super loadView];
     
-    videosTable.rowHeight = DeviceUtils.isIphone ? 100 : 180;
-	
+    allActivitiesListView = [[ActivityListView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    allActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    allActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
+    allActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    allActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    allActivitiesListView.isViewRefreshable = true;
+    allActivitiesListView.hidden = NO;
+    [self.view addSubview:allActivitiesListView];
+    [self.view sendSubviewToBack:allActivitiesListView];
+    
+    facebookOnlyActivitiesListView = [[ActivityListView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    facebookOnlyActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    facebookOnlyActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
+    facebookOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    facebookOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    facebookOnlyActivitiesListView.isViewRefreshable = true;
+    facebookOnlyActivitiesListView.hidden = YES;
+    [self.view addSubview:facebookOnlyActivitiesListView];
+    [self.view sendSubviewToBack:facebookOnlyActivitiesListView]; 
+    
+    watchlrOnlyActivitiesListView = [[ActivityListView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    watchlrOnlyActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    watchlrOnlyActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
+    watchlrOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    watchlrOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    watchlrOnlyActivitiesListView.isViewRefreshable = true;
+    watchlrOnlyActivitiesListView.hidden = YES;
+    [self.view addSubview:watchlrOnlyActivitiesListView];
+    [self.view sendSubviewToBack:watchlrOnlyActivitiesListView]; 
+    
+    activityOptionsButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"All", @"Facebook only", @"Watchlr only", nil]];
+    [activityOptionsButton setSegmentedControlStyle:UISegmentedControlStyleBar];
+    [activityOptionsButton addTarget:self action:@selector(onActivityOptionsButtonClicked:) forControlEvents:UIControlEventValueChanged];
+    activityOptionsButton.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
+    activityOptionsButton.selectedSegmentIndex = 0;
+//    activityOptionsButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 30);
+//    [self.view addSubview:activityOptionsButton];
+    self.navigationItem.titleView = activityOptionsButton;
+
+    
     // request video lsit
     isRefreshing = true;
-	[self doUserActivityListRequest:NO startingAt:-1 withCount:10];
+    activityType = ALL;
+//	[self doUserActivityListRequest:ALL startingAt:-1 withCount:10];
 }
 
 - (void)dealloc {
 	// release memory
-	[activities release];
-    [activityListRequest release];
+    [activityOptionsButton release];
+    [allActivitiesListView release];
+    [facebookOnlyActivitiesListView release];
+    [watchlrOnlyActivitiesListView release];
+	[activityListRequest release];
     [super dealloc];
 }
 
 // --------------------------------------------------------------------------------
-//                             Private Functions
+//                          Private Functions
 // --------------------------------------------------------------------------------
 
-- (void) updateList:(NSArray*)activitiesList withLastPageRequested:(int)pageNumber andNumberOfVideos:(int)activityCount {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    if (activities == nil) {
-        // This is the first time we are loading videos
-        // we should create the new videos list element.
-        videos = [[NSMutableArray alloc] init];
-        activities = [[NSMutableArray alloc] init];
-        
-        for (NSDictionary* activityDic in activitiesList) {
-            // create video from dictionnary
-            ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:activityDic] autorelease];
-            [activities addObject:activity];
-            activity.video.savedInCurrentTab = false;
-            [videos addObject:activity.video];
-        }
-        
-        lastPageRequested = pageNumber;
-        if ((activityCount != 0) && ((activityCount % 10) == 0)) {
-            loadedAllVideos = false;
-        } else {
-            loadedAllVideos = true;            
-        }
-        
-    } else if (isRefreshing) {
-        // We are doing this odd logic intead of replacing all the video elements 
-        // because we don't want to make extra calls to fetch thumbnail and favicon, 
-        // everytime user refreshes their list or switch between tabs
-        
-        // user wants to refresh the list
-        // insert only those videos which are never inserted
-        NSUInteger firstMatchedActicityIndex = NSNotFound;
-        if ([activities count] > 0) {
-            for (int i = 0; i < [activities count]; i++) {
-                ActivityObject* activity = [activities objectAtIndex:i];
-                firstMatchedActicityIndex = [activitiesList indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                    NSDictionary* video = [obj objectForKey:@"video"];
-                    if ([[video objectForKey:@"id"] intValue] == activity.video.videoId) {
-                        *stop = YES;
-                        return YES;
-                    }
-                    return NO;
-                }];
-                
-                if (firstMatchedActicityIndex != NSNotFound) {
-                    break;
-                }
-                
-                [activities removeObject:activity];
-                [videos removeObjectAtIndex:i];
-                i--;
-            }
-            
-        }
-        
-        if (firstMatchedActicityIndex != NSNotFound) {
-            // add all the videos to the list that were not present before
-            for (int i = 0; i < firstMatchedActicityIndex; i++) {
-                // create video from dictionnary
-                ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:[activitiesList objectAtIndex:i]] autorelease];
-                [activities insertObject:activity atIndex:i];
-                activity.video.savedInCurrentTab = false;
-                [videos insertObject:activity.video atIndex:i];
-            }
-            
-            int lastActicvityItemProcessedIndex = [activities count];
-            for (int i = firstMatchedActicityIndex, j = firstMatchedActicityIndex; 
-                 ((i < [activitiesList count]) && (j < [activities count]));) {
-                
-                NSDictionary* newActivityItem = (NSDictionary*)[activitiesList objectAtIndex:i];
-                ActivityObject* activityListItem = (ActivityObject*)[activities objectAtIndex:j];
-                
-                NSDictionary* newActivityVideo = [newActivityItem objectForKey:@"video"];
-                if ([[newActivityVideo objectForKey:@"id"] intValue] == activityListItem.video.videoId) {
-                    [activityListItem updateFromDictionary:newActivityItem];
-                    activityListItem.video.savedInCurrentTab = false;
-                    [videos replaceObjectAtIndex:j withObject:activityListItem.video];
-                    j++;
-                    i++;
-                } else {
-                    [activities removeObject:activityListItem];
-                    [videos removeObjectAtIndex:j];
-                }
-                
-                lastActicvityItemProcessedIndex = j;
-            }
-            
-            if (lastActicvityItemProcessedIndex < [activities count]) {
-                NSRange range = NSMakeRange(lastActicvityItemProcessedIndex, ([activities count] - lastActicvityItemProcessedIndex));
-                [activities removeObjectsInRange:range];
-                [videos removeObjectsInRange:range];
-                loadedAllVideos = false;
-            }
-            
-            if (lastActicvityItemProcessedIndex < [activitiesList count]) {
-                for (int i = lastActicvityItemProcessedIndex; i < [activitiesList count]; i++) {
-                    // create video from dictionnary
-                    ActivityObject* activity = [[[ActivityObject alloc] initFromDictionary:[activitiesList objectAtIndex:i]] autorelease];
-                    [activities insertObject:activity atIndex:i];
-                    activity.video.savedInCurrentTab = false;
-                    [videos insertObject:activity.video atIndex:i];
-                }
-                loadedAllVideos = false;
-            }
-        }
-        
-        // NOTE: please don't update lastPageRequested over here
-        //       otherwise it will screw the logic for loading more videos.
-        //       Refresh can request for more than 10 videos in the
-        //       single page. So updating it here will screw the last page 
-        //       requested number. If you really want to update the last page 
-        //       requested over here. Then my suggestion would be to divide
-        //       the videos count with 10 and then update the page number accordingly.
-        
-        // indicates refresh action is completed
-        refreshState = REFRESHED;
-        [refreshStatusView setRefreshStatus:REFRESHED];
-        
-    } else { 
-        // Appending the videos retreived to the list
-        for (NSDictionary* activityDic in activitiesList) {
-            // create video from dictionnary
-            ActivityObject* activityObject = [[[ActivityObject alloc] initFromDictionary:activityDic] autorelease];
-            [activities addObject:activityObject];
-            activityObject.video.savedInCurrentTab = false;
-            [videos addObject:activityObject.video];
-        }
-        
-        loadMoreState = LOADED;
-        lastPageRequested = pageNumber;
-        if ((activityCount != 0) && ((activityCount % 10) == 0)) {
-            loadedAllVideos = false;
-        } else {
-            loadedAllVideos = true;            
-        }
-    }
-    
-    //LOG_DEBUG(@"Sending message to main thread to update videos list");
-    [videosTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
-    
-    loadMoreState = LOAD_MORE_NONE;
-    refreshState = REFRESH_NONE;
-    [refreshStatusView setRefreshStatus:REFRESH_NONE];
-    [refreshStatusView setHidden:YES];
-    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
-    isRefreshing = false;
-    
-    if ([loadingView isAnimating]) {
-        [loadingView stopAnimating];
-    }
-    
-    [pool release];
+- (void) doUserActivityListRequest:(ActivityType)type startingAt:(int)pageStart withCount:(int)videosCount {
+	// get the list of videos
+	if (activityListRequest == nil) {
+		activityListRequest = [[UserActivityListRequest alloc] init];
+		activityListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
+		activityListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
+	}
+	if ([activityListRequest isRequesting]) {
+		[activityListRequest cancelRequest];
+	}
+	[activityListRequest doGetUserActicityListRequest:type startingAt:pageStart withCount:videosCount];	
 }
 
-- (void) updateListWrapper: (NSDictionary*)args {
-    [self updateList:[args objectForKey:@"activitiesList"] withLastPageRequested:[[args objectForKey:@"pageNumber"] integerValue] andNumberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
+- (ActivityListView*) getActiveView {
+    ActivityListView* activeView = allActivitiesListView;
+    switch (activityType) {
+        case ALL: {
+            activeView = allActivitiesListView;
+            break;
+        }
+            
+        case FACEBOOK_ONLY: {
+            activeView = facebookOnlyActivitiesListView;
+            break;
+        }
+            
+        case WATCHLR_ONLY: {
+            activeView = watchlrOnlyActivitiesListView;
+            break;
+        }
+    }
+    
+    return activeView;
 }
 
 // --------------------------------------------------------------------------------
 //                                  Callbacks
 // --------------------------------------------------------------------------------
 
+- (void) onApplicationBecomeActive: (NSNotification*)notification {
+    isRefreshing = true;
+    [self doUserActivityListRequest:activityType startingAt:-1 withCount:10];
+}
+
 - (void) onClickRefresh {
     isRefreshing = true;
-	[self doUserActivityListRequest:NO startingAt:-1 withCount:(lastPageRequested * 10)];
+    [self doUserActivityListRequest:activityType startingAt:-1 withCount:(lastPageRequested * 10)];
 }
 
 - (void) onLoadMoreData {
-    if (!loadedAllVideos) {
-        isRefreshing = false;
-        [self doUserActivityListRequest:NO startingAt:(lastPageRequested + 1) withCount:10];
+    isRefreshing = false;
+    [self doUserActivityListRequest:activityType startingAt:(lastPageRequested + 1) withCount:10];
+}
+
+- (void) onUsernameClicked:(NSString*)userName {
+    if ([userName rangeOfString:@"/"].location == 0) {
+        ProfileViewController* profileViewController = [[[ProfileViewController alloc] init] autorelease];
+        [profileViewController openUserProfileForName:[userName substringFromIndex:1]];
+        [self.navigationController pushViewController:profileViewController animated:YES];
     } else {
-        loadMoreState = LOADED;
+        WebViewController* webViewController = [[[WebViewController alloc] init] autorelease];
+        [self.navigationController pushViewController:webViewController animated:YES];
+        [webViewController loadUrl:userName];
     }
 }
 
-- (void) onApplicationBecomeActive: (NSNotification*)notification {
-    // LOG_DEBUG(@"Changing orientation");
-    isRefreshing = true;
-	[self doUserActivityListRequest:NO startingAt:-1 withCount:10];
+- (void) onActivityOptionsButtonClicked:(UIButton*) sender {
+    [allActivitiesListView closePlayer];
+    [facebookOnlyActivitiesListView closePlayer];
+    [watchlrOnlyActivitiesListView closePlayer];
+    
+    switch(activityOptionsButton.selectedSegmentIndex) {
+        case 0: {
+            activityType = ALL;
+            
+            allActivitiesListView.hidden = NO;
+            facebookOnlyActivitiesListView.hidden = YES;
+            watchlrOnlyActivitiesListView.hidden = YES;
+            
+            
+            break;
+        }
+            
+        case 1: {
+            activityType = FACEBOOK_ONLY;
+            facebookOnlyActivitiesListView.hidden = NO;
+            allActivitiesListView.hidden = YES;
+            watchlrOnlyActivitiesListView.hidden = YES;
+            break;
+        }
+            
+        case 2: {
+            activityType = WATCHLR_ONLY;
+            watchlrOnlyActivitiesListView.hidden = NO;
+            allActivitiesListView.hidden = YES;
+            facebookOnlyActivitiesListView.hidden =YES;
+            break;
+        }
+    }
+    
+    // update the list
+    [self onClickRefresh];
 }
 
 // --------------------------------------------------------------------------------
@@ -222,24 +188,22 @@
 // --------------------------------------------------------------------------------
 
 - (void) onListRequestSuccess: (UserActivityListResponse*)response {
+    ActivityListView* activeView = [self getActiveView];
     if (response.success) {
-		// LOG_DEBUG(@"list request success");
+        // LOG_DEBUG(@"list request success");
+        
+        
+        if ([activeView count] == 0 || !isRefreshing) {
+            lastPageRequested = [response page];
+        }
         NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
                               [response activities], @"activitiesList",
-                              [NSNumber numberWithInt:[response page]], @"pageNumber",
                               [NSNumber numberWithInt:[response count]], @"videoCount",
+                              [NSNumber numberWithBool:isRefreshing], @"isRefreshing",
                               nil];
-        [self performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
+        [activeView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
-        if ([loadingView isAnimating]) {
-            [loadingView stopAnimating];
-        }
-        
-        loadMoreState = LOAD_MORE_NONE;
-        refreshState = REFRESH_NONE;
-        [refreshStatusView setRefreshStatus:REFRESH_NONE];
-        [refreshStatusView setHidden:YES];
-        videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+        [activeView resetLoadingStatus];
         isRefreshing = false;
         
 		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
@@ -254,15 +218,10 @@
 }
 
 - (void) onListRequestFailed: (NSString*)errorMessage {
-    if ([loadingView isAnimating]) {
-        [loadingView stopAnimating];
-    }
+    ActivityListView* activeView = [self getActiveView];
     
-    loadMoreState = LOAD_MORE_NONE;
-	refreshState = REFRESH_NONE;
-    [refreshStatusView setRefreshStatus:REFRESH_NONE];
-    [refreshStatusView setHidden:YES];
-    videosTable.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
+    [activeView resetLoadingStatus];
+    isRefreshing = false;
     
     NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", errorMessage];
 	
@@ -274,95 +233,21 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
-// Overriding base class method
-- (void) onAddVideoRequestSuccess: (VideoResponse*)response {
-//     [super onAddVideoRequestSuccess:response]; 
-	if (response.success) {
-        int videoId = [[response.videoResponse objectForKey:@"id"] intValue];
-        NSUInteger idx =[videos indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            if (((VideoObject*)obj).videoId == videoId) {
-                *stop = YES;
-                return YES;
-            }
-            return NO;
-        }];
-        
-        if (idx != NSNotFound) {
-            VideoObject* videoObject = [videos objectAtIndex:idx];
-            ActivityObject* activity = (ActivityObject*)[activities objectAtIndex:idx];
-            activity.video = videoObject;
-            [activities replaceObjectAtIndex:idx withObject:activity];
-            [videos replaceObjectAtIndex:idx withObject:videoObject];
-            
-            
-            [videosTable beginUpdates];
-            NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
-            if (index.row < activities.count) {
-                // Update data for the cell
-                // LOG_DEBUG(@"Updating video object.");
-                ActivityTableCell* cell = (ActivityTableCell*)[videosTable cellForRowAtIndexPath:index];
-                [cell updateSaveButton:activity];
-            }
-            [videosTable endUpdates];
-        }
-        
-        [self trackAction:@"save" forVideo:videoId];
-    } else {
-        LOG_ERROR(@"request success but failed to save video: %@", response.errorMessage);
-    }
-}
-
-// --------------------------------------------------------------------------------
-//                      TableView delegates/datasource
-// --------------------------------------------------------------------------------
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"VideoTableCell";
-	
-	// try to reuse an id
-    ActivityTableCell* cell = (ActivityTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        // Create the cell
-        cell = [[[ActivityTableCell alloc] initWithStyle:UITableViewCellEditingStyleDelete reuseIdentifier:CellIdentifier] autorelease];
-		cell.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
-        cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
-        cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
-        cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
-    }
-	
-	if (indexPath.row < activities.count) {
-		// Update data for the cell
-		ActivityObject* activity = [activities objectAtIndex:indexPath.row];
-		[cell setActivityObject: activity];
-        
-        if (indexPath.row == (activities.count - 2)) {
-            if (loadMoreState != LOADING) {
-                LOG_DEBUG(@"Loading more data");
-                loadMoreState = LOADING;
-                [self onLoadMoreData];
-            }
-        }
-	}
-	
-    return cell;
-}
-
 // --------------------------------------------------------------------------------
 //                          Public Functions
 // --------------------------------------------------------------------------------
 
-- (void) doUserActivityListRequest:(BOOL)facebookVideosOnly startingAt:(int)pageStart withCount:(int)videosCount {
-	// get the list of videos
-	if (activityListRequest == nil) {
-		activityListRequest = [[UserActivityListRequest alloc] init];
-		activityListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
-		activityListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
-	}
-	if ([activityListRequest isRequesting]) {
-		[activityListRequest cancelRequest];
-	}
-	[activityListRequest doGetUserActicityListRequest:NO startingAt:pageStart withCount:videosCount];	
+- (void) onTabInactivate {
+    ActivityListView* activeView = [self getActiveView];
+    [activeView closePlayer];
 }
 
+- (void) onTabActivate {
+    [self onClickRefresh];
+}
 
+- (void) onApplicationBecomeInactive {
+    [self onTabInactivate];
+}
 
 @end

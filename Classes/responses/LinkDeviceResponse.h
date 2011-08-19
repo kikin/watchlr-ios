@@ -10,10 +10,11 @@
 #import "DefaultResponse.h"
 
 @interface LinkDeviceResponse : DefaultResponse {
-	NSString* sessionId;
+    NSDictionary* response;
 }
 
-- (NSString*) sessionId;
+@property(retain) NSDictionary* response;
+
 - (id) initWithResponse: (NSDictionary*)jsonObject;
 
 @end

@@ -17,6 +17,7 @@
     NSString* userName;
     NSString* userEmail;
     bool pushVideosToFacebook;
+    int userId;
 }
 
 - (id) init;
@@ -30,5 +31,6 @@
 @property(retain) NSString* userName;
 @property(retain) NSString* userEmail;
 @property         bool pushVideosToFacebook;
+@property         int userId;
 
 @end

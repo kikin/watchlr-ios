@@ -45,15 +45,21 @@
     int likes;
     int watches;
     int saves;
-    int followers;
-    int following;
+    int followersCount;
+    int followingCount;
+    bool follower;
+    bool following;
+    
     bool pictureImageLoaded;
     
     NSString* name;
     NSString* userName;
     NSString* pictureUrl;
     NSString* email;
-    UIImage*  pictureImage;
+    UIImage*  squarePictureImage;
+    UIImage*  smallPictureImage;
+    UIImage*  normalPictureImage;
+    UIImage*  largePictureImage;
     
     UserNotification* notifications; //{"welcome": 1, "firstlike": 1, "emptyq": 1}, 
     UserPreferences* preferences; //{"syndicate": 1}}
@@ -63,19 +69,24 @@
 @property()			int likes;
 @property()			int watches;
 @property()			int saves;
-@property()			int followers;
-@property()			int following;
+@property()			int followersCount;
+@property()			int followingCount;
+@property()			bool follower;
+@property()			bool following;
 @property()         bool pictureImageLoaded;
 @property(retain)	NSString* name;
 @property(retain)	NSString* userName;
 @property(retain)	NSString* pictureUrl;
 @property(retain)	NSString* email;
-@property(retain)   UIImage*  pictureImage;
+@property(retain)   UIImage*  squarePictureImage;
+@property(retain)   UIImage*  smallPictureImage;
+@property(retain)   UIImage*  normalPictureImage;
+@property(retain)   UIImage*  largePictureImage;
 @property(retain)	UserNotification* notifications;
 @property(retain)	UserPreferences* preferences;
 
 - (id) initFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
-- (void) loadUserImage:(Callback*)onUserImageLoaded;
+- (void) loadUserImage:(Callback*)onUserImageLoaded withSize:(NSString*)sizeType;
 
 @end

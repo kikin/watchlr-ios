@@ -131,13 +131,23 @@ const char* FB_APP_ID = "220283271338035";
 
 - (void) onLinkRequestSuccess: (LinkDeviceResponse*)response {
 	if (response.success) {
-		if (response.sessionId != nil) {
-			// change our userId (automatically savec)
+		if (response.response != nil) {
+            // change our userId (automatically savec)
 			UserObject* userObject = [UserObject getUser];
-			userObject.sessionId = response.sessionId;
-			
-			// go the the main view
-			[self goToMainView:YES];
+			userObject.sessionId = [response.response objectForKey:@"session_id"];
+            if (userObject.sessionId == nil) {
+                NSString* errorMessage = @"We failed to connect with the watchlr servers: Missing sessionId";
+                [errorMainView setErrorMessage:errorMessage];
+                [self showView:errorMainView];
+                
+                LOG_ERROR(@"failed to connect: missing sessionId");
+            } else {
+                userObject.userName = [[response.response objectForKey:@"user"] objectForKey:@"username"];
+                userObject.userId = [[[response.response objectForKey:@"user"] objectForKey:@"id"] intValue];
+                
+                // go the the main view
+                [self goToMainView:YES];
+            }
 		} else {
 			NSString* errorMessage = @"We failed to connect with the watchlr servers: Missing sessionId";
 			[errorMainView setErrorMessage:errorMessage];

@@ -22,10 +22,12 @@
     UILabel* sourceLabel;
 	UILabel* likesLabel;
     UIImageView* likeImageView;
+    UIImageView* saveImageView;
     
 	Callback* playVideoCallback;
     Callback* likeVideoCallback;
     Callback* unlikeVideoCallback;
+    Callback* addVideoCallback;
     
     NSThread* imageThread;
 }
@@ -33,9 +35,11 @@
 @property(retain) Callback* playVideoCallback;
 @property(retain) Callback* likeVideoCallback;
 @property(retain) Callback* unlikeVideoCallback;
+@property(retain) Callback* addVideoCallback;
 
 - (void) setVideoObject: (VideoObject*)video;
 - (void) updateLikeButton: (VideoObject*)video;
+- (void) updateSaveButton: (VideoObject*)video;
 - (void) loadImage;
 
 @end

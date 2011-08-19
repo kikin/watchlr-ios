@@ -34,7 +34,7 @@
 
 - (NSArray*) getActivityHeadingLabels {
     NSError* error = NULL;
-    NSRegularExpression *htmlLinksRegex = [NSRegularExpression regularExpressionWithPattern:@"<a href=([\\S]+?)<\\/a>"
+    NSRegularExpression *htmlLinksRegex = [NSRegularExpression regularExpressionWithPattern:@"<a href=(.+?)<\\/a>"
                                                                                   options:NSRegularExpressionCaseInsensitive
                                                                                     error:&error];
     
@@ -46,6 +46,7 @@
         if ([matchedStrings count] > 0) {
             for (NSTextCheckingResult* result in matchedStrings) {
                 NSString* textWithoutLink = [activity_heading substringWithRange:NSMakeRange(previousLinkEndPos, (result.range.location - previousLinkEndPos))];
+//                LOG_DEBUG(@"Text without link:%@", textWithoutLink);
                 if ([textWithoutLink length] > 0) {
                     ActivityStringPair* pair = [[[ActivityStringPair alloc] init] autorelease];
                     pair.key = textWithoutLink;
@@ -55,9 +56,12 @@
                 
                 
                 NSString* matchedString = [activity_heading substringWithRange:result.range];
+//                LOG_DEBUG(@"Matched string:%@", matchedString);
                 
                 NSRange urlStartPosRange = [matchedString rangeOfString:@"href="];
-                NSRange urlEndPosRange = [matchedString rangeOfString:@">"];
+                NSRange urlEndPosRange = [matchedString rangeOfString:@" target=_blank>"];
+                if (urlEndPosRange.location == NSNotFound)
+                    urlEndPosRange = [matchedString rangeOfString:@">"];
                 NSRange urlRange = NSMakeRange((urlStartPosRange.location + urlStartPosRange.length), (urlEndPosRange.location - (urlStartPosRange.location + urlStartPosRange.length)));
                 
                 NSRange textEndPosRange = [matchedString rangeOfString:@"</a>"];
@@ -67,6 +71,8 @@
                 pair.key = [matchedString substringWithRange:textRange];
                 pair.value = [matchedString substringWithRange:urlRange];
                 [activityHeadingLabels addObject:pair];
+                
+//                LOG_DEBUG(@"Key:%@, Value:%@", pair.key, pair.value);
                 
                 previousLinkEndPos = result.range.location + result.range.length;
             }
@@ -80,6 +86,7 @@
         pair.value = @"";
         [activityHeadingLabels addObject:pair];
     }
+//    LOG_DEBUG(@"Text at the end:%@", textWithoutLink);
     
     return activityHeadingLabels;
 }

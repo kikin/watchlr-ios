@@ -9,9 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <CommonIos/JsonRequest.h>
 
+typedef enum {
+    ALL,
+    FACEBOOK_ONLY,
+    WATCHLR_ONLY
+} ActivityType;
+
 @interface UserActivityListRequest : JsonRequest
 
-- (void) doGetUserActicityListRequest:(BOOL)facebookVideosOnly startingAt:(int)pageStart withCount:(int)videosCount;
+- (void) doGetUserActicityListRequest:(ActivityType)activityType startingAt:(int)pageStart withCount:(int)videosCount;
 - (id) processReceivedString: (NSString*)receivedString;
 
 @end

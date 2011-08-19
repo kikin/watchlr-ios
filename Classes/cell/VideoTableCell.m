@@ -12,7 +12,7 @@
 
 @implementation VideoTableCell
 
-@synthesize playVideoCallback, likeVideoCallback, unlikeVideoCallback;
+@synthesize playVideoCallback, likeVideoCallback, unlikeVideoCallback, addVideoCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
@@ -62,6 +62,11 @@
         likeImageView = [[UIImageView alloc] init];
         likeImageView.autoresizingMask = UIViewAutoresizingNone;
 		[self addSubview:likeImageView];
+        
+        // create the save button
+        saveImageView = [[UIImageView alloc] init];
+        saveImageView.autoresizingMask = UIViewAutoresizingNone;
+        [self addSubview:saveImageView];
         
         // set size/positions
 		if (DeviceUtils.isIphone) {
@@ -132,6 +137,17 @@
         
         // update like button
         [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:(videoObject.liked ? @"heart_red.png" : @"heart_grey.png")] waitUntilDone:YES];
+        
+        // update save button
+        if (!videoObject.saved) {
+            [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"save_video.png"] waitUntilDone:YES];
+            saveImageView.hidden = NO;
+        } else if (videoObject.savedInCurrentTab) {
+            [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
+            saveImageView.hidden = NO;
+        } else {
+            saveImageView.hidden = NO;
+        }
     }
 	
     // set the thumbnail image
@@ -213,11 +229,26 @@
         
         descriptionLabel.frame = CGRectMake(180, 20, (self.frame.size.width - titleAndDescriptionLabelWidth), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + 10)));
         
-        // set the size for likes label
-        likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
-        
-        // set the size for like/unlike button
-        likeImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+        if (!videoObject.saved || videoObject.savedInCurrentTab) {
+            // set the size for save/unsaved button
+            saveImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+            saveImageView.hidden = NO;
+            
+            // set the size for like/unlike button
+            likeImageView.frame = CGRectMake((self.frame.size.width - 90), 10, 30, 30);
+            
+            // set the size for likes label
+            likesLabel.frame = CGRectMake((self.frame.size.width - 150), 10, 55, 30);
+        } else {
+            // hide the add button
+            saveImageView.hidden = YES;
+            
+            // set the size for likes label
+            likesLabel.frame = CGRectMake((self.frame.size.width - 110), 10, 55, 30);
+            
+            // set the size for like/unlike button
+            likeImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
+        }
         
         // set the size for favicon image
         faviconImageView.frame = CGRectMake(180, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
@@ -299,6 +330,14 @@
     }
 }
 
+- (void) updateSaveButton: (VideoObject*)video {
+    if (videoObject) [videoObject release];
+    videoObject = [video retain];
+    
+    [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
+    videoObject.savedInCurrentTab = true;
+}
+
 - (void) layoutSubviews {
     [super layoutSubviews];
     [self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
@@ -331,6 +370,14 @@
                 }
             }
         }
+        
+        CGRect addVideoRect = [saveImageView bounds];
+        addVideoRect = [saveImageView convertRect:addVideoRect toView:self];
+        if (CGRectContainsPoint(addVideoRect, touchLocation)) {
+            if (addVideoCallback != nil) {
+                [addVideoCallback execute:videoObject];
+            }
+        }
     }
 }
 
@@ -338,6 +385,7 @@
     if (imageThread)
         [imageThread release];
     
+    [saveImageView release];
     [videoImageView release];
     [playButtonImage release];
     [titleLabel release];
@@ -348,6 +396,7 @@
 	[likeImageView release];
     [videoObject release];
     
+    [addVideoCallback release];
     [likeVideoCallback release];
     [unlikeVideoCallback release];
     [playVideoCallback release];

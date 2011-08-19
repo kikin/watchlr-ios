@@ -19,6 +19,8 @@
 - (void) getPeopleUserFollows:(NSString*)username;
 - (void) getPeopleFollowingUser:(NSString*)username;
 - (void) getLikedVideosByUser:(NSString*)username;
+- (void) followUser:(int) userId;
+- (void) unfollowUser:(int) userId;
 
 - (id) processReceivedString: (NSString*)receivedString;
 

@@ -14,17 +14,15 @@
 //                         Activity table cell
 // ---------------------------------------------------------------------------
 @interface ActivityTableCell : VideoTableCell {
-    UIImageView* addVideoImageView;
     UIImageView* userImageView;
     UIActicityHeadingLabel* activityHeading;
     
     ActivityObject* activityObject;
-    Callback* addVideoCallback;
+    Callback* onUserNameClickedCallback;
 }
 
-@property(retain) Callback* addVideoCallback;
+@property(retain) Callback* onUserNameClickedCallback;
 
 - (void) setActivityObject: (ActivityObject*)activity;
-- (void) updateSaveButton: (ActivityObject*)activity;
 
 @end

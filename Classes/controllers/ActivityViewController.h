@@ -6,16 +6,22 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "KikinVideoViewController.h"
+#import "WatchlrViewController.h"
 #import "UserActivityListResponse.h"
 #import "UserActivityListRequest.h"
+#import "ActivityListView.h"
 
-@interface ActivityViewController : KikinVideoViewController {
+@interface ActivityViewController : WatchlrViewController {
 	UserActivityListRequest* activityListRequest;
-    NSMutableArray* activities;
-	bool isRefreshing;
+    ActivityListView* allActivitiesListView;
+    ActivityListView* facebookOnlyActivitiesListView;
+    ActivityListView* watchlrOnlyActivitiesListView;
+    UISegmentedControl* activityOptionsButton;
+    
+    int lastPageRequested;
+    bool isRefreshing;
+    
+    ActivityType activityType;
 }
-
-- (void) doUserActivityListRequest:(BOOL)facebookVideosOnly startingAt:(int)pageStart withCount:(int)videosCount;
 
 @end
