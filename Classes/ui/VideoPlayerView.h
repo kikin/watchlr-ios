@@ -29,11 +29,19 @@
     UIActivityIndicatorView* loadingActivity;
     UILabel* countdown;
     UILabel* errorMessage;
+    UIButton* watchHereButton;
+    UILabel* nextVideoWillPlayInMessage;
     
     UIView* fullScreenModeView;
     UIActivityIndicatorView* fullScreenLoadingActivity;
     UILabel* fullScreenCountdown;
     UILabel* fullScreenErrorMessage;
+    UIButton* fullScreenWatchHereButton;
+    UILabel* fullScreenNextVideoWillPlayInMessage;
+    UIButton* fullScreenPreviousButton;
+    UIButton* fullScreenNextButton;
+    UIButton* fullScreenSaveButton;
+    UIButton* fullScreenLikeButton;
     bool wasPlayingInFullScreenMode;
 
     // UIView* moviePlayerNativeControlView;
@@ -49,6 +57,7 @@
     Callback* onUnlikeButtonClickedCallback;
     Callback* onSaveButtonClickedCallback;
     Callback* onPlaybackErrorCallback;
+    Callback* onViewSourceClickedCallback;
     
     bool isVimeoVideo;
     bool isYoutubeVideo;
@@ -70,6 +79,7 @@
 @property(retain) Callback* onUnlikeButtonClickedCallback;
 @property(retain) Callback* onSaveButtonClickedCallback;
 @property(retain) Callback* onPlaybackErrorCallback;
+@property(retain) Callback* onViewSourceClickedCallback;
 @property()       bool isFullScreenMode;
 
 - (void) playVideo:(VideoObject*) videoObject;

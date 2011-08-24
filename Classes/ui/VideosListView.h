@@ -44,6 +44,7 @@ typedef enum {
 @property(retain)   Callback* refreshListCallback;
 @property(retain)   Callback* loadMoreDataCallback;
 @property(retain)   Callback* addVideoPlayerCallback;
+@property(retain)   Callback* onViewSourceClickedCallback;
 
 - (void)    updateListWrapper: (NSDictionary*)args;
 - (int)     count;

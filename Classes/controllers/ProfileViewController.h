@@ -11,6 +11,14 @@
 
 @interface ProfileViewController: WatchlrViewController {
     UserProfileView* userProfileView;
+    UserProfileSettingsView* userProfileSettingsView;
+    UserSettingsView* userSettingsView;
+    UIImageView* settingsIconView;
+    
+    UITapGestureRecognizer* tapGesture;
+    UITapGestureRecognizer* settingsIconViewTapGesture;
+    
+    Callback* onLogoutCallback;
 }
 
 - (void) setUserObject:(UserProfileObject*)userObject;

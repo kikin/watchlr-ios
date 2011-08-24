@@ -23,6 +23,7 @@
     allActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     allActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     allActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    allActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     allActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
     allActivitiesListView.isViewRefreshable = true;
     allActivitiesListView.hidden = NO;
@@ -33,6 +34,7 @@
     facebookOnlyActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     facebookOnlyActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     facebookOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    facebookOnlyActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     facebookOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
     facebookOnlyActivitiesListView.isViewRefreshable = true;
     facebookOnlyActivitiesListView.hidden = YES;
@@ -43,35 +45,47 @@
     watchlrOnlyActivitiesListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     watchlrOnlyActivitiesListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     watchlrOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    watchlrOnlyActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     watchlrOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
     watchlrOnlyActivitiesListView.isViewRefreshable = true;
     watchlrOnlyActivitiesListView.hidden = YES;
     [self.view addSubview:watchlrOnlyActivitiesListView];
     [self.view sendSubviewToBack:watchlrOnlyActivitiesListView]; 
     
-    activityOptionsButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"All", @"Facebook only", @"Watchlr only", nil]];
-    [activityOptionsButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-    [activityOptionsButton addTarget:self action:@selector(onActivityOptionsButtonClicked:) forControlEvents:UIControlEventValueChanged];
-    activityOptionsButton.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
-    activityOptionsButton.selectedSegmentIndex = 0;
-//    activityOptionsButton.frame = CGRectMake(0, 0, self.view.frame.size.width, 30);
-//    [self.view addSubview:activityOptionsButton];
-    self.navigationItem.titleView = activityOptionsButton;
+    activityFilterView = [[ActivityFilterView alloc] init];
+    activityFilterView.hidden = YES;
+    activityFilterView.optionSelectedCallback = [Callback create:self selector:@selector(onActivityOptionsButtonClicked:)];
+    [self.view addSubview:activityFilterView];
+    
+    
+//    activityOptionsButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"All", @"Facebook only", @"Watchlr only", nil]];
+//    [activityOptionsButton setSegmentedControlStyle:UISegmentedControlStyleBar];
+//    [activityOptionsButton addTarget:self action:@selector(onActivityOptionsButtonClicked:) forControlEvents:UIControlEventValueChanged];
+//    activityOptionsButton.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
+//    activityOptionsButton.selectedSegmentIndex = 0;
+//    self.navigationItem.titleView = activityOptionsButton;
 
     
     // request video lsit
     isRefreshing = true;
     activityType = ALL;
-//	[self doUserActivityListRequest:ALL startingAt:-1 withCount:10];
+    
+    [self performSelector:@selector(onActivityOptionsButtonClicked:) withObject:[NSNumber numberWithInt:activityType]];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(onFilterButtonClicked)];
+
 }
 
 - (void)dealloc {
 	// release memory
-    [activityOptionsButton release];
+//    [activityOptionsButton release];
+    [activityFilterView release];
     [allActivitiesListView release];
     [facebookOnlyActivitiesListView release];
     [watchlrOnlyActivitiesListView release];
 	[activityListRequest release];
+    
+    [tapGesture release];
     [super dealloc];
 }
 
@@ -114,6 +128,20 @@
     return activeView;
 }
 
+- (void) addPageTapGestureRecognizer {
+    if (tapGesture == nil) {
+        tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action: @selector(onPageClicked)];
+        tapGesture.numberOfTapsRequired = 1;
+        tapGesture.numberOfTouchesRequired = 1;
+    }
+    [self.view addGestureRecognizer:tapGesture];
+}
+
+- (void) removePageTapGestureRecognizer {
+    [self.view removeGestureRecognizer:tapGesture];
+}
+
+
 // --------------------------------------------------------------------------------
 //                                  Callbacks
 // --------------------------------------------------------------------------------
@@ -133,6 +161,13 @@
     [self doUserActivityListRequest:activityType startingAt:(lastPageRequested + 1) withCount:10];
 }
 
+- (void) onViewSourceClicked:(NSString*)sourceUrl {
+    WebViewController* webViewController = [[[WebViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:webViewController animated:YES];
+    [webViewController loadUrl:sourceUrl];
+    
+}
+
 - (void) onUsernameClicked:(NSString*)userName {
     if ([userName rangeOfString:@"/"].location == 0) {
         ProfileViewController* profileViewController = [[[ProfileViewController alloc] init] autorelease];
@@ -145,13 +180,35 @@
     }
 }
 
-- (void) onActivityOptionsButtonClicked:(UIButton*) sender {
+- (void) onFilterButtonClicked {
+    if (activityFilterView.hidden) {
+        activityFilterView.frame = CGRectMake((self.view.frame.size.width - 150), 0, 150, 105);
+        [activityFilterView showActivityFilterOptions:activityType];
+        [self addPageTapGestureRecognizer];
+    } else {
+        activityFilterView.hidden = YES;
+        [self removePageTapGestureRecognizer];
+    }
+}
+
+- (void) onPageClicked {
+    LOG_DEBUG(@"On Page clicked");
+    if (activityFilterView.hidden == NO) {
+        activityFilterView.hidden = YES;
+        [self removePageTapGestureRecognizer];
+    }
+}
+
+- (void) onActivityOptionsButtonClicked:(NSNumber*) type {
+    [self removePageTapGestureRecognizer];
+    activityFilterView.hidden = YES;
+    
     [allActivitiesListView closePlayer];
     [facebookOnlyActivitiesListView closePlayer];
     [watchlrOnlyActivitiesListView closePlayer];
     
-    switch(activityOptionsButton.selectedSegmentIndex) {
-        case 0: {
+    switch([type intValue]) {
+        case ALL: {
             activityType = ALL;
             
             allActivitiesListView.hidden = NO;
@@ -162,7 +219,7 @@
             break;
         }
             
-        case 1: {
+        case FACEBOOK_ONLY: {
             activityType = FACEBOOK_ONLY;
             facebookOnlyActivitiesListView.hidden = NO;
             allActivitiesListView.hidden = YES;
@@ -170,7 +227,7 @@
             break;
         }
             
-        case 2: {
+        case WATCHLR_ONLY: {
             activityType = WATCHLR_ONLY;
             watchlrOnlyActivitiesListView.hidden = NO;
             allActivitiesListView.hidden = YES;

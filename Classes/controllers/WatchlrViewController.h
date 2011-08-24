@@ -14,18 +14,10 @@
 
 /** Video List View Controller. */
 @interface WatchlrViewController : UIViewController {
-	UserProfileSettingsView* userProfileSettingsView;
-    UserSettingsView* userSettingsView;
-    
-    Callback* onLogoutCallback;
+	
 }
 
-- (void) onClickAccount;
-- (void) showUserProfile;
-- (void) showFeedbackForm;
-- (void) logoutUser;
 - (void) onApplicationBecomeInactive;
-
 - (void) onTabInactivate;
 - (void) onTabActivate;
 

@@ -27,14 +27,14 @@
 //                    User activity object
 // -----------------------------------------------------------
 @interface ActivityObject : NSObject {
-	long                timestamp;
+	double                timestamp;
     NSString*           activity_heading;
     NSArray*            activityHeadingLabelsList;
     NSMutableArray*     userActivities;
     VideoObject*        video;
 }
 
-@property()			long timestamp;
+@property()			double timestamp;
 @property(retain)	NSString* activity_heading;
 @property(retain)	NSArray* activityHeadingLabelsList;
 @property(retain)	NSMutableArray* userActivities;

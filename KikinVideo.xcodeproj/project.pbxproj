@@ -29,6 +29,8 @@
 		265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */; };
 		269B6F6013AADF000019133D /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 269B6F5F13AADEFF0019133D /* Entitlements.plist */; };
 		269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269B6F6413ABB6880019133D /* MediaPlayer.framework */; };
+		26E00A2B14031C8A007B833A /* white-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E00A2A14031C8A007B833A /* white-gear.png */; };
+		26E00A2E1403290E007B833A /* ActivityFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E00A2D1403290D007B833A /* ActivityFilterView.m */; };
 		26E2300613F0503B00DB6D0A /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300213F0503B00DB6D0A /* Icon-72.png */; };
 		26E2300713F0503B00DB6D0A /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300313F0503B00DB6D0A /* Icon-Small-50.png */; };
 		26E2300813F0503B00DB6D0A /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E2300413F0503B00DB6D0A /* Icon-Small.png */; };
@@ -361,6 +363,9 @@
 		265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_icon.png; sourceTree = "<group>"; };
 		269B6F5F13AADEFF0019133D /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		269B6F6413ABB6880019133D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		26E00A2A14031C8A007B833A /* white-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white-gear.png"; path = "images/white-gear.png"; sourceTree = "<group>"; };
+		26E00A2C14032905007B833A /* ActivityFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivityFilterView.h; path = ui/ActivityFilterView.h; sourceTree = "<group>"; };
+		26E00A2D1403290D007B833A /* ActivityFilterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActivityFilterView.m; path = ui/ActivityFilterView.m; sourceTree = "<group>"; };
 		26E2300213F0503B00DB6D0A /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		26E2300313F0503B00DB6D0A /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		26E2300413F0503B00DB6D0A /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
@@ -705,6 +710,7 @@
 		260864CF13F4A52F0081C53C /* source */ = {
 			isa = PBXGroup;
 			children = (
+				26E00A2D1403290D007B833A /* ActivityFilterView.m */,
 				2608650B13F5B7470081C53C /* ActivityListView.m */,
 				260864F113F5990D0081C53C /* ConnectMainView.m */,
 				260864F213F5990D0081C53C /* ErrorMainView.m */,
@@ -725,6 +731,7 @@
 		260864D013F4A54F0081C53C /* headers */ = {
 			isa = PBXGroup;
 			children = (
+				26E00A2C14032905007B833A /* ActivityFilterView.h */,
 				2608650A13F5B7410081C53C /* ActivityListView.h */,
 				260864E613F598F50081C53C /* ConnectMainView.h */,
 				260864E713F598F50081C53C /* ErrorMainView.h */,
@@ -1237,6 +1244,7 @@
 				26EA180413F2FEED00291CAC /* watchlr_icon.png */,
 				26EA180513F2FEED00291CAC /* watchlr_icon_512x512.png */,
 				26EA180613F2FEED00291CAC /* watchlr_logo.png */,
+				26E00A2A14031C8A007B833A /* white-gear.png */,
 				26EA180713F2FEED00291CAC /* whiteArrow.png */,
 				26EA180813F2FEED00291CAC /* whiteArrowUp.png */,
 				26EA180913F2FEED00291CAC /* x_grey.png */,
@@ -1561,6 +1569,7 @@
 				26EA181A13F2FEED00291CAC /* whiteArrow.png in Resources */,
 				26EA181B13F2FEED00291CAC /* whiteArrowUp.png in Resources */,
 				26EA181C13F2FEED00291CAC /* x_grey.png in Resources */,
+				26E00A2B14031C8A007B833A /* white-gear.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1621,6 +1630,7 @@
 				2608650C13F5B7470081C53C /* ActivityListView.m in Sources */,
 				2608650F13F6366C0081C53C /* UserProfileView.m in Sources */,
 				2608651213FA17580081C53C /* WebViewController.m in Sources */,
+				26E00A2E1403290E007B833A /* ActivityFilterView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

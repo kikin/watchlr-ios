@@ -16,7 +16,7 @@
 
 @implementation VideoPlayerView
 
-@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback, isFullScreenMode;
+@synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback, onViewSourceClickedCallback, isFullScreenMode;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -103,12 +103,16 @@
         prevButton = [[UIButton alloc] init];
         [prevButton addTarget:self action:@selector(onPreviousButtonClicked:) forControlEvents:UIControlEventTouchDown];
         [prevButton setImage:[UIImage imageNamed:@"back_arrow.png"] forState:UIControlStateNormal];
+        prevButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:1.0];
+        prevButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
         [self addSubview:prevButton];
         
         // create the next button
         nextButton = [[UIButton alloc] init];
         [nextButton addTarget:self action:@selector(onNextButtonClicked:) forControlEvents:UIControlEventTouchDown];
         [nextButton setImage:[UIImage imageNamed:@"fwd_arrow.png"] forState:UIControlStateNormal];
+        nextButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        nextButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:1.0];
         [self addSubview:nextButton];
         
         // create the movie player
@@ -172,13 +176,35 @@
         
         // add the error message to movie player
         errorMessage = [[UILabel alloc] init];
+        errorMessage.text = @"We could not play this video.";
         errorMessage.textColor = [UIColor whiteColor];
         errorMessage.backgroundColor = [UIColor clearColor];
         errorMessage.font = [UIFont systemFontOfSize:20];
         errorMessage.textAlignment = UITextAlignmentCenter;
-        errorMessage.numberOfLines = 3;
+        errorMessage.numberOfLines = 1;
         errorMessage.hidden = YES;
         [moviePlayerController.view addSubview:errorMessage];
+        
+        // add the watch here link to movie player
+        watchHereButton = [[UIButton alloc] init];
+        [watchHereButton addTarget:self action:@selector(onViewSourceClicked) forControlEvents:UIControlEventTouchDown];
+        [watchHereButton setTitle:@"Watch here" forState:UIControlStateNormal];
+        [watchHereButton setTitleColor:[UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0] forState:UIControlStateNormal];
+        watchHereButton.backgroundColor = [UIColor clearColor];
+        watchHereButton.titleLabel.font = [UIFont systemFontOfSize:20];
+        watchHereButton.hidden = YES;
+        [moviePlayerController.view addSubview:watchHereButton];
+        
+        // add the "nect video will play in" message to movie player
+        nextVideoWillPlayInMessage = [[UILabel alloc] init];
+        nextVideoWillPlayInMessage.text = @"Your next video will play in";
+        nextVideoWillPlayInMessage.textColor = [UIColor whiteColor];
+        nextVideoWillPlayInMessage.backgroundColor = [UIColor clearColor];
+        nextVideoWillPlayInMessage.font = [UIFont systemFontOfSize:20];
+        nextVideoWillPlayInMessage.textAlignment = UITextAlignmentCenter;
+        nextVideoWillPlayInMessage.numberOfLines = 1;
+        nextVideoWillPlayInMessage.hidden = YES;
+        [moviePlayerController.view addSubview:nextVideoWillPlayInMessage];
         
         // listen for events from movie player
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onVideoFinished:) name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayerController];
@@ -215,16 +241,26 @@
                                        30);
         bottomSeparator.frame = CGRectMake(0, moviePlayer.frame.size.height - 50, moviePlayer.frame.size.width, 1);
         
-        prevButton.frame = CGRectMake(moviePlayer.frame.origin.x - 37, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
-        nextButton.frame = CGRectMake(moviePlayer.frame.origin.x + moviePlayer.frame.size.width + 10, ((moviePlayer.frame.size.height - 53) / 2) + moviePlayer.frame.origin.y, 27, 53);
+        prevButton.frame = CGRectMake(moviePlayer.frame.origin.x - 37, ((moviePlayer.frame.size.height - 63) / 2) + moviePlayer.frame.origin.y, 37, 63);
+        nextButton.frame = CGRectMake(moviePlayer.frame.origin.x + moviePlayer.frame.size.width, ((moviePlayer.frame.size.height - 63) / 2) + moviePlayer.frame.origin.y, 37, 63);
         
         moviePlayerController.view.frame = CGRectMake(10, 50, moviePlayer.frame.size.width - 20, moviePlayer.frame.size.height - 110);
+        
+        
+        int errorMessageHeight = [errorMessage.text sizeWithFont:errorMessage.font].height;
+        errorMessage.frame = CGRectMake(0, 20, moviePlayerController.view.frame.size.width, errorMessageHeight);
+        
+        int watchHereLabelHeight = [watchHereButton.titleLabel.text sizeWithFont:watchHereButton.titleLabel.font].height;
+        watchHereButton.frame = CGRectMake(0, errorMessageHeight + 25, moviePlayerController.view.frame.size.width, watchHereLabelHeight);
+        
+        int nextVideoMessageHeight = [nextVideoWillPlayInMessage.text sizeWithFont:nextVideoWillPlayInMessage.font].height;
+        nextVideoWillPlayInMessage.frame = CGRectMake(0, (errorMessageHeight + watchHereLabelHeight + 35), moviePlayerController.view.frame.size.width, nextVideoMessageHeight);
+        
         loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
-                                           ((moviePlayerController.view.frame.size.height - 100) / 2), 
+                                           (errorMessageHeight + watchHereLabelHeight + nextVideoMessageHeight + 50), 
                                            100, 100);
         countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
         
-        errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);
         // videosListView.frame = CGRectMake(0, (self.frame.size.height - 111), self.frame.size.width, 110);
     }
 }
@@ -261,6 +297,8 @@
     
     [countdown release];
     [errorMessage release];
+    [watchHereButton release];
+    [nextVideoWillPlayInMessage release];
     
     // [videosListView release];
     
@@ -320,9 +358,13 @@
         if (isFullScreenMode) {
             fullScreenCountdown.hidden = YES;
             fullScreenErrorMessage.hidden = YES;
+            fullScreenWatchHereButton.hidden = YES;
+            fullScreenNextVideoWillPlayInMessage.hidden = YES;
         } else {
             countdown.hidden = YES;
             errorMessage.hidden = YES;
+            watchHereButton.hidden = YES;
+            nextVideoWillPlayInMessage.hidden = YES;
         }
         [self performSelectorOnMainThread:@selector(onNextButtonClicked:) withObject:nil waitUntilDone:NO];
     }
@@ -331,36 +373,31 @@
 /*
  * Show the watchlr custom controls on the MPMoviePlayer.
  */
-/*-(void) showCustomControls {
-    // place like button on top right corner
-    likeButton.frame = CGRectMake(moviePlayerController.view.frame.size.width - 62, 20, 52, 32);
-    likeButton.hidden = NO;
-    
-    // place save button below the like button;
-    saveButton.frame = CGRectMake(moviePlayerController.view.frame.size.width - 62, 62, 52, 32);
-    saveButton.hidden = NO;
-    
-    // place previous button at left center
-    prevButton.frame = CGRectMake(10, (moviePlayerController.view.frame.size.height - 52) / 2, 52, 32);
-    prevButton.hidden = NO;
-    
-    // place next button at right center
-    nextButton.frame = CGRectMake(moviePlayerController.view.frame.size.width - 62, (moviePlayerController.view.frame.size.height - 52) / 2, 52, 32);
-    nextButton.hidden = NO;
-    
-    areControlsVisible = true;
-}*/
+-(void) showCustomControls {
+    if (isFullScreenMode) {
+        fullScreenPreviousButton.hidden = NO;
+        fullScreenNextButton.hidden = NO;
+        fullScreenLikeButton.hidden = NO;
+        
+        if (!video.saved || video.savedInCurrentTab) {
+            fullScreenSaveButton.hidden = NO;
+        }
+        areControlsVisible = true;
+    }
+}
 
 /*
  * hide watchlr custom controls
  */
-/*- (void) hideCustomControls {
-    likeButton.hidden = YES;
-    saveButton.hidden = YES;
-    prevButton.hidden = YES;
-    nextButton.hidden = YES; 
-    areControlsVisible = false;
-}*/
+- (void) hideCustomControls {
+    if (isFullScreenMode) {
+        fullScreenPreviousButton.hidden = YES;
+        fullScreenNextButton.hidden = YES; 
+        fullScreenLikeButton.hidden = YES;
+        fullScreenSaveButton.hidden = YES;
+        areControlsVisible = false;
+    }
+}
 
 /*
  * Play the video with given url and initial position.
@@ -413,11 +450,15 @@
         fullScreenErrorMessage.text = message;
         fullScreenErrorMessage.hidden = NO;
         fullScreenCountdown.hidden = NO;
+        fullScreenWatchHereButton.hidden = NO;
+        fullScreenNextVideoWillPlayInMessage.hidden = NO;
         fullScreenCountdown.text = @"5";
     } else {
         errorMessage.text = message;
         errorMessage.hidden = NO;
         countdown.hidden = NO;
+        watchHereButton.hidden = NO;
+        nextVideoWillPlayInMessage.hidden = NO;
         countdown.text = @"5";
     }
     
@@ -703,7 +744,7 @@
         [self loadVideo:videoSource];
     } else {
         LOG_ERROR(@"Unable to found the URL for vimeo video stream.");
-        [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        [self showErrorMessage:@"We could not play this video."];
     }
     
 }
@@ -729,14 +770,14 @@
     // then video is not embeddable and we cannot play that video.
     if (NSOrderedSame != [(NSString*)[paramsDict valueForKey:@"status"] caseInsensitiveCompare:@"ok"]) {
         LOG_ERROR(@"Youtube video is not embeddable. Status: %@", (NSString*)[paramsDict valueForKey:@"status"]);
-        [self showErrorMessage:@"Embedding disabled by request.\nYour next video will play in"];
+        [self showErrorMessage:@"Embedding disabled by request."];
         return;
     }
     
     NSString* url_encoded_fmt_stream_map = (NSString*)[paramsDict valueForKey:@"url_encoded_fmt_stream_map"];
     if (url_encoded_fmt_stream_map == nil || [url_encoded_fmt_stream_map length] == 0) {
         LOG_ERROR(@"Unable to fetch the url_encoded_fmt_stream_map");
-        [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        [self showErrorMessage:@"We could not play this video."];
         return;
     }
     
@@ -768,7 +809,7 @@
         [self loadVideo: videoUrl];
     } else {
         LOG_ERROR(@"Unable to found the URL for youtube video stream.");
-        [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        [self showErrorMessage:@"We could not play this video."];
     }
     
 }
@@ -819,6 +860,14 @@
         if (fullScreenCountdown != nil && fullScreenCountdown.hidden == NO) {
             [fullScreenCountdown setHidden:YES];
         }
+        
+        if (fullScreenWatchHereButton != nil && fullScreenWatchHereButton.hidden == NO) {
+            [fullScreenWatchHereButton setHidden:YES];
+        }
+        
+        if (fullScreenNextVideoWillPlayInMessage != nil && fullScreenNextVideoWillPlayInMessage.hidden == NO) {
+            [fullScreenNextVideoWillPlayInMessage setHidden:YES];
+        }
     } else {
         if (errorMessage != nil && errorMessage.hidden == NO) {
             [errorMessage setHidden:YES];
@@ -826,6 +875,14 @@
         
         if (countdown != nil && countdown.hidden == NO) {
             [countdown setHidden:YES];
+        }
+        
+        if (watchHereButton != nil && watchHereButton.hidden == NO) {
+            [watchHereButton setHidden:YES];
+        }
+        
+        if (nextVideoWillPlayInMessage != nil && nextVideoWillPlayInMessage.hidden == NO) {
+            [nextVideoWillPlayInMessage setHidden:YES];
         }
     }
 }
@@ -861,7 +918,7 @@
             [self play:currentlyPlayingVideoUrl withInitialPlaybackTime:seekTime];
         } else {
             LOG_ERROR(@"Unable to found the URL for vimeo video stream.");
-            [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+            [self showErrorMessage:@"We could not play this video."];
         }
     }
 }
@@ -872,7 +929,7 @@
             [self play:currentlyPlayingVideoUrl withInitialPlaybackTime:video.seek];
         } else {
             LOG_ERROR(@"Unable to found the URL for vimeo video stream.");
-            [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+            [self showErrorMessage:@"We could not play this video."];
         }
     }
 }
@@ -898,12 +955,19 @@
     if (video.liked) {
         if (onUnlikeButtonClickedCallback != nil) {
             [likeButton setImage:[UIImage imageNamed:@"heart_grey.png"] forState:UIControlStateNormal];
+            if (fullScreenLikeButton != nil) {
+                [fullScreenLikeButton setImage:[UIImage imageNamed:@"heart_grey.png"] forState:UIControlStateNormal];
+            }
             [onUnlikeButtonClickedCallback execute:video];
         }
     } else {
         if (onLikeButtonClickedCallback != nil) {
-            [onLikeButtonClickedCallback execute:video];
             [likeButton setImage:[UIImage imageNamed:@"heart_red.png"] forState:UIControlStateNormal];
+            if (fullScreenLikeButton != nil) {
+                [fullScreenLikeButton setImage:[UIImage imageNamed:@"heart_red.png"] forState:UIControlStateNormal];
+            }
+            [onLikeButtonClickedCallback execute:video];
+            
         }
     }
     // LOG_DEBUG(@"Like button clicked.");
@@ -912,6 +976,9 @@
 - (void) onSaveButtonClicked:(UIButton*) sender {
     if (onSaveButtonClickedCallback != nil) {
         [saveButton setImage:[UIImage imageNamed:@"check_mark_green.png"] forState:UIControlStateNormal];
+        if (fullScreenSaveButton != nil) {
+            [fullScreenSaveButton setImage:[UIImage imageNamed:@"check_mark_green.png"] forState:UIControlStateNormal];
+        }
         [onSaveButtonClickedCallback execute:video];
     }
     
@@ -947,15 +1014,29 @@
     }
 }
 
-- (void) onFullScreenMode: (NSNotification*) aNotification {
-    //[moviePlayerController.view addSubview:loadingAcctivity];
-    /*loadingAcctivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
-                                        ((moviePlayerController.view.frame.size.height - 100) / 2), 
-                                        100, 100);
-    [moviePlayerController.view bringSubviewToFront:loadingAcctivity];
+- (void) onViewSourceClicked {
+    [self hideLoadingActivity];
+    if (isFullScreenMode) {
+        [moviePlayerController setFullscreen:NO animated:NO];
+        wasPlayingInFullScreenMode = false;
+    }
     
-    countdown.frame = CGRectMake(((loadingAcctivity.frame.size.width - 20)/ 2), ((loadingAcctivity.frame.size.height - 20) / 2) - 4, 20, 20);
-    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);*/
+    // hide error message displayed if any
+    [self stopCountdown];
+    
+    [self onCloseButtonClicked:nil];
+    
+    if (onViewSourceClickedCallback != nil) {
+        if (video.hostUrl != nil) {
+            [onViewSourceClickedCallback execute:video.hostUrl];
+        } else {
+            [onViewSourceClickedCallback execute:video.videoUrl];
+        }
+    }
+}
+
+- (void) onFullScreenMode: (NSNotification*) aNotification {
+//    moviePlayerController.controlStyle = MPMovieControlStyleEmbedded;
     isFullScreenMode = true;
     
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
@@ -965,6 +1046,15 @@
     }
     fullScreenModeView = [[window subviews] objectAtIndex:0];
     
+    // tap gesture
+    UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc] init];
+    tapGesture.numberOfTapsRequired = 1;
+    tapGesture.numberOfTouchesRequired = 1;
+    tapGesture.delegate= self;
+    [fullScreenModeView addGestureRecognizer:tapGesture];
+    [tapGesture release];
+    
+    // swipe left
     UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc]
                                            initWithTarget:self action:@selector(handleSwipeLeft:)];
     
@@ -980,6 +1070,8 @@
     [fullScreenModeView addGestureRecognizer:swipeRight];
     [swipeRight release];
     
+    
+    
     // add the loading view to movie player
     fullScreenLoadingActivity = [[UIActivityIndicatorView alloc] init];
     fullScreenLoadingActivity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
@@ -993,6 +1085,7 @@
     fullScreenCountdown.textColor = [UIColor whiteColor];
     fullScreenCountdown.backgroundColor = [UIColor clearColor];
     fullScreenCountdown.textAlignment = UITextAlignmentCenter;
+    fullScreenCountdown.font = [UIFont systemFontOfSize:25];
     fullScreenCountdown.numberOfLines = 1;
     fullScreenCountdown.hidden = YES;
     fullScreenCountdown.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -1000,13 +1093,80 @@
     
     // add the error message to movie player
     fullScreenErrorMessage = [[UILabel alloc] init];
+    fullScreenErrorMessage.text = @"We could not play this video.";
     fullScreenErrorMessage.textColor = [UIColor whiteColor];
     fullScreenErrorMessage.backgroundColor = [UIColor clearColor];
     fullScreenErrorMessage.textAlignment = UITextAlignmentCenter;
-    fullScreenErrorMessage.numberOfLines = 3;
+    fullScreenErrorMessage.font = [UIFont systemFontOfSize:25];
+    fullScreenErrorMessage.numberOfLines = 1;
     fullScreenErrorMessage.hidden = YES;
     fullScreenErrorMessage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenModeView addSubview:fullScreenErrorMessage];
+    
+    // add the watch here button to movie player
+    fullScreenWatchHereButton = [[UIButton alloc] init];
+    [fullScreenWatchHereButton addTarget:self action:@selector(onViewSourceClicked) forControlEvents:UIControlEventTouchDown];
+    [fullScreenWatchHereButton setTitle:@"Watch here" forState:UIControlStateNormal];
+    [fullScreenWatchHereButton setTitleColor:[UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0] forState:UIControlStateNormal];
+    fullScreenWatchHereButton.backgroundColor = [UIColor clearColor];
+    fullScreenWatchHereButton.titleLabel.font = [UIFont systemFontOfSize:25];
+    fullScreenWatchHereButton.hidden = YES;
+    fullScreenWatchHereButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [fullScreenModeView addSubview:fullScreenWatchHereButton];
+
+    
+    // add the error message to movie player
+    fullScreenNextVideoWillPlayInMessage = [[UILabel alloc] init];
+    fullScreenNextVideoWillPlayInMessage.text = @"Your next video will play in";
+    fullScreenNextVideoWillPlayInMessage.textColor = [UIColor whiteColor];
+    fullScreenNextVideoWillPlayInMessage.backgroundColor = [UIColor clearColor];
+    fullScreenNextVideoWillPlayInMessage.textAlignment = UITextAlignmentCenter;
+    fullScreenNextVideoWillPlayInMessage.font = [UIFont systemFontOfSize:25];
+    fullScreenNextVideoWillPlayInMessage.numberOfLines = 1;
+    fullScreenNextVideoWillPlayInMessage.hidden = YES;
+    fullScreenNextVideoWillPlayInMessage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [fullScreenModeView addSubview:fullScreenNextVideoWillPlayInMessage];
+    
+    // add the previous button
+    // create the previous button
+    fullScreenPreviousButton = [[UIButton alloc] init];
+    [fullScreenPreviousButton addTarget:self action:@selector(onPreviousButtonClicked:) forControlEvents:UIControlEventTouchDown];
+    [fullScreenPreviousButton setImage:[UIImage imageNamed:@"back_arrow.png"] forState:UIControlStateNormal];
+    fullScreenPreviousButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
+    fullScreenPreviousButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    fullScreenPreviousButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [fullScreenModeView addSubview:fullScreenPreviousButton];
+    
+    // create the next button
+    fullScreenNextButton = [[UIButton alloc] init];
+    [fullScreenNextButton addTarget:self action:@selector(onNextButtonClicked:) forControlEvents:UIControlEventTouchDown];
+    [fullScreenNextButton setImage:[UIImage imageNamed:@"fwd_arrow.png"] forState:UIControlStateNormal];
+    fullScreenNextButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    fullScreenNextButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
+    fullScreenNextButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [fullScreenModeView addSubview:fullScreenNextButton];
+    
+    // create the like button
+    fullScreenLikeButton = [[UIButton alloc] init];
+    [fullScreenLikeButton addTarget:self action:@selector(onLikeButtonClicked:) forControlEvents:UIControlEventTouchDown];
+    [fullScreenLikeButton setImage:[UIImage imageNamed:(video.liked ? @"heart_red.png" : @"heart_grey.png")] forState:UIControlStateNormal];
+    fullScreenLikeButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    fullScreenLikeButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
+    fullScreenLikeButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [fullScreenModeView addSubview:fullScreenLikeButton];
+    
+    // create the save button
+    fullScreenSaveButton = [[UIButton alloc] init];
+    [fullScreenSaveButton addTarget:self action:@selector(onSaveButtonClicked:) forControlEvents:UIControlEventTouchDown];
+    [fullScreenSaveButton setImage:[UIImage imageNamed:(video.saved ? @"check_mark_green.png" : @"save_video.png")] forState:UIControlStateNormal];
+    fullScreenSaveButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    fullScreenSaveButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
+    fullScreenSaveButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    if (video.saved && !video.savedInCurrentTab) {
+        fullScreenSaveButton.hidden = YES;
+    }
+    [fullScreenModeView addSubview:fullScreenSaveButton];
+    
     
     // adjust the positions
     if (DeviceUtils.isIphone) {
@@ -1028,39 +1188,84 @@
         fullScreenErrorMessage.frame = CGRectMake(0, 10, fullScreenModeView.frame.size.width, 75);
     } else {
         UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        
+        int loadingActivityStartPos = 0;
+        int screenWidth = 0;
+        int screenHeight = 0;
         if (UIInterfaceOrientationIsLandscape(orientation)) {
-            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.height - 150) / 2), 
-                                                         ((window.frame.size.width - 150) / 2), 
-                                                         150, 150);
+            screenWidth = fullScreenModeView.frame.size.height;
+            screenHeight = fullScreenModeView.frame.size.width;
             
-            fullScreenErrorMessage.frame = CGRectMake(0, (fullScreenLoadingActivity.frame.origin.y - 200) , fullScreenModeView.frame.size.height, 150);
         } else {
-            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.width - 150) / 2), 
-                                                         ((window.frame.size.height - 150) / 2), 
-                                                         150, 150);
-            
-            fullScreenErrorMessage.frame = CGRectMake(0, fullScreenLoadingActivity.frame.origin.y - 200, fullScreenModeView.frame.size.width, 100);
+            screenWidth = fullScreenModeView.frame.size.width;
+            screenHeight = fullScreenModeView.frame.size.height;
         }
+        
+        fullScreenLoadingActivity.frame = CGRectMake(((screenWidth - 150) / 2), 
+                                                     ((screenHeight - 150) / 2), 
+                                                     150, 150);
+        loadingActivityStartPos = fullScreenLoadingActivity.frame.origin.y;
+        
+        int nextMessageHeight = [fullScreenNextVideoWillPlayInMessage.text sizeWithFont:fullScreenNextVideoWillPlayInMessage.font].height;
+        fullScreenNextVideoWillPlayInMessage.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + 20)), screenWidth, nextMessageHeight);
+        
+        int watchHereLabelHeight = [fullScreenWatchHereButton.titleLabel.text sizeWithFont:fullScreenWatchHereButton.titleLabel.font].height;
+        fullScreenWatchHereButton.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + watchHereLabelHeight + 35)), screenWidth, watchHereLabelHeight);
+        
+        int errorMessageHeight = [fullScreenErrorMessage.text sizeWithFont:fullScreenErrorMessage.font].height;
+        fullScreenErrorMessage.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + watchHereLabelHeight + errorMessageHeight + 45)) , screenWidth, errorMessageHeight);
         
         fullScreenCountdown.font = [UIFont systemFontOfSize: 25];
         fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 20)/ 2), ((fullScreenLoadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
         
-        fullScreenErrorMessage.font = [UIFont systemFontOfSize:30];
+        fullScreenPreviousButton.frame = CGRectMake(10, ((screenHeight - 63) / 2) , 37, 63);
+        fullScreenNextButton.frame = CGRectMake(screenWidth - 47, ((screenHeight - 63) / 2), 37, 63);
         
+        fullScreenLikeButton.frame = CGRectMake(screenWidth - 45, 80, 35, 35);
+        fullScreenSaveButton.frame = CGRectMake(screenWidth - 45, 130, 35, 35);
     }
+    
+}
+
+- (void) handleFullScreenTap {
     
 }
 
 -(void) willExitFullScreenMode: (NSNotification*) aNotification {
     
+    for (UIGestureRecognizer* gestureRecognizer in fullScreenModeView.gestureRecognizers) {
+        [fullScreenModeView removeGestureRecognizer:gestureRecognizer];
+    }
     
+    [fullScreenLikeButton removeFromSuperview];
+    [fullScreenSaveButton removeFromSuperview];
+    [fullScreenPreviousButton removeFromSuperview];
+    [fullScreenNextButton removeFromSuperview];
     [fullScreenCountdown removeFromSuperview];
     [fullScreenLoadingActivity removeFromSuperview];
     [fullScreenErrorMessage removeFromSuperview];
+    [fullScreenWatchHereButton removeFromSuperview];
+    [fullScreenNextVideoWillPlayInMessage removeFromSuperview];
     
+    [fullScreenLikeButton release];
+    [fullScreenSaveButton release];
+    [fullScreenPreviousButton release];
+    [fullScreenNextButton release];
     [fullScreenCountdown release];
     [fullScreenLoadingActivity release];
     [fullScreenErrorMessage release];
+    [fullScreenWatchHereButton release];
+    [fullScreenNextVideoWillPlayInMessage release];
+    
+    fullScreenLikeButton = nil;
+    fullScreenSaveButton = nil;
+    fullScreenPreviousButton = nil;
+    fullScreenNextButton = nil;
+    fullScreenCountdown = nil;
+    fullScreenLoadingActivity = nil;
+    fullScreenErrorMessage = nil;
+    fullScreenWatchHereButton = nil;
+    fullScreenNextVideoWillPlayInMessage = nil;
     
     wasPlayingInFullScreenMode = (moviePlayerController.playbackState == MPMoviePlaybackStatePlaying);
     
@@ -1076,11 +1281,7 @@
         }
     }
     
-    /*loadingActivity.frame = CGRectMake(((moviePlayerController.view.frame.size.width - 100) / 2), 
-                                        ((moviePlayerController.view.frame.size.height - 100) / 2), 
-                                        100, 100);
-    countdown.frame = CGRectMake(((loadingActivity.frame.size.width - 20)/ 2), ((loadingActivity.frame.size.height - 20) / 2) - 4, 20, 20);
-    errorMessage.frame = CGRectMake(0, 10, moviePlayerController.view.frame.size.width, 100);*/
+    [self layoutSubviews];
     
     // LOG_DEBUG(@"Exited full screen mode.");
     // find the native controller view so that we can 
@@ -1091,54 +1292,92 @@
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]]) {
-        bool shouldPerformActionOnTouchGesture = true;
-        CGPoint touchLocation = [touch locationInView:self];
-        
-        // LOG_DEBUG(@"native control view: %ld", moviePlayerNativeControlView);
-        // check if user has tapped on one of the native controls.
-        /*if (moviePlayerNativeControlView) {
-            CGRect nativeControlRect = [moviePlayerNativeControlView bounds];
-            nativeControlRect = [moviePlayerNativeControlView convertRect:nativeControlRect toView:moviePlayerController.view];
-            if (CGRectContainsPoint(nativeControlRect, touchLocation)) {
-                shouldPerformActionOnTochGesture = false;
+        if (isFullScreenMode) {
+            CGPoint touchLocation = [touch locationInView:fullScreenModeView];
+            bool shouldPerformActionOnTouchGesture = true;
+            
+            // check if user has tapped on next button
+            CGRect nextButtonRect = [fullScreenNextButton bounds];
+            nextButtonRect = [fullScreenNextButton convertRect:nextButtonRect toView:fullScreenModeView];
+            if (CGRectContainsPoint(nextButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
             }
-        }*/
-        
-        // check if user has tapped on the next button
-        CGRect nextButtonRect = [nextButton bounds];
-        nextButtonRect = [nextButton convertRect:nextButtonRect toView:self];
-        if (CGRectContainsPoint(nextButtonRect, touchLocation)) {
-            shouldPerformActionOnTouchGesture = false;
-        }
-        
-        // check if user has tapped on the previous button
-        CGRect prevButtonRect = [prevButton bounds];
-        prevButtonRect = [prevButton convertRect:prevButtonRect toView:self];
-        if (CGRectContainsPoint(prevButtonRect, touchLocation)) {
-            shouldPerformActionOnTouchGesture = false;
-        }
-        
-        // check if user has tapped on the movie player
-        CGRect moviePlayerRect = [moviePlayer bounds];
-        moviePlayerRect = [moviePlayer convertRect:moviePlayerRect toView:self];
-        if (CGRectContainsPoint(moviePlayerRect, touchLocation)) {
-            shouldPerformActionOnTouchGesture = false;
-        }
-        
-        /*if (areControlsVisible) {
-            // If controls are visible and user has tapped on the control 
-            // don't perform any action
-            if (shouldPerformActionOnTouchGesture) {
+            
+            // check if user has tapped on previous button
+            CGRect prevButtonRect = [fullScreenPreviousButton bounds];
+            prevButtonRect = [fullScreenPreviousButton convertRect:prevButtonRect toView:fullScreenModeView];
+            if (CGRectContainsPoint(prevButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            // check if user has tapped on save button
+            CGRect saveButtonRect = [fullScreenSaveButton bounds];
+            saveButtonRect = [fullScreenSaveButton convertRect:saveButtonRect toView:fullScreenModeView];
+            if (CGRectContainsPoint(saveButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            // check if user has tapped on like button
+            CGRect likeButtonRect = [fullScreenLikeButton bounds];
+            likeButtonRect = [fullScreenLikeButton convertRect:likeButtonRect toView:fullScreenModeView];
+            if (CGRectContainsPoint(likeButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            if (areControlsVisible) {
                 [UIApplication cancelPreviousPerformRequestsWithTarget:self];
-                [self hideCustomControls];
+                if (shouldPerformActionOnTouchGesture) {
+                    // If controls are visible and user has tapped on the control 
+                    // don't perform any action
+                    [self hideCustomControls];
+                } else {
+                    [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
+                }    
+                
+            } else {
+                [self showCustomControls];
+                [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
             }
+            
+            
         } else {
-            [self showCustomControls];
-            [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
-        }*/
-        
-        if (shouldPerformActionOnTouchGesture) {
-            [self onCloseButtonClicked:nil];
+            CGPoint touchLocation = [touch locationInView:self];
+            bool shouldPerformActionOnTouchGesture = true;
+            
+            // LOG_DEBUG(@"native control view: %ld", moviePlayerNativeControlView);
+            // check if user has tapped on one of the native controls.
+            /*if (moviePlayerNativeControlView) {
+             CGRect nativeControlRect = [moviePlayerNativeControlView bounds];
+             nativeControlRect = [moviePlayerNativeControlView convertRect:nativeControlRect toView:moviePlayerController.view];
+             if (CGRectContainsPoint(nativeControlRect, touchLocation)) {
+             shouldPerformActionOnTochGesture = false;
+             }
+             }*/
+            
+            // check if user has tapped on the next button
+            CGRect nextButtonRect = [nextButton bounds];
+            nextButtonRect = [nextButton convertRect:nextButtonRect toView:self];
+            if (CGRectContainsPoint(nextButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            // check if user has tapped on the previous button
+            CGRect prevButtonRect = [prevButton bounds];
+            prevButtonRect = [prevButton convertRect:prevButtonRect toView:self];
+            if (CGRectContainsPoint(prevButtonRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            // check if user has tapped on the movie player
+            CGRect moviePlayerRect = [moviePlayer bounds];
+            moviePlayerRect = [moviePlayer convertRect:moviePlayerRect toView:self];
+            if (CGRectContainsPoint(moviePlayerRect, touchLocation)) {
+                shouldPerformActionOnTouchGesture = false;
+            }
+            
+            if (shouldPerformActionOnTouchGesture) {
+                [self onCloseButtonClicked:nil];
+            }
         }
     } 
     else if ([gestureRecognizer isKindOfClass:[UISwipeGestureRecognizer class]]) { // SWIPE Gesture
@@ -1184,7 +1423,7 @@
 - (void) onVideoFinished:(NSNotification*)aNotification {
     LOG_DEBUG(@"Video finished for URL:%@", video.videoUrl);
     NSDictionary *userInfo = [aNotification userInfo];
-    // LOG_DEBUG(@"Reason video finished: %d", [[userInfo objectForKey:@"MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"] intValue]);
+    LOG_DEBUG(@"Reason video finished: %d", [[userInfo objectForKey:@"MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"] intValue]);
     // LOG_DEBUG(@"Has user initiated finish action: %@", (hasUserInitiatedVideoFinished ? @"true" : @"false"));
     
     if (([[userInfo objectForKey:@"MPMoviePlayerPlaybackDidFinishReasonUserInfoKey"] intValue] == MPMovieFinishReasonPlaybackEnded) &&
@@ -1203,8 +1442,8 @@
         [self hideLoadingActivity];
         [self hideErrorMessage];
         
-        // [self showCustomControls];
-        // [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
+//        [self showCustomControls];
+//        [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
         
         // find the native controller view so that we can 
         // show/hide the controls when native controls show/hide 
@@ -1214,14 +1453,16 @@
 }
 
 - (void) onVideoPlaybackStateChanged:(NSNotification*) aNotification {
-    // [UIApplication cancelPreviousPerformRequestsWithTarget:self];
-    // if (moviePlayerController.playbackState == MPMoviePlaybackStatePlaying) {
-    //     [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
-    // } else {
-    //    if (!areControlsVisible) {
-    //        [self showCustomControls];
-    //    }
-    // }
+     [UIApplication cancelPreviousPerformRequestsWithTarget:self];
+     if (moviePlayerController.playbackState == MPMoviePlaybackStatePlaying) {
+         if (isFullScreenMode) {
+             [self performSelector:@selector(hideCustomControls) withObject:nil afterDelay:5.0];
+         }
+     } else {
+        if (isFullScreenMode && !areControlsVisible) {
+            [self showCustomControls];
+        }
+     }
     
     if (moviePlayerController.playbackState == MPMoviePlaybackStatePaused && moviePlayerController.loadState != MPMovieLoadStateStalled) {
         LOG_DEBUG(@"Updating time because user has paused the video.");
@@ -1286,12 +1527,30 @@
     
     // set the like button image
     [likeButton setImage:[UIImage imageNamed:(video.liked ? @"heart_red.png" : @"heart_grey.png")] forState:UIControlStateNormal];
+    if (fullScreenLikeButton != nil) {
+        [fullScreenLikeButton setImage:[UIImage imageNamed:(video.liked ? @"heart_red.png" : @"heart_grey.png")] forState:UIControlStateNormal];
+    }
     
     // set whether we should show the save button
     if (video.saved) {
-        saveButton.hidden = YES;
+        [saveButton setImage:[UIImage imageNamed:@"check_mark_green.png"] forState:UIControlStateNormal];
+        if (!video.savedInCurrentTab) {
+            saveButton.hidden = YES;
+        }
+        
+        if (fullScreenSaveButton != nil) {
+            [fullScreenSaveButton setImage:[UIImage imageNamed:@"check_mark_green.png"] forState:UIControlStateNormal];
+            if (!video.savedInCurrentTab) {
+                fullScreenSaveButton.hidden = YES;
+            }
+        }
     } else {
+        [saveButton setImage:[UIImage imageNamed:@"save_video.png"] forState:UIControlStateNormal];
         saveButton.hidden = NO;
+        if (fullScreenSaveButton != nil) {
+            [fullScreenSaveButton setImage:[UIImage imageNamed:@"save_video.png"] forState:UIControlStateNormal];
+            fullScreenSaveButton.hidden = NO;
+        }
     }
     
     // set the favicon
@@ -1335,7 +1594,7 @@
         }
     } else {
         LOG_ERROR(@"Unable to found the URL for video stream.");
-        [self showErrorMessage:@"We could not play this video.\nYour next video will play in"];
+        [self showErrorMessage:@"We could not play this video."];
     }
 }
 
@@ -1358,7 +1617,7 @@
         wasPlayingInFullScreenMode = false;
     }
     
-    errorMessage.text = (nextButtonClicked ? @"You have reached at the \nend of your playlist." : @"You have reached at the \nstart of your playlist.");
+    errorMessage.text = (nextButtonClicked ? @"You have reached at \nend of your playlist." : @"You have reached at \nstart of your playlist.");
     errorMessage.hidden = NO;
 }
 

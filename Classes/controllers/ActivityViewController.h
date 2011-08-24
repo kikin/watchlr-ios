@@ -10,13 +10,17 @@
 #import "UserActivityListResponse.h"
 #import "UserActivityListRequest.h"
 #import "ActivityListView.h"
+#import "ActivityFilterView.h"
 
 @interface ActivityViewController : WatchlrViewController {
 	UserActivityListRequest* activityListRequest;
     ActivityListView* allActivitiesListView;
     ActivityListView* facebookOnlyActivitiesListView;
     ActivityListView* watchlrOnlyActivitiesListView;
-    UISegmentedControl* activityOptionsButton;
+    ActivityFilterView* activityFilterView;
+//    UISegmentedControl* activityOptionsButton;
+    
+    UITapGestureRecognizer* tapGesture;
     
     int lastPageRequested;
     bool isRefreshing;

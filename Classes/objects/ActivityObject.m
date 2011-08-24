@@ -92,7 +92,7 @@
 }
 
 - (id) initFromDictionary: (NSDictionary*)data { 
-    self.timestamp = [[data objectForKey:@"timestamp"] longValue];
+    self.timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
     self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
     self.video = [data objectForKey:@"video"] != [NSNull null] ? [[VideoObject alloc] initFromDictionary:[data objectForKey:@"video"]] : nil;
     
@@ -114,7 +114,7 @@
 }
 
 - (void) updateFromDictionary: (NSDictionary*)data { 
-    self.timestamp = [[data objectForKey:@"timestamp"] longValue];
+    self.timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
     self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
     if ([data objectForKey:@"video"] != [NSNull null]) {
         [self.video updateFromDictionary:[data objectForKey:@"video"]];
@@ -144,7 +144,7 @@
 - (NSDictionary*) toDictionary {
     NSMutableDictionary* userActivity = [[[NSMutableDictionary alloc] init] autorelease];
     
-    [userActivity setObject:[[NSNumber numberWithLong:self.timestamp] stringValue] forKey:@"timestamp"];
+    [userActivity setObject:[[NSNumber numberWithDouble:self.timestamp] stringValue] forKey:@"timestamp"];
     [userActivity setObject:self.activity_heading forKey:@"activity_heading"];
     [userActivity setObject:self.userActivities forKey:@"user_activities"];
     [userActivity setObject:self.video forKey:@"video"];

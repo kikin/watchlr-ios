@@ -157,10 +157,28 @@
         }
         
         // set the size for favicon image
-        faviconImageView.frame = CGRectMake(thumbnailWidth, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+        faviconImageView.frame = CGRectMake(thumbnailWidth, self.frame.size.height - (faviconAndSourceHeight + 5), 16, 16);
+        
+        // set the size for first dot separator
+        dotLabel1.frame = CGRectMake(thumbnailWidth + 25, self.frame.size.height - (faviconAndSourceHeight + 10), [dotLabel1.text sizeWithFont:dotLabel1.font].width, 15);
         
         // set the size for source label
-        sourceLabel.frame = CGRectMake((thumbnailWidth + 25), self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (thumbnailWidth + 20)), 15);
+        timestampLabel.frame = CGRectMake((30 + thumbnailWidth + dotLabel1.frame.size.width), 
+                                          self.frame.size.height - (faviconAndSourceHeight + 5), 
+                                          [timestampLabel.text sizeWithFont:timestampLabel.font].width, 
+                                          15);
+        
+        // set the size for second dot separator
+        dotLabel2.frame = CGRectMake((35 + thumbnailWidth + dotLabel1.frame.size.width + timestampLabel.frame.size.width), 
+                                     self.frame.size.height - (faviconAndSourceHeight + 10), 
+                                     [dotLabel2.text sizeWithFont:dotLabel2.font].width, 
+                                     15);
+        
+        // set the size for source label
+        sourceLabel.frame = CGRectMake((dotLabel1.frame.size.width + timestampLabel.frame.size.width + dotLabel2.frame.size.width + thumbnailWidth + 40), // x
+                                       self.frame.size.height - (faviconAndSourceHeight + 5), // y
+                                       [sourceLabel.text sizeWithFont:sourceLabel.font].width, // width
+                                       15); // height
         
     }
 }
@@ -172,6 +190,9 @@
     activityObject = [activity retain];
     
     [self setVideoObject:activityObject.video];
+    
+    // set timestamp
+    timestampLabel.text = [self getPrettyDate:activity.timestamp];
     
     if (activity.activityHeadingLabelsList != nil && [activity.activityHeadingLabelsList count] > 0) {
         activityHeading.hidden = NO;

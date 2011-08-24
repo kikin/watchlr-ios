@@ -8,6 +8,7 @@
 
 #import "SavedVideosViewController.h"
 #import "VideoResponse.h"
+#import "WebViewController.h"
 
 @implementation SavedVideosViewController
 
@@ -19,6 +20,7 @@
     videosListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     videosListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     videosListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
+    videosListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     videosListView.isViewRefreshable = true;
     [self.view addSubview:videosListView];
     [self.view sendSubviewToBack:videosListView];
@@ -51,6 +53,13 @@
 - (void) onLoadMoreData {
     isRefreshing = false;
     [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
+}
+
+- (void) onViewSourceClicked:(NSString*)sourceUrl {
+    WebViewController* webViewController = [[[WebViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:webViewController animated:YES];
+    [webViewController loadUrl:sourceUrl];
+    
 }
 
 // --------------------------------------------------------------------------------

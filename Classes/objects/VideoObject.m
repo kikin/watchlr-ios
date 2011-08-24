@@ -10,7 +10,7 @@
 
 @implementation VideoObject
 
-@synthesize videoId, title, description, thumbnail, videoUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek, savedInCurrentTab;
+@synthesize videoId, title, description, thumbnail, videoUrl, hostUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek, savedInCurrentTab, timestamp;
 
 - (id) initFromDictionary: (NSDictionary*)data {
     // LOG_DEBUG(@"Creating new video object");
@@ -19,11 +19,13 @@
 	self.title = [data objectForKey:@"title"] != [NSNull null] ? [data objectForKey:@"title"] : nil;
 	self.description = [data objectForKey:@"description"] != [NSNull null] ? [data objectForKey:@"description"] : nil;
 	self.videoUrl = [data objectForKey:@"url"] != [NSNull null] ? [data objectForKey:@"url"] : nil;
+    self.hostUrl = [data objectForKey:@"host"] != [NSNull null] ? [data objectForKey:@"host"] : nil;
 	self.htmlCode = [data objectForKey:@"html"] != [NSNull null] ? [data objectForKey:@"html"] : nil;
     self.liked = [data objectForKey:@"liked"] != [NSNull null] ? [[data objectForKey:@"liked"] boolValue] : false;
     self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : 0;
     self.saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : false;
     self.seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : 0.0;
+    self.timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
     
     NSDictionary* thumbnailDict = [data objectForKey:@"thumbnail"] != [NSNull null] ? [data objectForKey:@"thumbnail"] : nil;
     if (thumbnailDict != nil) {
@@ -57,6 +59,7 @@
 	self.description = nil;
 	self.videoUrl = nil;
 	self.embedUrl = nil;
+    self.hostUrl = nil;
 //	self.thumbnail = nil;
     self.htmlCode = nil;
 //    self.videoSource = nil;

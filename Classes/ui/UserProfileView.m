@@ -17,7 +17,7 @@
 
 @implementation UserProfileView
 
-@synthesize openUserProfileCallback;
+@synthesize openUserProfileCallback, onViewSourceClickedCallback;
 
 - (id) initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -59,6 +59,7 @@
 		likedVideosView.layer.borderWidth = 1.0f;
         likedVideosView.layer.borderColor = color.CGColor;
         likedVideosView.addVideoPlayerCallback = [Callback create:self selector:@selector(addVideoPlayer:)];
+        likedVideosView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
         [self addSubview:likedVideosView];
         [self sendSubviewToBack:likedVideosView];
         
@@ -102,6 +103,7 @@
 
 - (void) dealloc {
     [openUserProfileCallback release];
+    [onViewSourceClickedCallback release];
     [userProfile release];
 	[profilePicView release];
     [followButton release];
@@ -249,6 +251,12 @@
     }
 }
 
+- (void) onViewSourceClicked:(NSString*)sourceUrl {
+    if (onViewSourceClickedCallback != nil) {
+        [onViewSourceClickedCallback execute:sourceUrl];
+    }
+}
+
 - (void) addVideoPlayer: (VideoPlayerView*) videoPlayer {
     videoPlayer.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
     [self addSubview:videoPlayer];
@@ -266,6 +274,7 @@
 		NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
                               [result objectForKey:@"videos"], @"videosList",
                               [NSNumber numberWithInt:count], @"videoCount",
+                              [NSNumber numberWithBool:YES], @"isRefreshing",
                               nil];
         [likedVideosView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {

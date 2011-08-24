@@ -10,7 +10,7 @@
 #import "UserProfileObject.h"
 #import "LoadingMainView.h"
 
-@interface UserProfileSettingsView : UIView<UIAlertViewDelegate> {
+@interface UserProfileSettingsView : UIView<UIAlertViewDelegate, UITextFieldDelegate> {
     UILabel* nameLabel;
     UIImageView* userProfileImageView;
 	UILabel* userNameLabel;

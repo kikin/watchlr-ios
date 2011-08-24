@@ -47,13 +47,15 @@
         [logoutButton addTarget:self action:@selector(onClickLogoutButton:) forControlEvents:UIControlEventValueChanged];
         [self addSubview:logoutButton];
         
-        // create the cancel button
-        cancelButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Cancel"]];
-        [cancelButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [cancelButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
-        [cancelButton setMomentary:YES];
-        [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventValueChanged];
-        [self addSubview:cancelButton];
+        if (DeviceUtils.isIphone) {
+            // create the cancel button
+            cancelButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Cancel"]];
+            [cancelButton setSegmentedControlStyle:UISegmentedControlStyleBar];
+            [cancelButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
+            [cancelButton setMomentary:YES];
+            [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventValueChanged];
+            [self addSubview:cancelButton];
+        }
     }
     return self;
 }
@@ -92,10 +94,9 @@
         logoutButton.frame = CGRectMake(5, self.frame.size.height-180, self.frame.size.width - 10, 35);
         cancelButton.frame = CGRectMake(5, self.frame.size.height-45, self.frame.size.width - 10, 35);
     } else {
-        userProfileButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-180, 200, 35);
-        feedbackButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-135, 200, 35);
+        userProfileButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-135, 200, 35);
+        feedbackButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-90, 200, 35);
         logoutButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-45, 200, 35);
-        cancelButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-90, 200, 35);
     }
     
     [self setHidden:NO];

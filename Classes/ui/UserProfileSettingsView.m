@@ -59,9 +59,10 @@
         userNameTextView.borderStyle = UITextBorderStyleLine;
         userNameTextView.clearButtonMode = UITextFieldViewModeWhileEditing;
         userNameTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        userNameTextView.returnKeyType = UIReturnKeyDone;
+        userNameTextView.returnKeyType = UIReturnKeyNext;
         [userNameTextView addTarget:self action:@selector(textFieldStartEditing:) forControlEvents:UIControlEventEditingChanged];
         //[userNameTextView addTarget:self action:@selector(textFieldDidEditing) forControlEvents];
+        userNameTextView.delegate = self;
         [self addSubview:userNameTextView];
         
         // create the username label
@@ -82,7 +83,8 @@
         userEmailTextView.clearButtonMode = UITextFieldViewModeWhileEditing;
         userEmailTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
         userEmailTextView.keyboardType = UIKeyboardTypeEmailAddress;
-        userEmailTextView.returnKeyType = UIReturnKeyDone;
+        userEmailTextView.returnKeyType = UIReturnKeyGo;
+        userEmailTextView.delegate = self;
         [self addSubview:userEmailTextView];
         
         // create the checkbox button
@@ -101,14 +103,14 @@
         
         // create the save button
         saveButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-        [saveButton addTarget:self action:@selector(onClickSaveButton:) forControlEvents:UIControlEventTouchUpInside];
+        [saveButton addTarget:self action:@selector(onClickSaveButton:) forControlEvents:UIControlEventTouchDown];
 		[saveButton setTitle:@"Save" forState:UIControlStateNormal];
         saveButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
 		[self addSubview:saveButton];
         
         // create the save button
         cancelButton = [[UIButton buttonWithType:UIButtonTypeRoundedRect] retain];
-        [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventTouchUpInside];
+        [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventTouchDown];
 		[cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
         cancelButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
 		[self addSubview:cancelButton];
@@ -163,6 +165,85 @@
     return self;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    
+    userNameTextView.delegate = nil;
+    userEmailTextView.delegate = nil;
+    
+    [nameLabel release];
+    [userProfileImageView release];
+    [userNameLabel release];
+    [userNameTextView release];
+    [userEmailLabel release];
+    [userEmailTextView release];
+    [checkboxImageView release];
+    [pushToFacebookLabel release];
+    [saveButton release];
+    [cancelButton release];
+    
+    if (loadingView != nil) {
+        [loadingView release];
+    }
+    
+    [userProfile release];
+    [super dealloc];
+}
+
+// ------------------------------------------
+//            Private Functions
+// ------------------------------------------
+
+- (void) loadUserProfileImage {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    
+    
+    if (![[NSThread currentThread] isCancelled]) {
+        if (DeviceUtils.isIphone) {
+            if (userProfile.smallPictureImage == nil) {
+                if (!userProfile.pictureImageLoaded) {
+                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                } else {
+                    userProfileImageView.hidden = YES;
+                }
+            } else {
+                if (![[NSThread currentThread] isCancelled]) {
+                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 50, userProfile.smallPictureImage.size.height);
+                    [userProfileImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.smallPictureImage waitUntilDone:YES];
+                    userProfileImageView.hidden = NO;
+                }
+            }
+        } else {
+            if (userProfile.normalPictureImage == nil) {
+                if (!userProfile.pictureImageLoaded) {
+                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                } else {
+                    userProfileImageView.hidden = YES;
+                }
+            } else {
+                if (![[NSThread currentThread] isCancelled]) {
+                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 50, userProfile.normalPictureImage.size.height);
+                    [userProfileImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.normalPictureImage waitUntilDone:YES];
+                    userProfileImageView.hidden = NO;
+                }
+            }
+        }
+    }
+    
+    [pool release];
+}
+
+- (void) hideView {
+    [userNameTextView resignFirstResponder];
+    [userEmailTextView resignFirstResponder];
+    [self setHidden:YES];
+}
+
+// ------------------------------------------
+//                  Callbacks
+// ------------------------------------------
+
 - (void) onClickSaveButton: (UIButton*)sender {
     
     // check if username is not empty
@@ -207,24 +288,15 @@
     
     if (modified) {
         [self doSaveUserProfileRequest:userProfileObject];
+    } else {
+        [self hideView];
     }
     
     [userProfileObject release];
 }
 
 - (void) onClickCancelButton: (UIButton*)sender {
-    [self setHidden:YES];
-}
-
--(void) showUserProfile {
-    if (loadingView == nil) {
-        loadingView = [[LoadingMainView alloc] initWithFrame:CGRectMake((self.superview.frame.size.width-300)/2, (self.superview.frame.size.height-55)/2, 300, 55)];
-        [self.superview addSubview:loadingView];
-        [self.superview bringSubviewToFront:loadingView];
-    }
-    
-    [loadingView setHidden:NO];
-    [self doGetUserProfileRequest];
+    [self hideView];
 }
 
 - (void) onUserImageLoaded:(UIImage*)userImage {
@@ -246,106 +318,36 @@
 }
 
 - (void) downloadUserImage {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (DeviceUtils.isIphone) {
         [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"small"];
     } else {
         [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"normal"];
     }
-}
-
-- (void) loadUserProfileImage {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
-    
-    if (![[NSThread currentThread] isCancelled]) {
-        if (DeviceUtils.isIphone) {
-            if (userProfile.smallPictureImage == nil) {
-                if (!userProfile.pictureImageLoaded) {
-                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
-                } else {
-                    userProfileImageView.hidden = YES;
-                }
-            } else {
-                if (![[NSThread currentThread] isCancelled]) {
-                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 50, userProfile.smallPictureImage.size.height);
-                    [userProfileImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.smallPictureImage waitUntilDone:YES];
-                    userProfileImageView.hidden = NO;
-                }
-            }
-        } else {
-            if (userProfile.normalPictureImage == nil) {
-                if (!userProfile.pictureImageLoaded) {
-                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
-                } else {
-                    userProfileImageView.hidden = YES;
-                }
-            } else {
-                if (![[NSThread currentThread] isCancelled]) {
-                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 50, userProfile.normalPictureImage.size.height);
-                    [userProfileImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.normalPictureImage waitUntilDone:YES];
-                    userProfileImageView.hidden = NO;
-                }
-            }
-        }
-    }
-    
     [pool release];
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-    
-    [nameLabel release];
-    [userProfileImageView release];
-    [userNameLabel release];
-    [userNameTextView release];
-    [userEmailLabel release];
-    [userEmailTextView release];
-    [checkboxImageView release];
-    [pushToFacebookLabel release];
-    [saveButton release];
-    [cancelButton release];
-    
-    if (loadingView != nil) {
-        [loadingView release];
-    }
-    
-    [userProfile release];
-    [super dealloc];
-}
-
-// ------------------------------------------
-//                  Touch Events
-// ------------------------------------------
-- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    for (UITouch *myTouch in touches)
-    {
-        CGPoint touchLocation = [myTouch locationInView:self];
-        
-        CGRect checkBoxRect = [checkboxImageView bounds];
-        checkBoxRect = [checkboxImageView convertRect:checkBoxRect toView:self];
-        if (CGRectContainsPoint(checkBoxRect, touchLocation)) {
-            if (checked) {
-                checked = false;
-                checkboxImageView.image = [UIImage imageNamed:@"checkbox.png"];
-            } else {
-                checked = true;
-                checkboxImageView.image = [UIImage imageNamed:@"checkbox-checked.png"];
-            }
-        }
-    }
 }
 
 // -------------------------------------------------
 //                      Requests
 // -------------------------------------------------
+
 -(void) doGetUserProfileRequest {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onGetUserProfileRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onGetUserProfileRequestSuccess:)];
 	[userProfileRequest getUserProfile];	
 }
+
+-(void) doSaveUserProfileRequest:(NSDictionary*)data {
+    UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
+    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestFailed:)];
+    userProfileRequest.successCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestSuccess:)];
+	[userProfileRequest updateUserProfile:data];
+}
+
+// -------------------------------------------------
+//               Request Callbacks
+// -------------------------------------------------
 
 - (void) onGetUserProfileRequestSuccess: (UserProfileResponse*)response {
 	if (response.success) {
@@ -403,17 +405,10 @@
 	LOG_ERROR(@"get user profile request error: %@", errorMessage);
 }
 
--(void) doSaveUserProfileRequest:(NSDictionary*)data {
-    UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
-    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestFailed:)];
-    userProfileRequest.successCallback = [Callback create:self selector:@selector(onSaveUserProfileRequestSuccess:)];
-	[userProfileRequest updateUserProfile:data];
-}
-
 -(void) onSaveUserProfileRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
 		// save response and get videos
-        [self setHidden:YES];
+        [self hideView];
 		
 		// LOG_DEBUG(@"save user profile request success");
 	} else {
@@ -467,6 +462,29 @@
 	LOG_ERROR(@"save user profile request error: %@", errorMessage);
 }
 
+// ------------------------------------------
+//                  Touch Events
+// ------------------------------------------
+- (void) touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch *myTouch in touches)
+    {
+        CGPoint touchLocation = [myTouch locationInView:self];
+        
+        CGRect checkBoxRect = [checkboxImageView bounds];
+        checkBoxRect = [checkboxImageView convertRect:checkBoxRect toView:self];
+        if (CGRectContainsPoint(checkBoxRect, touchLocation)) {
+            if (checked) {
+                checked = false;
+                checkboxImageView.image = [UIImage imageNamed:@"checkbox.png"];
+            } else {
+                checked = true;
+                checkboxImageView.image = [UIImage imageNamed:@"checkbox-checked.png"];
+            }
+        }
+    }
+}
+
+
 // ---------------------------------------------------------
 //             Alert View delegate implementation
 // ---------------------------------------------------------
@@ -503,5 +521,34 @@
         userNameTextView.textColor = [UIColor blackColor];
     }];
 }
+
+// ---------------------------------------------------------
+//                  Text field Notifications
+// ---------------------------------------------------------
+- (BOOL) textFieldShouldReturn:(UITextField *)textField {
+    if (textField == userNameTextView) {
+        [userEmailTextView becomeFirstResponder];
+    } else {
+        [self performSelector:@selector(onClickSaveButton:) withObject:nil];
+    }
+
+    return NO;
+}
+
+// ---------------------------------------------------------
+//                  Public functions
+// ---------------------------------------------------------
+
+-(void) showUserProfile {
+    if (loadingView == nil) {
+        loadingView = [[LoadingMainView alloc] initWithFrame:CGRectMake((self.superview.frame.size.width-300)/2, (self.superview.frame.size.height-55)/2, 300, 55)];
+        [self.superview addSubview:loadingView];
+        [self.superview bringSubviewToFront:loadingView];
+    }
+    
+    [loadingView setHidden:NO];
+    [self doGetUserProfileRequest];
+}
+
 
 @end

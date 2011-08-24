@@ -15,10 +15,11 @@
 
 @implementation VideosListView
 
-@synthesize isViewRefreshable, refreshListCallback, loadMoreDataCallback, addVideoPlayerCallback;
+@synthesize isViewRefreshable, refreshListCallback, loadMoreDataCallback, addVideoPlayerCallback, onViewSourceClickedCallback;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
+        
         // create the video table
         videosListView = [[UITableView alloc] init];
         videosListView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
@@ -62,6 +63,7 @@
     [refreshListCallback release];
     [loadMoreDataCallback release];
     [addVideoPlayerCallback release];
+    [onViewSourceClickedCallback release];
     [refreshStatusView release];
 	[videosListView release];
     [videosList release];
@@ -263,6 +265,7 @@
     videoPlayerView.onLikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoLiked:)];
     videoPlayerView.onUnlikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
     videoPlayerView.onSaveButtonClickedCallback = [Callback create:self selector:@selector(onVideoSaved:)];
+    videoPlayerView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     if (addVideoPlayerCallback != nil) {
         [addVideoPlayerCallback execute:videoPlayerView];
     } else {
@@ -540,6 +543,16 @@
 }
 
 // --------------------------------------------------------------------------------
+//                              Callbacks
+// --------------------------------------------------------------------------------
+
+- (void) onViewSourceClicked:(NSString*)sourceUrl {
+    if (onViewSourceClickedCallback != nil) {
+        [onViewSourceClickedCallback execute:sourceUrl];
+    }
+}
+
+// --------------------------------------------------------------------------------
 //                      Table view delegate
 // --------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -562,6 +575,7 @@
         cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
         cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
         cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
+        cell.viewSourceCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     }
 	
     if (indexPath.row < videosList.count) {
@@ -605,7 +619,6 @@
                 [refreshStatusView setRefreshStatus:PULLING_DOWN];
             }
             
-//            refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, topToolbar.frame.size.height, self.view.frame.size.width, -scrollView.contentOffset.y);
             refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, 0, self.frame.size.width, -scrollView.contentOffset.y);
             
         } else if (scrollView.contentOffset.y >= 0) {
@@ -623,8 +636,8 @@
                 [refreshStatusView setRefreshStatus:RELEASING];
             }
             
-//            refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, topToolbar.frame.size.height - 60 - scrollView.contentOffset.y, self.view.frame.size.width, 60);
-            refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, -(60 + scrollView.contentOffset.y), self.frame.size.width, 60);
+            //refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, -(60 + scrollView.contentOffset.y), self.frame.size.width, 60);
+            refreshStatusView.frame = CGRectMake(refreshStatusView.frame.origin.x, 0, self.frame.size.width, -scrollView.contentOffset.y);
         }
     }
 }

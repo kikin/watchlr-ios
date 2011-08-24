@@ -35,6 +35,7 @@ typedef enum {
 }
 
 @property(retain) Callback* openUserProfileCallback;
+@property(retain) Callback* onViewSourceClickedCallback;
 
 - (void) setUserProfile: (UserProfileObject*)user;
 - (UserProfileObject*) getUserProfile;

@@ -106,7 +106,11 @@
     
     for (UITouch *myTouch in touches)
     {
-        
+        if (CGRectContainsPoint([self bounds], [myTouch locationInView:self])) {
+            if (openUserProfileCallback != nil) {
+                [openUserProfileCallback execute:userProfile];
+            }
+        }
     }
 }
 

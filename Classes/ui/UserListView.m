@@ -21,7 +21,7 @@
         // create the video table
         userListView = [[UITableView alloc] init];
         userListView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-        userListView.rowHeight = 80;
+        userListView.rowHeight = 70;
         userListView.delegate = self;
         userListView.dataSource = self;
         userListView.allowsSelection = NO;
@@ -109,8 +109,8 @@
     UserTableCell* cell = (UserTableCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         // Create the cell
-        cell = [[[UserTableCell alloc] initWithStyle:UITableViewCellEditingStyleNone reuseIdentifier:CellIdentifier] autorelease];
-        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+        cell = [[[UserTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.openUserProfileCallback = [Callback create:self selector:@selector(openUserProfile:)];
     }
 	
@@ -122,17 +122,6 @@
 	
     return cell;
 }
-
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row < usersList.count) {
-		// Update data for the cell
-		if (openUserProfileCallback != nil) {
-            UserProfileObject* userProfileObject = [usersList objectAtIndex:indexPath.row];
-            [openUserProfileCallback execute:userProfileObject];
-        }
-	}
-}
-
 // --------------------------------------------------------------------------------
 //                             Public Functions
 // --------------------------------------------------------------------------------

@@ -17,6 +17,7 @@
 	NSString*           description;
 	NSString*           embedUrl;
 	NSString*           videoUrl;
+    NSString*           hostUrl;
 	ThumbnailObject*	thumbnail;
     SourceObject*       videoSource;
     NSString*           htmlCode;
@@ -24,21 +25,24 @@
     bool                saved;
     double              seek;
     bool                savedInCurrentTab;
+    double              timestamp;
 }
 
-@property()			int videoId;
-@property()			int likes;
-@property(retain)	NSString* title;
-@property(retain)	NSString* description;
-@property(retain)	NSString* videoUrl;
-@property(retain)	NSString* embedUrl;
-@property(retain)	ThumbnailObject* thumbnail;
-@property(retain)	SourceObject* videoSource;
-@property(retain)	NSString* htmlCode;
-@property()			bool liked;
-@property()			bool saved;
-@property()         double seek;
-@property()         bool savedInCurrentTab;
+@property()			int                 videoId;
+@property()			int                 likes;
+@property(retain)	NSString*           title;
+@property(retain)	NSString*           description;
+@property(retain)	NSString*           videoUrl;
+@property(retain)	NSString*           hostUrl;
+@property(retain)	NSString*           embedUrl;
+@property(retain)	ThumbnailObject*    thumbnail;
+@property(retain)	SourceObject*       videoSource;
+@property(retain)	NSString*           htmlCode;
+@property()			bool                liked;
+@property()			bool                saved;
+@property()         double              seek;
+@property()         bool                savedInCurrentTab;
+@property()         double              timestamp;
 
 - (id) initFromDictionary: (NSDictionary*)data;
 - (void) updateFromDictionary: (NSDictionary*)data;

@@ -193,7 +193,7 @@
 }
 
 // --------------------------------------------------------------------------------
-//                              User Callbacks
+//                              Callbacks
 // --------------------------------------------------------------------------------
 
 - (void) onUserNameClicked:(NSString*)userName {
@@ -218,6 +218,7 @@
         cell.likeVideoCallback = [Callback create:self selector:@selector(onVideoLiked:)];
         cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
         cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
+        cell.viewSourceCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
         cell.onUserNameClickedCallback = [Callback create:self selector:@selector(onUserNameClicked:)];
     }
 	
