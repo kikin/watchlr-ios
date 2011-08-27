@@ -32,6 +32,14 @@ typedef enum {
     UserProfileObject*  userProfile;
     
     ActiveView activeView;
+    
+    bool isLikedVideosListRefreshing;
+    bool isFollowersListRefreshing;
+    bool isFollowingListRefreshing;
+    
+    int lastlikedVideosPageRequested;
+    int lastFollowersPageRequested;
+    int lastFollowingPageRequested;
 }
 
 @property(retain) Callback* openUserProfileCallback;
@@ -40,5 +48,6 @@ typedef enum {
 - (void) setUserProfile: (UserProfileObject*)user;
 - (UserProfileObject*) getUserProfile;
 - (void) closePlayer;
+- (void) didReceiveMemoryWarning:(bool)forced;
 
 @end

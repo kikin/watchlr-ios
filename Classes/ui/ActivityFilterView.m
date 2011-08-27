@@ -56,11 +56,16 @@
 }
 
 -(void) dealloc {
-    [allActivities release];
-    [facebookOnlyActivities release];
-    [watchlrOnlyActivities release];
+    [allActivities removeFromSuperview];
+    [facebookOnlyActivities removeFromSuperview];
+    [watchlrOnlyActivities removeFromSuperview];
     
     [optionSelectedCallback release];
+    
+    allActivities = nil;
+    facebookOnlyActivities = nil;
+    watchlrOnlyActivities = nil;
+    
     [super dealloc];
 }
 

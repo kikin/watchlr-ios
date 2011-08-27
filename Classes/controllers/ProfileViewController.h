@@ -19,7 +19,11 @@
     UITapGestureRecognizer* settingsIconViewTapGesture;
     
     Callback* onLogoutCallback;
+    
+    bool isActiveTab;
 }
+
+@property(retain) Callback* onLogoutCallback;
 
 - (void) setUserObject:(UserProfileObject*)userObject;
 - (void) openUserProfileForName:(NSString*)userName;

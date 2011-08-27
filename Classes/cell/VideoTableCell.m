@@ -134,21 +134,29 @@
 }
 
 - (void)dealloc {
-    if (imageThread)
-        [imageThread release];
     
-    [saveImageView release];
-    [videoImageView release];
-    [playButtonImage release];
-    [titleLabel release];
-	[descriptionLabel release];
-    [faviconImageView release];
-    [dotLabel1 release];
-    [timestampLabel release];
-    [dotLabel2 release];
-    [sourceLabel release];
-    [likesLabel release];
-	[likeImageView release];
+    // remove all the callbacks we have set
+    [videoObject.thumbnail resetThumnailImageLoadedCallback];
+    [videoObject.videoSource resetFaviconImageLoadedCallback];
+    
+    if (imageThread) {
+        [imageThread release];
+        imageThread = nil;
+    }
+    
+    [saveImageView removeFromSuperview];
+    [videoImageView removeFromSuperview];
+    [playButtonImage removeFromSuperview];
+    [titleLabel removeFromSuperview];
+	[descriptionLabel removeFromSuperview];
+    [faviconImageView removeFromSuperview];
+    [dotLabel1 removeFromSuperview];
+    [timestampLabel removeFromSuperview];
+    [dotLabel2 removeFromSuperview];
+    [sourceLabel removeFromSuperview];
+    [likesLabel removeFromSuperview];
+	[likeImageView removeFromSuperview];
+    
     [videoObject release];
     
     [addVideoCallback release];
@@ -156,6 +164,27 @@
     [unlikeVideoCallback release];
     [playVideoCallback release];
     [viewSourceCallback release];
+    
+    saveImageView = nil;
+    videoImageView = nil;
+    playButtonImage = nil;
+    titleLabel = nil;
+    descriptionLabel = nil;
+    faviconImageView = nil;
+    dotLabel1 = nil;
+    timestampLabel = nil;
+    dotLabel2 = nil;
+    sourceLabel = nil;
+    likesLabel = nil;
+    likeImageView = nil;
+    
+    videoObject = nil;
+    addVideoCallback = nil;
+    likeVideoCallback = nil;
+    unlikeVideoCallback = nil;
+    playVideoCallback = nil;
+    viewSourceCallback = nil;
+    
     [super dealloc];
 }
 
@@ -192,9 +221,18 @@
 //                             Private Functions
 // --------------------------------------------------------------------------------
 
+- (void) downloadThumbnailImage:(ThumbnailObject*) thumbnail  {
+    [thumbnail setThumnailImageLoadedCallback:[Callback create:self selector:@selector(onThumbnailImageLoaded:)]];
+    [thumbnail performSelector:@selector(loadImage)];
+
+}
+
+- (void) downloadFaviconImage:(SourceObject*) source  {
+    [source setFaviconImageLoadedCallback:[Callback create:self selector:@selector(onFaviconImageLoaded:)]];
+    [source performSelector:@selector(loadImage)];
+}
+
 - (void) loadImage {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
     if (![[NSThread currentThread] isCancelled]) {
         // update play button image
         [playButtonImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"play_button.png"] waitUntilDone:YES];
@@ -222,7 +260,7 @@
                 [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:(videoObject.thumbnail.thumbnailImage) waitUntilDone:YES];
             }
         } else {
-            videoObject.thumbnail.onThumbnailImageLoaded = [Callback create:self selector:@selector(onThumbnailImageLoaded:)];
+            [self performSelector:@selector(downloadThumbnailImage:) withObject:videoObject.thumbnail];
         }
     } else {
         // make sure the thread was not killed
@@ -247,7 +285,7 @@
                 faviconImageView.hidden = YES;
             }
         } else {
-            videoObject.videoSource.onFaviconImageLoaded = [Callback create:self selector:@selector(onFaviconImageLoaded:)];
+            [self performSelector:@selector(downloadFaviconImage:) withObject:videoObject.videoSource];
         }
         
         // set the source name
@@ -256,8 +294,6 @@
             sourceLabel.hidden = NO;
         }
     }
-    
-    [pool release];
 }
 
 - (void) fixSize {
@@ -387,7 +423,7 @@
 
 - (void) layoutSubviews {
     [super layoutSubviews];
-    [self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
+    [self performSelector:@selector(fixSize) withObject:nil];
 }
 
 // --------------------------------------------------------------------------------
@@ -449,12 +485,17 @@
 // --------------------------------------------------------------------------------
 
 - (void)setVideoObject: (VideoObject*)video {
-	// change video object
+    // change video object
     // LOG_DEBUG(@"Drawing the cell");
-	if (videoObject) [videoObject release];
+	if (videoObject) {
+        [videoObject.thumbnail resetThumnailImageLoadedCallback];
+        [videoObject.videoSource resetFaviconImageLoadedCallback];
+        [videoObject release];
+    }
+    
 	videoObject = [video retain];
     faviconImageView.hidden = YES;
-	
+    
 	// change text
 	titleLabel.text = video.title;
 	if (video.description != nil) {
@@ -463,7 +504,7 @@
         if (!DeviceUtils.isIphone) 
             descriptionLabel.text = description;
         
-		[self performSelectorOnMainThread:@selector(fixSize) withObject:nil waitUntilDone:NO];
+		[self performSelector:@selector(fixSize) withObject:nil];
 		//descriptionLabel.backgroundColor = [UIColor yellowColor];
 	}
     

@@ -51,7 +51,6 @@
 }
 
 - (void) onUsernameClicked:(NSString*)userName {
-    LOG_DEBUG(@"User name clicked:%@", userName);
     if (onUserNameClickedCallback != nil) {
         [onUserNameClickedCallback execute:userName];
     }
@@ -71,19 +70,19 @@
 }
 
 - (void) downloadUserImage:(UserProfileObject*)userProfile {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"square"];
-    [pool release];
+    [userProfile setProfileImageLoadedCallback:[Callback create:self selector:@selector(onUserImageLoaded:)]];
+    [userProfile loadUserImage:@"square"];
 }
 
 - (void) loadActivityCellImages {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
+    userImageView.hidden = YES;
     if (![[NSThread currentThread] isCancelled]) {
         UserProfileObject* userProfile = ((UserActivityObject*)[activityObject.userActivities objectAtIndex:0]).userProfile;
         if (userProfile.squarePictureImage == nil) {
             if (!userProfile.pictureImageLoaded) {
-                [self performSelectorInBackground:@selector(downloadUserImage:) withObject:userProfile];
+                [self performSelector:@selector(downloadUserImage:) withObject:userProfile];
             } else {
                 userImageView.hidden = YES;
             }
@@ -186,7 +185,13 @@
 - (void) setActivityObject: (ActivityObject*)activity {
     
     // change acticity object
-    if (activityObject) [activityObject release];
+    if (activityObject) {
+        // Release the callback we have set
+        UserProfileObject* userProfile = ((UserActivityObject*)[activityObject.userActivities objectAtIndex:0]).userProfile;
+        [userProfile resetProfileImageLoadedCallback];
+        
+        [activityObject release];
+    }
     activityObject = [activity retain];
     
     [self setVideoObject:activityObject.video];
@@ -206,11 +211,21 @@
 }
 
 - (void)dealloc {
-    // activityHeading.delegate = nil;
+    // Release the callback we have set
+    activityHeading.onUsernameClicked = nil;
+    
+    UserProfileObject* userProfile = ((UserActivityObject*)[activityObject.userActivities objectAtIndex:0]).userProfile;
+    [userProfile resetProfileImageLoadedCallback];
+    
     [onUserNameClickedCallback release];
-    [userImageView release];
-    [activityHeading release];
+    
+    [userImageView removeFromSuperview];
+    [activityHeading removeFromSuperview];
     [activityObject release];
+    
+    userImageView = nil;
+    activityObject = nil;
+    activityHeading = nil;
     
 	[super dealloc];
 }

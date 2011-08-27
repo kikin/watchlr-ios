@@ -50,24 +50,42 @@
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getPeopleUserFollows:(NSString*)username {
+- (void) getPeopleUserFollows:(NSString*)username forPage:(int)page withFollowersCount:(int)followersCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/followers", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
     [params setValue:username forKey:@"username"];
+    [params setObject:[NSString stringWithFormat:@"%d", (followersCount > 0 ? followersCount : 10)] forKey:@"count"];
+    
+    // send the page index only if you are loading more videos
+    if (page > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", page] forKey:@"page"];
+    }
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getPeopleFollowingUser:(NSString*)username {
+- (void) getPeopleFollowingUser:(NSString*)username forPage:(int)page withFollowingCount:(int)followingCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/following", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
     [params setValue:username forKey:@"username"];
+    [params setObject:[NSString stringWithFormat:@"%d", (followingCount > 0 ? followingCount : 10)] forKey:@"count"];
+    
+    // send the page index only if you are loading more videos
+    if (page > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", page] forKey:@"page"];
+    }
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getLikedVideosByUser:(NSString*)username {
+- (void) getLikedVideosByUser:(NSString*)username forPage:(int)page withVideosCount:(int)videosCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/liked_videos", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
     [params setValue:username forKey:@"username"];
+    [params setObject:[NSString stringWithFormat:@"%d", (videosCount > 0 ? videosCount : 10)] forKey:@"count"];
+    
+    // send the page index only if you are loading more videos
+    if (page > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", page] forKey:@"page"];
+    }
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 

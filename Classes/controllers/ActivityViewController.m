@@ -57,15 +57,6 @@
     activityFilterView.optionSelectedCallback = [Callback create:self selector:@selector(onActivityOptionsButtonClicked:)];
     [self.view addSubview:activityFilterView];
     
-    
-//    activityOptionsButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"All", @"Facebook only", @"Watchlr only", nil]];
-//    [activityOptionsButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-//    [activityOptionsButton addTarget:self action:@selector(onActivityOptionsButtonClicked:) forControlEvents:UIControlEventValueChanged];
-//    activityOptionsButton.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
-//    activityOptionsButton.selectedSegmentIndex = 0;
-//    self.navigationItem.titleView = activityOptionsButton;
-
-    
     // request video lsit
     isRefreshing = true;
     activityType = ALL;
@@ -73,19 +64,86 @@
     [self performSelector:@selector(onActivityOptionsButtonClicked:) withObject:[NSNumber numberWithInt:activityType]];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(onFilterButtonClicked)];
+    isActiveTab = true;
+}
 
+- (void)didReceiveMemoryWarning {
+    if (!isActiveTab) {
+        // release memory
+        [allActivitiesListView didReceiveMemoryWarning];
+        [facebookOnlyActivitiesListView didReceiveMemoryWarning];
+        [watchlrOnlyActivitiesListView didReceiveMemoryWarning];
+        
+        [activityListRequest release];
+        [tapGesture release];
+        
+        activityListRequest = nil;
+        tapGesture = nil;
+    } else {
+        int level = [DeviceUtils currentMemoryLevel];
+        if (level == OSMemoryNotificationLevelUrgent) {
+            switch (activityType) {
+                case ALL: {
+                    [facebookOnlyActivitiesListView didReceiveMemoryWarning];
+                    [watchlrOnlyActivitiesListView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                case FACEBOOK_ONLY: {
+                    [allActivitiesListView didReceiveMemoryWarning];
+                    [watchlrOnlyActivitiesListView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                case WATCHLR_ONLY: {
+                    [facebookOnlyActivitiesListView didReceiveMemoryWarning];
+                    [allActivitiesListView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+        } else if (level == OSMemoryNotificationLevelCritical) {
+            [allActivitiesListView didReceiveMemoryWarning];
+            [facebookOnlyActivitiesListView didReceiveMemoryWarning];
+            [watchlrOnlyActivitiesListView didReceiveMemoryWarning];
+            
+            [activityListRequest release];
+            [tapGesture release];
+            
+            activityListRequest = nil;
+            tapGesture = nil;
+        }
+    }
+    
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc {
 	// release memory
-//    [activityOptionsButton release];
-    [activityFilterView release];
-    [allActivitiesListView release];
-    [facebookOnlyActivitiesListView release];
-    [watchlrOnlyActivitiesListView release];
-	[activityListRequest release];
-    
+    [activityListRequest release];
     [tapGesture release];
+    
+    activityListRequest = nil;
+    tapGesture = nil;
+    
+    [activityFilterView removeFromSuperview];
+    [allActivitiesListView removeFromSuperview];
+    [facebookOnlyActivitiesListView removeFromSuperview];
+    [watchlrOnlyActivitiesListView removeFromSuperview];
+    
+//    [activityFilterView release];
+//    [allActivitiesListView release];
+//    [facebookOnlyActivitiesListView release];
+//    [watchlrOnlyActivitiesListView release];
+    
+    activityFilterView = nil;
+    allActivitiesListView = nil;
+    facebookOnlyActivitiesListView = nil;
+    watchlrOnlyActivitiesListView = nil;
+    
     [super dealloc];
 }
 
@@ -107,7 +165,7 @@
 }
 
 - (ActivityListView*) getActiveView {
-    ActivityListView* activeView = allActivitiesListView;
+    ActivityListView* activeView;
     switch (activityType) {
         case ALL: {
             activeView = allActivitiesListView;
@@ -122,6 +180,10 @@
         case WATCHLR_ONLY: {
             activeView = watchlrOnlyActivitiesListView;
             break;
+        }
+            
+        default: {
+            activeView = allActivitiesListView;
         }
     }
     
@@ -255,8 +317,9 @@
         }
         NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
                               [response activities], @"activitiesList",
-                              [NSNumber numberWithInt:[response count]], @"videoCount",
+                              [NSNumber numberWithInt:[response total]], @"videoCount",
                               [NSNumber numberWithBool:isRefreshing], @"isRefreshing",
+                              [NSNumber numberWithInt:lastPageRequested], @"lastPageRequested",
                               nil];
         [activeView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
@@ -295,15 +358,18 @@
 // --------------------------------------------------------------------------------
 
 - (void) onTabInactivate {
+    isActiveTab = false;
     ActivityListView* activeView = [self getActiveView];
     [activeView closePlayer];
 }
 
 - (void) onTabActivate {
+    isActiveTab = true;
     [self onClickRefresh];
 }
 
 - (void) onApplicationBecomeInactive {
+    isActiveTab = true;
     [self onTabInactivate];
 }
 

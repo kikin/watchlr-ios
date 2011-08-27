@@ -55,14 +55,23 @@
 }
 
 - (void) dealloc {
-    [label1 release];
-    [label2 release];
-    [label3 release];
-    [label4 release];
-    [label5 release];
+    [label1 removeFromSuperview];
+    [label2 removeFromSuperview];
+    [label3 removeFromSuperview];
+    [label4 removeFromSuperview];
+    [label5 removeFromSuperview];
     
     [onUsernameClicked release];
     [links release];
+    
+    label1 = nil;
+    label2 = nil;
+    label3 = nil;
+    label4 = nil;
+    label5 = nil;
+    
+    onUsernameClicked = nil;
+    links = nil;
     
     [super dealloc];
 }
@@ -73,17 +82,20 @@
     label1.frame = CGRectMake(0, 0, [label1.text sizeWithFont:label1.font].width, self.frame.size.height);
     int labelStartPos = label1.frame.size.width;
     
-    label2.frame = CGRectMake(labelStartPos, 0, [label2.text sizeWithFont:label2.font].width, self.frame.size.height);
+    int labelWidth = [label2.text sizeWithFont:label2.font].width;
+    label2.frame = CGRectMake(labelStartPos, 0, ((labelWidth > 0) ? labelWidth : 0), self.frame.size.height);
     labelStartPos += label2.frame.size.width;
     
-    label3.frame = CGRectMake(labelStartPos, 0, [label3.text sizeWithFont:label3.font].width, self.frame.size.height);
+    labelWidth = [label3.text sizeWithFont:label3.font].width;
+    label3.frame = CGRectMake(labelStartPos, 0, ((labelWidth > 0) ? labelWidth : 0), self.frame.size.height);
     labelStartPos += label3.frame.size.width;
     
-    label4.frame = CGRectMake(labelStartPos, 0, [label4.text sizeWithFont:label4.font].width, self.frame.size.height);
+    labelWidth = [label4.text sizeWithFont:label4.font].width;
+    label4.frame = CGRectMake(labelStartPos, 0, ((labelWidth > 0) ? labelWidth : 0), self.frame.size.height);
     labelStartPos += label4.frame.size.width;
     
-    label5.frame = CGRectMake(labelStartPos, 0, [label5.text sizeWithFont:label5.font].width, self.frame.size.height);
-    labelStartPos += label5.frame.size.width;
+    labelWidth = [label5.text sizeWithFont:label5.font].width;
+    label5.frame = CGRectMake(labelStartPos, 0, ((labelWidth > 0) ? labelWidth : 0), self.frame.size.height);
 }
 
 // --------------------------------------------------------------------------------
@@ -120,6 +132,7 @@
         label2.hidden = NO;
         labelStartPos += label2.frame.size.width;
     } else {
+        label2.text = @"";
         label2.hidden = YES;
     }
     
@@ -137,6 +150,7 @@
         label3.hidden = NO;
         labelStartPos += label3.frame.size.width;
     } else {
+        label3.text = @"";
         label3.hidden = YES;
     }
     
@@ -154,6 +168,7 @@
         label4.hidden = NO;
         labelStartPos += label4.frame.size.width;
     } else {
+        label4.text = @"";
         label4.hidden = YES;
     }
     
@@ -169,8 +184,8 @@
         }
         
         label5.hidden = NO;
-        labelStartPos += label5.frame.size.width;
     } else {
+        label5.text = @"";
         label5.hidden = YES;
     }
     

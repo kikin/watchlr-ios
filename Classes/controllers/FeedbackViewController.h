@@ -10,9 +10,7 @@
 #import "LoadingMainView.h"
 
 @interface FeedbackViewController : UIViewController<UIWebViewDelegate> {
-	UINavigationBar* navigationBar;
 	UIWebView* webView;
-	UIBarButtonItem* backButton;
     
     LoadingMainView* loadingView;
 }

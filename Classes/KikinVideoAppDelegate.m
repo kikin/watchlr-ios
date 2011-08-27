@@ -51,9 +51,13 @@
 	if (startDate != nil) {
         if ([window.rootViewController isKindOfClass:[UITabBarController class]]) {
             UITabBarController* tabBarController = (UITabBarController*)window.rootViewController;
-            UINavigationController* navigationController = (UINavigationController*)tabBarController.selectedViewController;
-            WatchlrViewController* watchlrController = (WatchlrViewController*)navigationController.topViewController;
-            [watchlrController onApplicationBecomeInactive];
+            for (UINavigationController* navigationController in tabBarController.viewControllers) {
+                for (UIViewController* controller in navigationController.viewControllers) {
+                    if ([controller isKindOfClass:[WatchlrViewController class]]) {
+                        [(WatchlrViewController*)controller onApplicationBecomeInactive];
+                    }
+                }
+            }
         }
         
         NSTimeInterval time = [[NSDate date] timeIntervalSinceDate: startDate];
@@ -87,7 +91,6 @@
 - (void) onLoginSuccess {
     // create saved videos tab
     SavedVideosViewController* savedVideosViewController = [[[SavedVideosViewController alloc] initWithNibName:@"SavedVideosView" bundle:nil] autorelease];
-    savedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
     UINavigationController * savedTabNavigationController = [[[UINavigationController alloc] initWithRootViewController:savedVideosViewController] autorelease];
     savedTabNavigationController.navigationBar.tintColor =[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
@@ -96,7 +99,6 @@
     
     // create liked videos tab
     LikedVideosViewController* likedVideosViewController = [[[LikedVideosViewController alloc] initWithNibName:@"LikedVideosView" bundle:nil] autorelease];
-    likedVideosViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
     UINavigationController * likedTabNavigationController = [[[UINavigationController alloc] initWithRootViewController:likedVideosViewController] autorelease];
     likedTabNavigationController.navigationBar.tintColor =[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
@@ -105,7 +107,6 @@
     
     // create activity videos tab
     ActivityViewController* activitiesViewController = [[[ActivityViewController alloc] initWithNibName:@"ActivitiesView" bundle:nil] autorelease];
-    activitiesViewController.onLogoutCallback = [Callback create:self selector:@selector(onLogout)];
     
     UINavigationController * activitiesTabNavigationController = [[[UINavigationController alloc] initWithRootViewController:activitiesViewController] autorelease];
     activitiesTabNavigationController.navigationBar.tintColor =[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
@@ -137,11 +138,20 @@
     // perform the actions only when user selects the different tab.
     if (viewController != tabBarController.selectedViewController) {
         
-        WatchlrViewController* currentViewController = (WatchlrViewController*)((UINavigationController*)tabBarController.selectedViewController).topViewController;
-        WatchlrViewController* nextViewController = (WatchlrViewController*)((UINavigationController*)viewController).topViewController;
+        UINavigationController* currentViewController = (UINavigationController*)tabBarController.selectedViewController;
+        UINavigationController* nextViewController = (UINavigationController*)viewController;
         
-        [currentViewController onTabInactivate];
-        [nextViewController onTabActivate];
+        for (UIViewController* controller in currentViewController.viewControllers) {
+            if ([controller isKindOfClass:[WatchlrViewController class]]) {
+                [(WatchlrViewController*)controller onTabInactivate];
+            }
+        }
+        
+        for (UIViewController* controller in nextViewController.viewControllers) {
+            if ([controller isKindOfClass:[WatchlrViewController class]]) {
+                [(WatchlrViewController*)controller onTabActivate];
+            }
+        }
     }
     
     return YES;

@@ -9,6 +9,7 @@
 #import "VideosListView.h"
 #import <QuartzCore/QuartzCore.h>
 #import "VideoTableCell.h"
+#import "LoadingIndicatorCell.h"
 #import "TrackerRequest.h"
 #import "VideoRequest.h"
 #import "VideoResponse.h"
@@ -56,6 +57,13 @@
     return self;
 }
 
+- (void) didReceiveMemoryWarning {
+    [videosList release];
+    videosList = nil;
+    
+    // we will not release callbacks as there is no way to recover them. 
+}
+
 - (void) dealloc {
     [videoPlayerView removeFromSuperview];
     [videoPlayerView release];
@@ -74,7 +82,7 @@
 //                             Private Functions
 // --------------------------------------------------------------------------------
 
-- (void) updateList:(NSArray*)videosArray isRefreshing:(bool)refreshing numberOfVideos:(int)videoCount {
+- (void) updateList:(NSArray*)videosArray isRefreshing:(bool)refreshing numberOfVideos:(int)videoCount andLastPageRequested:(int)lastPageRequested {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     isRefreshing = refreshing;
     if (videosList == nil) {
@@ -88,7 +96,7 @@
             [videosList addObject:videoObject];
         }
         
-        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
+        if ((lastPageRequested * 10) < videoCount) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -184,6 +192,16 @@
         [refreshStatusView setRefreshStatus:REFRESHED];
         
     } else { 
+        
+        // Remove the loading indicator
+        if ([videosListView numberOfRowsInSection:0] > [videosList count]) {
+            [videosListView beginUpdates];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[videosList count] inSection:0];
+            [videosListView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                  withRowAnimation:UITableViewRowAnimationNone];
+            [videosListView endUpdates];
+        }
+        
         // Appending the videos retreived to the list
         for (NSDictionary* videoDic in videosArray) {
             // create video from dictionnary
@@ -192,7 +210,7 @@
         }
         
         loadMoreState = LOADED;
-        if ((videoCount != 0) && ((videoCount % 10) == 0)) {
+        if ((lastPageRequested * 10) < videoCount) {
             loadedAllVideos = false;
         } else {
             loadedAllVideos = true;            
@@ -557,7 +575,11 @@
 // --------------------------------------------------------------------------------
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (videosList != nil) {
-		return [videosList count];
+        if (loadMoreState == LOADING || loadedAllVideos) {
+            return [videosList count];
+        } else {
+            return [videosList count] + 1;
+        }
 	} else {
 		return 0;
 	}
@@ -577,7 +599,7 @@
         cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
         cell.viewSourceCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     }
-	
+    
     if (indexPath.row < videosList.count) {
         // Update data for the cell
         VideoObject* videoObject = [videosList objectAtIndex:indexPath.row];
@@ -585,11 +607,19 @@
 
         if (indexPath.row == (videosList.count - 1)) {
             if (loadMoreState != LOADING) {
-                LOG_DEBUG(@"Loading more data");
                 loadMoreState = LOADING;
                 [self loadMoreData];
             }
         }
+    } else if (indexPath.row == videosList.count && loadMoreState == LOADING) {
+        static NSString* LoadingCellIdentifier = @"LoadingCell";
+        LoadingIndicatorCell* loadingCell = (LoadingIndicatorCell*)[tableView dequeueReusableCellWithIdentifier:LoadingCellIdentifier];
+        if (loadingCell == nil) {
+            loadingCell = [[[LoadingIndicatorCell alloc] initWithStyle:UITableViewCellEditingStyleNone reuseIdentifier:LoadingCellIdentifier] autorelease];
+        }
+        
+        [loadingCell showLoadingIndicator];
+        return loadingCell;
     }
 	
     return cell;
@@ -602,6 +632,13 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	// unselect row
 	[tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == videosList.count)
+        return 40;
+    
+    return DeviceUtils.isIphone ? 100 : 150;
 }
 
 // --------------------------------------------------------------------------------
@@ -660,7 +697,7 @@
 // --------------------------------------------------------------------------------
 
 - (void) updateListWrapper: (NSDictionary*)args {
-    [self updateList:[args objectForKey:@"videosList"] isRefreshing:[[args objectForKey:@"isRefreshing"] boolValue] numberOfVideos:[[args objectForKey:@"videoCount"] integerValue]];
+    [self updateList:[args objectForKey:@"videosList"] isRefreshing:[[args objectForKey:@"isRefreshing"] boolValue] numberOfVideos:[[args objectForKey:@"videoCount"] integerValue] andLastPageRequested:[[args objectForKey:@"lastPageRequested"] integerValue]];
 }
 
 - (int) count {

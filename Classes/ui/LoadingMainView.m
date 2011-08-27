@@ -41,8 +41,12 @@
 }
 
 - (void)dealloc {
-	[loadingSpinner release];
-	[loadingLabel release];
+	[loadingSpinner removeFromSuperview];
+	[loadingLabel removeFromSuperview];
+    
+    loadingSpinner = nil;
+    loadingLabel = nil;
+    
     [super dealloc];
 }
 

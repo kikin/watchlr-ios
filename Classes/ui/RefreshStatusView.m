@@ -117,8 +117,14 @@
 }
 
 - (void)dealloc {
-	[refreshStatusIndicator release];
-	[refreshStatusLabel release];
+	[refreshStatusIndicator removeFromSuperview];
+	[refreshStatusLabel removeFromSuperview];
+    [refreshImageView removeFromSuperview];
+    
+    refreshStatusIndicator = nil;
+    refreshStatusLabel = nil;
+    refreshImageView = nil;
+    
     [super dealloc];
 }
 

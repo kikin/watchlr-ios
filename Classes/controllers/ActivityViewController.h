@@ -18,12 +18,12 @@
     ActivityListView* facebookOnlyActivitiesListView;
     ActivityListView* watchlrOnlyActivitiesListView;
     ActivityFilterView* activityFilterView;
-//    UISegmentedControl* activityOptionsButton;
     
     UITapGestureRecognizer* tapGesture;
     
     int lastPageRequested;
     bool isRefreshing;
+    bool isActiveTab;
     
     ActivityType activityType;
 }

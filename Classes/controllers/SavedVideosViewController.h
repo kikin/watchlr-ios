@@ -16,8 +16,7 @@
     
 	int lastPageRequested;
     bool isRefreshing;
+    bool isActiveTab;
 }
-
-- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount;
 
 @end

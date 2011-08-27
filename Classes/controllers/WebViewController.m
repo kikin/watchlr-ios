@@ -43,10 +43,20 @@
     [loadingView setHidden:YES];
 }
 
+- (void) didReceiveMemoryWarning {
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+}
+
 - (void)dealloc {
     webView.delegate = nil;
-	[webView release];
-    [loadingView release];
+    
+	[webView removeFromSuperview];
+    [loadingView removeFromSuperview];
+    
+    webView = nil;
+    loadingView = nil;
+    
     [super dealloc];
 }
 

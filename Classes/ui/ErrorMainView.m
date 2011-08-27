@@ -65,9 +65,14 @@
 }
 
 - (void) dealloc {
-	[okButton release];
-	[errorLabel release];
-	[titleLabel release];
+	[okButton removeFromSuperview];
+	[errorLabel removeFromSuperview];
+	[titleLabel removeFromSuperview];
+    
+    okButton = nil;
+    errorLabel = nil;
+    titleLabel = nil;
+    
     [super dealloc];
 }
 

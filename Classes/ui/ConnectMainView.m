@@ -66,7 +66,14 @@
 }
 
 - (void)dealloc {
-	[loginButton release];
+    [titleLabel removeFromSuperview];
+    [descriptionLabel removeFromSuperview];
+	[loginButton removeFromSuperview];
+    
+    titleLabel = nil;
+    descriptionLabel = nil;
+    loginButton = nil;
+    
     [super dealloc];
 }
 

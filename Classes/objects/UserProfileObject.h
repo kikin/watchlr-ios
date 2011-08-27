@@ -21,6 +21,7 @@
 @property()			int emptyq;
 
 - (id) initFromDictionary: (NSDictionary*)data;
+- (void) updateFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end
@@ -35,6 +36,7 @@
 @property()         int follow_email;
 
 - (id) initFromDictionary: (NSDictionary*)data;
+- (void) updateFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
 
 @end
@@ -61,8 +63,15 @@
     UIImage*  normalPictureImage;
     UIImage*  largePictureImage;
     
+    NSMutableData*      profileImageData;
+    NSURLConnection*    profileImageUrlConnection;
+    NSLock*             profileImageLoadedCallbackLock;
+    
     UserNotification* notifications; //{"welcome": 1, "firstlike": 1, "emptyq": 1}, 
     UserPreferences* preferences; //{"syndicate": 1}}
+    
+    Callback* profileImageLoadedCallback;
+    NSString* currentlyLoadingProfileImageSizeType;
 }
 
 @property()			int userId;
@@ -86,7 +95,10 @@
 @property(retain)	UserPreferences* preferences;
 
 - (id) initFromDictionary: (NSDictionary*)data;
+- (void) updateFromDictionary: (NSDictionary*)data;
 - (NSDictionary*) toDictionary;
-- (void) loadUserImage:(Callback*)onUserImageLoaded withSize:(NSString*)sizeType;
+- (void) loadUserImage:(NSString*)sizeType;
+- (void) setProfileImageLoadedCallback:(Callback*)callback;
+- (void) resetProfileImageLoadedCallback;
 
 @end

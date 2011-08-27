@@ -21,23 +21,23 @@
     // self.wantsFullScreenLayout = YES;
 	
 	// create the toolbar
-	navigationBar = [[UINavigationBar alloc] init];
+	UINavigationBar* navigationBar = [[[UINavigationBar alloc] init] autorelease];
 	navigationBar.frame = CGRectMake(0, 0, view.frame.size.width, 42);
 	navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     navigationBar.tintColor = [UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0];
 	[view addSubview:navigationBar];
     
     // create the back button
-	backButton = [[UIBarButtonItem alloc] init];
+	UIBarButtonItem* backButton = [[[UIBarButtonItem alloc] init] autorelease];
 	backButton.title = @"Close";
 	backButton.style = UIBarButtonItemStyleBordered;
 	backButton.action = @selector(onClickBackButton);
 	
 	// add the button to the navigation bar
-	UINavigationItem* item = [[UINavigationItem alloc] initWithTitle:@"Feedback"];
+	UINavigationItem* item = [[[UINavigationItem alloc] initWithTitle:@"Feedback"] autorelease];
 	item.rightBarButtonItem = backButton;
 	[navigationBar pushNavigationItem:item animated:FALSE];
-	[item release];
+	
     
     // create the video table
 	webView = [[UIWebView alloc] init];
@@ -53,49 +53,61 @@
     [loadingView setHidden:NO];
 }
 
-- (void) onClickBackButton {
-	[webView loadHTMLString:@"<html><body></body></html>" baseURL:nil];
-	[self dismissModalViewControllerAnimated:TRUE];
-}
-
-- (void)viewDidLoad {
-	[super viewDidLoad];
-}
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Overriden to allow any orientation.
     return YES;
 }
 
+- (void) releaseMemory {
+    webView.delegate = nil;
+    
+	[webView removeFromSuperview];
+	[loadingView removeFromSuperview];
+    
+    webView = nil;
+    loadingView = nil;
+}
+
 - (void)didReceiveMemoryWarning {
+    // release memory 
+//    [self releaseMemory];
+    
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload {
-    [super viewDidUnload];
+- (void)dealloc {
+    [self releaseMemory];
+    [super dealloc];
 }
 
+// --------------------------------------------------------------------------------
+//                              Callbacks
+// --------------------------------------------------------------------------------
+
+- (void) onClickBackButton {
+	[webView loadHTMLString:@"<html><body></body></html>" baseURL:nil];
+	[self dismissModalViewControllerAnimated:TRUE];
+}
+
+// --------------------------------------------------------------------------------
+//                          Public Functions
+// --------------------------------------------------------------------------------
 - (void) loadFeedbackForm {
     NSURL* url = [NSURL URLWithString:@"https://webux.wufoo.com/forms/m7x1p5/"];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
     [webView loadRequest:requestObj];
 }
 
+// --------------------------------------------------------------------------------
+//                          Web view delegates
+// --------------------------------------------------------------------------------
+
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)uiWebView {
     [loadingView setHidden:YES];
-}
-
-- (void)dealloc {
-    webView.delegate = nil;
-	[navigationBar release];
-	[webView release];
-	[backButton release];
-    [loadingView release];
-    [super dealloc];
 }
 
 @end

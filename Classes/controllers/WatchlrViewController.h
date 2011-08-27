@@ -21,6 +21,4 @@
 - (void) onTabInactivate;
 - (void) onTabActivate;
 
-@property(retain) Callback* onLogoutCallback;
-
 @end

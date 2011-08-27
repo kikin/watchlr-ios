@@ -20,7 +20,6 @@
 	LoadingMainView* loadingMainView;
 	ConnectMainView* connectMainView;
     Callback* onLoginSuccessCallback;
-	UIImageView* logoImage;
 }
 
 - (Facebook*) facebook;

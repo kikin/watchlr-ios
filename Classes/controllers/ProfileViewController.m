@@ -12,8 +12,11 @@
 #import "VideoPlayerView.h"
 #import "WebViewController.h"
 #import "FeedbackViewController.h"
+#import "UserObject.h"
 
 @implementation ProfileViewController
+
+@synthesize onLogoutCallback;
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
@@ -37,7 +40,6 @@
     
     [self.view addSubview:userProfileView];
     [self.view sendSubviewToBack:userProfileView];
-    
 }
 
 - (void) viewDidLoad {
@@ -69,26 +71,68 @@
     if (!userSettingsView.hidden) {
         userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, 0, userSettingsView.frame.size.width, userSettingsView.frame.size.height);
     }
+}
+
+- (void)didReceiveMemoryWarning {
+    if (!isActiveTab) {
+        // release memory
+        [userProfileView didReceiveMemoryWarning:true];
+        
+        [tapGesture release];
+        [settingsIconViewTapGesture release];
+        
+        settingsIconViewTapGesture = nil;
+        tapGesture = nil;
+        
+        // we will not release callbacks 
+        // as there is no way to recover them.
+    } else {
+        int level = [DeviceUtils currentMemoryLevel];
+        if (level >= OSMemoryNotificationLevelUrgent) {
+            [userProfileView didReceiveMemoryWarning:false];
+            
+            [tapGesture release];
+            [settingsIconViewTapGesture release];
+            
+            settingsIconViewTapGesture = nil;
+            tapGesture = nil;
+            
+            // we will not release callbacks 
+            // as there is no way to recover them.
+        }
+    }
     
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc {
     // release memory
-    [userProfileView release];
-	[userProfileSettingsView release];
-    [userSettingsView release];
-    [settingsIconView release];
+    [onLogoutCallback release];
+    onLogoutCallback = nil;
     
     [tapGesture release];
     [settingsIconViewTapGesture release];
-    [onLogoutCallback release];
+    
+    settingsIconViewTapGesture = nil;
+    tapGesture = nil;
+    
+    [userProfileView removeFromSuperview];
+	[userProfileSettingsView removeFromSuperview];
+    [userSettingsView removeFromSuperview];
+    [settingsIconView removeFromSuperview];
+    
+    userProfileView = nil;
+    userProfileSettingsView = nil;
+    userSettingsView = nil;
+    settingsIconView = nil;
     
     [super dealloc];
 }
 
 
 // --------------------------------------------------------------------------------
-//                                  Provate functions
+//                                  Private functions
 // --------------------------------------------------------------------------------
 
 - (void) addPageTapGestureRecognizer {
@@ -102,6 +146,16 @@
 
 - (void) removePageTapGestureRecognizer {
     [self.view removeGestureRecognizer:tapGesture];
+}
+
+- (void) logoutUser {
+    // erase userId
+	UserObject* userObject = [UserObject getUser];
+	[userObject resetUser];
+    
+    if (onLogoutCallback != nil) {
+        [onLogoutCallback execute:nil];
+    }
 }
 
 
@@ -198,11 +252,12 @@
 - (void) onUserProfileRequestSuccess: (UserProfileResponse*)response {
     @try {
         if (response.success) {
-            
+            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
             NSDictionary* result = [response userProfile];
-            UserProfileObject* userProfile = [[[UserProfileObject alloc] initFromDictionary:result] autorelease];
+            UserProfileObject* userProfile = [[UserProfileObject alloc] initFromDictionary:result];
             [userProfileView setUserProfile:userProfile];
-            
+            [userProfile release];
+            [pool release];
         } else {
             NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve user profile: %@", response.errorMessage];
             
@@ -239,6 +294,7 @@
 // --------------------------------------------------------------------------------
 
 - (void) setUserObject:(UserProfileObject*)user {
+    isActiveTab = true;
     if (user != nil) {
         [self performSelector:@selector(getUserProfile:) withObject:user.userName];
     } else {
@@ -247,18 +303,24 @@
 }
 
 - (void) openUserProfileForName:(NSString*)userName {
+    isActiveTab = true;
     [self performSelector:@selector(getUserProfile:) withObject:userName];
 }
 
 - (void) onTabInactivate {
+    isActiveTab = false;
     [userProfileView closePlayer];
 }
 
 - (void) onTabActivate {
-    [self setUserObject:[userProfileView getUserProfile]];
+    isActiveTab = true;
+    if (self == self.navigationController.visibleViewController) {
+        [self setUserObject:[userProfileView getUserProfile]];
+    }
 }
 
 - (void) onApplicationBecomeInactive {
+    isActiveTab = false;
     [self onTabInactivate];
 }
 

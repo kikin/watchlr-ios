@@ -8,6 +8,8 @@
 
 #import "LoginViewController.h"
 #import "LinkDeviceRequest.h"
+#import "UserProfileRequest.h"
+#import "UserProfileResponse.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation LoginViewController
@@ -24,7 +26,7 @@ const char* FB_APP_ID = "220283271338035";
 	[view release];
 	
 	// add the kikin logo in the middle
-	logoImage = [[UIImageView alloc] init];
+	UIImageView* logoImage = [[[UIImageView alloc] init] autorelease];
 	logoImage.frame = CGRectMake((view.frame.size.width-350)/2, (view.frame.size.height-350)/2, 350, 350);
 	logoImage.image = [UIImage imageNamed:@"watchlr_favicon_big.png"];
 	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -59,8 +61,14 @@ const char* FB_APP_ID = "220283271338035";
 	// look if the user is already loggedIn
 	UserObject* user = [UserObject getUser];
 	if (user.sessionId != nil) {
-		// go the the main view
-		[self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.0];
+        // save the user id for the legacy users
+        if (user.userId < 1) {
+            [self performSelector:@selector(doUserProfileRequest)];
+            [self showView:loadingMainView];
+        } else {
+            // go the the main view
+            [self performSelector:@selector(goToMainView:) withObject:nil afterDelay:0.0];
+        }
 	} else {
 		[self showView:connectMainView];
 	}
@@ -145,6 +153,8 @@ const char* FB_APP_ID = "220283271338035";
                 userObject.userName = [[response.response objectForKey:@"user"] objectForKey:@"username"];
                 userObject.userId = [[[response.response objectForKey:@"user"] objectForKey:@"id"] intValue];
                 
+                [userObject saveUserProfile];
+                
                 // go the the main view
                 [self goToMainView:YES];
             }
@@ -171,6 +181,41 @@ const char* FB_APP_ID = "220283271338035";
 	LOG_ERROR(@"failed to link the device: %@", errorMessage);
 }
 
+- (void) onUserProfileRequestSuccess: (UserProfileResponse*)response {
+	if (response.success) {
+        UserObject* userObject = [UserObject getUser];
+        userObject.userName = [[response userProfile] objectForKey:@"username"];
+        userObject.userId = [[[response userProfile] objectForKey:@"id"] intValue];
+        
+        [userObject saveUserProfile];
+        
+        // go the the main view
+        [self goToMainView:YES];
+        
+	} else {
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to connect with the watchlr servers: %@.", response.errorMessage];
+		[errorMainView setErrorMessage:errorMessage];
+		[self showView:errorMainView];
+		
+		LOG_ERROR(@"failed to connect: %@", response.errorMessage);
+	}
+}
+
+- (void) onUserProfileRequestFailed: (NSString*)errorMessage {
+	[errorMainView setErrorMessage:@"We failed to connect with the watchlr servers: Bad response."];
+	[self showView:errorMainView];
+	
+	LOG_ERROR(@"failed to link the device: %@", errorMessage);
+}
+
+- (void) doUserProfileRequest {
+    UserProfileRequest* request = [[UserProfileRequest alloc] init];
+    request.successCallback = [Callback create:self selector:@selector(onUserProfileRequestSuccess:)];
+    request.errorCallback = [Callback create:self selector:@selector(onUserProfileRequestFailed:)];
+    [request getUserProfile];
+    [request release];
+}
+
 - (void) doLinkDeviceRequest: (NSString*)facebookId andAccessToken:(NSString*)facebookAccessToken {
 	LinkDeviceRequest* request = [[LinkDeviceRequest alloc] init];
 	request.successCallback = [Callback create:self selector:@selector(onLinkRequestSuccess:)];
@@ -193,10 +238,22 @@ const char* FB_APP_ID = "220283271338035";
 }
 
 - (void)dealloc {
-	[connectMainView release];
-	[errorMainView release];
-	[loadingMainView release];
+    connectMainView.clickConnectCallback = nil;
+    errorMainView.clickOkCallback = nil;
+    facebook.sessionDelegate = nil;
+    
+    [onLoginSuccessCallback release];
+	[connectMainView removeFromSuperview];
+	[errorMainView removeFromSuperview];
+	[loadingMainView removeFromSuperview];
     [facebook release];
+    
+    onLoginSuccessCallback = nil;
+    connectMainView = nil;
+    errorMainView = nil;
+    loadingMainView = nil;
+    facebook = nil;
+    
     [super dealloc];
 }
 

@@ -27,15 +27,56 @@
 	
 	// request video list
     isRefreshing = true;
-	[self doVideoListRequest:-1 withVideosCount:10];
+//	[self doVideoListRequest:-1 withVideosCount:10];
+}
+
+- (void) didReceiveMemoryWarning {
+    if (!isActiveTab) {
+        [videosListView didReceiveMemoryWarning];
+        
+        [videoListRequest release];
+        videoListRequest = nil;
+    } else {
+        int level = [DeviceUtils currentMemoryLevel];
+        if (level >= OSMemoryNotificationLevelUrgent) {
+            [videosListView didReceiveMemoryWarning];
+            
+            [videoListRequest release];
+            videoListRequest = nil;
+        }
+    }
+    
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc {
 	// release memory
-    [videosListView release];
+    [videosListView removeFromSuperview];
 	[videoListRequest release];
+    
+    videosListView = nil;
+    videoListRequest = nil;
     [super dealloc];
 }
+
+// --------------------------------------------------------------------------------
+//                          Private Functions
+// --------------------------------------------------------------------------------
+
+- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
+	// get the list of videos
+	if (videoListRequest == nil) {
+		videoListRequest = [[VideoListRequest alloc] init];
+		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
+		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
+	}
+	if ([videoListRequest isRequesting]) {
+		[videoListRequest cancelRequest];
+	}
+	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
+}
+
 
 // --------------------------------------------------------------------------------
 //                                  Callbacks
@@ -74,8 +115,9 @@
         }
         NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
                               [response videos], @"videosList",
-                              [NSNumber numberWithInt:[response count]], @"videoCount",
+                              [NSNumber numberWithInt:[response total]], @"videoCount",
                               [NSNumber numberWithBool:isRefreshing], @"isRefreshing",
+                              [NSNumber numberWithInt:lastPageRequested], @"lastPageRequested",
                               nil];
         [videosListView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
@@ -107,34 +149,22 @@
 	LOG_ERROR(@"list request error: %@", errorMessage);
 }
 
-
-
 // --------------------------------------------------------------------------------
 //                          Public Functions
 // --------------------------------------------------------------------------------
 
-- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
-	// get the list of videos
-	if (videoListRequest == nil) {
-		videoListRequest = [[VideoListRequest alloc] init];
-		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
-		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
-	}
-	if ([videoListRequest isRequesting]) {
-		[videoListRequest cancelRequest];
-	}
-	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
-}
-
 - (void) onTabInactivate {
+    isActiveTab = false;
     [videosListView closePlayer];
 }
 
 - (void) onTabActivate {
+    isActiveTab = true;
     [self onClickRefresh];
 }
 
 - (void) onApplicationBecomeInactive {
+    isActiveTab = false;
     [videosListView closePlayer];
 }
 

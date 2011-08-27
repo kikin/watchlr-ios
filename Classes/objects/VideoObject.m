@@ -38,31 +38,37 @@
     }
     
     // set default values
-	if (title == nil) self.title = @"";
-	if (description == nil) self.description = @"";
+	if (self.title == nil) title = @"";
+	if (self.description == nil) description = @"";
 	
 	return self;
 }
 
 - (void) updateFromDictionary: (NSDictionary*)data {
-    self.liked = [data objectForKey:@"liked"] != [NSNull null] ? [[data objectForKey:@"liked"] boolValue] : self.liked;
-    self.likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : self.likes;
-    self.saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : self.saved;
-    self.seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : self.seek;
+    liked = [data objectForKey:@"liked"] != [NSNull null] ? [[data objectForKey:@"liked"] boolValue] : liked;
+    likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : likes;
+    saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : saved;
+    seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : seek;
 }
 
 - (void) dealloc {
     [thumbnail release];
     [videoSource release];
+    [title release];
+    [description release];
+    [videoUrl release];
+    [embedUrl release];
+    [hostUrl release];
+    [htmlCode release];
     
-	self.title = nil;
-	self.description = nil;
-	self.videoUrl = nil;
-	self.embedUrl = nil;
-    self.hostUrl = nil;
-//	self.thumbnail = nil;
-    self.htmlCode = nil;
-//    self.videoSource = nil;
+	title = nil;
+	description = nil;
+	videoUrl = nil;
+	embedUrl = nil;
+    hostUrl = nil;
+	thumbnail = nil;
+    htmlCode = nil;
+    videoSource = nil;
 	[super dealloc];
 }
 

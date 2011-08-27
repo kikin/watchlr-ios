@@ -103,13 +103,21 @@
 }
 
 -(void) dealloc {
-    [userProfileButton release];
-    [feedbackButton release];
-    [logoutButton release];
+    [userProfileButton removeFromSuperview];
+    [feedbackButton removeFromSuperview];
+    [logoutButton removeFromSuperview];
     
     [showUserProfileCallback release];
     [showFeedbackFormCallback release];
     [logoutCallback release];
+    
+    userProfileButton = nil;
+    feedbackButton = nil;
+    logoutButton = nil;
+    
+    showUserProfileCallback = nil;
+    showFeedbackFormCallback = nil;
+    logoutCallback = nil;
     
     [super dealloc];
 }

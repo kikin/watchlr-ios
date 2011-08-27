@@ -266,6 +266,8 @@
 }
 
 - (void) dealloc {
+    [video.videoSource resetFaviconImageLoadedCallback];
+    
     // stop listening notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayerController];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:moviePlayerController];
@@ -278,6 +280,26 @@
     [moviePlayerController.view removeFromSuperview];
     
     [video release];
+    
+    [closeButton removeFromSuperview];
+    [titleLabel removeFromSuperview];
+    [likeButton removeFromSuperview];
+    [saveButton removeFromSuperview];
+    [prevButton removeFromSuperview];
+    [nextButton removeFromSuperview];
+    // [moviePlayerNativeControlView release];
+    [loadingActivity removeFromSuperview];
+    [moviePlayer removeFromSuperview];
+    [description removeFromSuperview];
+    [favicon removeFromSuperview];
+    // [faviconBackground release];
+    [topSeparator removeFromSuperview];
+    [bottomSeparator removeFromSuperview];
+    
+    [countdown removeFromSuperview];
+    [errorMessage removeFromSuperview];
+    [watchHereButton removeFromSuperview];
+    [nextVideoWillPlayInMessage removeFromSuperview];
     
     [moviePlayerController release];
     [closeButton release];
@@ -305,10 +327,47 @@
     [onLikeButtonClickedCallback release];
     [onNextButtonClickedCallback release];
     [onPreviousButtonClickedCallback release];
-    
+    [onCloseButtonClickedCallback release];
+    [onUnlikeButtonClickedCallback release];
+    [onSaveButtonClickedCallback release];
+    [onPlaybackErrorCallback release];
+    [onViewSourceClickedCallback release];
     [onVideoFinishedCallback release];
     
-    // currentlyPlayingVideoUrl = NULL;
+    currentlyPlayingVideoUrl = nil;
+    
+    moviePlayerController = nil;
+    closeButton = nil;
+    titleLabel = nil;
+    likeButton = nil;
+    saveButton = nil;
+    prevButton = nil;
+    nextButton = nil;
+    // [moviePlayerNativeControlView release];
+    loadingActivity = nil;
+    moviePlayer = nil;
+    description = nil;
+    favicon = nil;
+    // [faviconBackground release];
+    topSeparator = nil;
+    bottomSeparator = nil;
+    
+    countdown = nil;
+    errorMessage = nil;
+    watchHereButton = nil;
+    nextVideoWillPlayInMessage = nil;
+    
+    onLikeButtonClickedCallback = nil;
+    onNextButtonClickedCallback = nil;
+    onLikeButtonClickedCallback = nil;
+    onCloseButtonClickedCallback = nil;
+    onUnlikeButtonClickedCallback = nil;
+    onSaveButtonClickedCallback = nil;
+    onPlaybackErrorCallback = nil;
+    onViewSourceClickedCallback = nil;
+    onVideoFinishedCallback = nil;
+    
+    video = nil;
     
     [super dealloc];
 }
@@ -753,6 +812,8 @@
  * play youtube video using the meta data fetched.
  */
 -(void) playYoutubeVideo:(NSString*) metadata {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    
     // LOG_DEBUG(@"Playing youtube video.");
     NSString *videoUrlHD = NULL;
     NSString *videoUrl = NULL;
@@ -812,6 +873,7 @@
         [self showErrorMessage:@"We could not play this video."];
     }
     
+    [pool release];
 }
 
 /*
@@ -835,16 +897,47 @@
     return nil;
 }*/
 
+- (void) onFaviconImageLoaded:(UIImage*)faviconImage {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    if (faviconImage != nil) {
+        if (![[NSThread currentThread] isCancelled]) {
+            [favicon performSelectorOnMainThread:@selector(setImage:) withObject:faviconImage waitUntilDone:YES];
+            favicon.hidden = NO;
+        }
+    } else {
+        favicon.hidden = YES;
+    }
+    [pool release];
+}
+
+/*
+ * downloads favicon image.
+ */
+- (void) downloadFaviconImage:(SourceObject*) source  {
+    [source setFaviconImageLoadedCallback:[Callback create:self selector:@selector(onFaviconImageLoaded:)]];
+    [source performSelector:@selector(loadImage)];
+}
+
 /**
  * Loads the images
  */
 - (void) loadImages {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-    if (video.videoSource != nil && video.videoSource.faviconImage != nil) {
-        // make sure the thread was not killed
-        if (![[NSThread currentThread] isCancelled]) {
-            [favicon performSelectorOnMainThread:@selector(setImage:) withObject:video.videoSource.faviconImage waitUntilDone:YES];
+    if (video.videoSource != nil) {
+        // set the favicon image
+        if (video.videoSource.isFaviconImageLoaded) {
+            if (video.videoSource.faviconImage != nil) {
+                // make sure the thread was not killed
+                if (![[NSThread currentThread] isCancelled]) {
+                    [favicon performSelectorOnMainThread:@selector(setImage:) withObject:video.videoSource.faviconImage waitUntilDone:YES];
+                    favicon.hidden = NO;
+                }
+            } else {
+                favicon.hidden = YES;
+            }
+        } else {
+            [self performSelector:@selector(downloadFaviconImage:) withObject:video.videoSource];
         }
     }
     
@@ -1512,6 +1605,11 @@
     }
     
     // save the video object
+    if (video != nil) {
+        [video.videoSource resetFaviconImageLoadedCallback];
+        [video release];
+        video = nil;
+    }
     video = [videoObject retain];
     
     // set the title
@@ -1554,7 +1652,7 @@
     }
     
     // set the favicon
-    [self performSelectorInBackground:@selector(loadImages) withObject:nil];
+    [self performSelector:@selector(loadImages) withObject:nil];
 
     // reset all the variables
     isYoutubeVideo = false;

@@ -60,12 +60,14 @@
         likedVideosView.layer.borderColor = color.CGColor;
         likedVideosView.addVideoPlayerCallback = [Callback create:self selector:@selector(addVideoPlayer:)];
         likedVideosView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
+        likedVideosView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreLikedVideos)];
         [self addSubview:likedVideosView];
         [self sendSubviewToBack:likedVideosView];
         
         followersView = [[UserListView alloc] initWithFrame:CGRectMake(0, 120, self.frame.size.width, self.frame.size.height - 120)];
         followersView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         followersView.openUserProfileCallback = [Callback create:self selector:@selector(openUserProfile:)];
+        followersView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreFollowers)];
         followersView.hidden = NO;
 		followersView.layer.borderWidth = 1.0f;
         followersView.layer.borderColor = color.CGColor;
@@ -76,6 +78,7 @@
         followingView = [[UserListView alloc] initWithFrame:CGRectMake(0, 120, self.frame.size.width, self.frame.size.height - 120)];
         followingView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         followingView.openUserProfileCallback = [Callback create:self selector:@selector(openUserProfile:)];
+        followingView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreFollowing)];
         followingView.hidden = NO;
 		followingView.layer.borderWidth = 1.0f;
         followingView.layer.borderColor = color.CGColor;
@@ -83,6 +86,13 @@
         [self sendSubviewToBack:followingView];
         
         activeView = LIKED_VIDEOS_VIEW;
+        isLikedVideosListRefreshing = true;
+        isFollowersListRefreshing = true;
+        isFollowingListRefreshing = true;
+        
+        lastlikedVideosPageRequested = 1;
+        lastFollowersPageRequested = 1;
+        lastFollowingPageRequested = 1;
     }
     return self;
 }
@@ -100,17 +110,78 @@
     followingView.frame = CGRectMake(120, 78, self.frame.size.width - 121, self.frame.size.height - 79);
 }
 
+- (void) didReceiveMemoryWarning:(bool)forced {
+    if  (forced) {
+        [likedVideosView didReceiveMemoryWarning];
+        [followersView didReceiveMemoryWarning];
+        [followingView didReceiveMemoryWarning];
+    } else {
+        int level = [DeviceUtils currentMemoryLevel];
+        if (level == OSMemoryNotificationLevelUrgent) {
+            switch (activeView) {
+                case LIKED_VIDEOS_VIEW: {
+                    [followersView didReceiveMemoryWarning];
+                    [followingView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                case FOLLWERS_VIEW: {
+                    [likedVideosView didReceiveMemoryWarning];
+                    [followingView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                case FOLLOWING_VIEW: {
+                    [likedVideosView didReceiveMemoryWarning];
+                    [followersView didReceiveMemoryWarning];
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+        } else if (level == OSMemoryNotificationLevelCritical) {
+            [likedVideosView didReceiveMemoryWarning];
+            [followersView didReceiveMemoryWarning];
+            [followingView didReceiveMemoryWarning];
+        }
+    }
+    
+}
 
 - (void) dealloc {
+    [userProfile resetProfileImageLoadedCallback];
+    
+    likedVideosView.loadMoreDataCallback = nil;
+    likedVideosView.addVideoPlayerCallback = nil;
+    likedVideosView.onViewSourceClickedCallback = nil;
+    
+    followersView.openUserProfileCallback = nil;
+    followersView.loadMoreDataCallback = nil;
+    
+    followingView.openUserProfileCallback = nil;
+    followingView.loadMoreDataCallback = nil;
+    
     [openUserProfileCallback release];
     [onViewSourceClickedCallback release];
     [userProfile release];
-	[profilePicView release];
-    [followButton release];
-    [optionsButton release];
-    [likedVideosView release];
-    [followersView release];
-    [followingView release];
+	[profilePicView removeFromSuperview];
+    [followButton removeFromSuperview];
+    [optionsButton removeFromSuperview];
+    [likedVideosView removeFromSuperview];
+    [followersView removeFromSuperview];
+    [followingView removeFromSuperview];
+    
+    openUserProfileCallback = nil;
+    onViewSourceClickedCallback = nil;
+    userProfile = nil;
+    profilePicView = nil;
+    followButton = nil;
+    optionsButton = nil;
+    likedVideosView = nil;
+    followersView = nil;
+    followingView = nil;
+    
     [super dealloc];
 }
 
@@ -134,34 +205,34 @@
 }
 
 - (void) downloadUserImage {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"normal"];
-    [pool release];
+    [userProfile setProfileImageLoadedCallback:[Callback create:self selector:@selector(onUserImageLoaded:)]];
+    [userProfile loadUserImage:@"normal"];
+    
 }
 
 // --------------------------------------------------------------------------------
 //                                  Requests
 // --------------------------------------------------------------------------------
 
-- (void) getFollowers:(UserProfileObject*)user {
+- (void) getFollowers:(UserProfileObject*)user forPage:(int)pageNumber withFollowersCount:(int)followersCount {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onFollowersRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onFollowersRequestSuccess:)];
-	[userProfileRequest getPeopleUserFollows:user.userName];	
+	[userProfileRequest getPeopleUserFollows:user.userName forPage:pageNumber withFollowersCount:followersCount];	
 }
 
-- (void) getFollowing:(UserProfileObject*)user {
+- (void) getFollowing:(UserProfileObject*)user forPage:(int)pageNumber withFollowingCount:(int)followingCount {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onFollowingRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onFollowingRequestSuccess:)];
-	[userProfileRequest getPeopleFollowingUser:user.userName];
+	[userProfileRequest getPeopleFollowingUser:user.userName forPage:pageNumber withFollowingCount:followingCount];
 }
 
-- (void) getLikedVideos:(UserProfileObject*)user {
+- (void) getLikedVideos:(UserProfileObject*)user forPage:(int)pageNumber withVideosCount:(int)videosCount {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onLikedVideosRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onLikedVideosRequestSuccess:)];
-	[userProfileRequest getLikedVideosByUser:user.userName];
+	[userProfileRequest getLikedVideosByUser:user.userName forPage:pageNumber withVideosCount:videosCount];
 }
 
 - (void) followUser:(UserProfileObject*)user {
@@ -181,6 +252,21 @@
 // --------------------------------------------------------------------------------
 //                                  Callbacks
 // --------------------------------------------------------------------------------
+
+- (void) onLoadMoreLikedVideos {
+    isLikedVideosListRefreshing = false;
+    [self getLikedVideos:userProfile forPage:(lastlikedVideosPageRequested + 1) withVideosCount:10];
+}
+
+- (void) onLoadMoreFollowers {
+    isFollowersListRefreshing = false;
+    [self getFollowers:userProfile forPage:(lastFollowersPageRequested + 1) withFollowersCount:20];
+}
+
+- (void) onLoadMoreFollowing {
+    isFollowingListRefreshing = false;
+    [self getFollowing:userProfile forPage:(lastFollowingPageRequested + 1) withFollowingCount:20];
+}
 
 - (void) onOptionsButtonClicked:(UIButton*)sender {
     switch(optionsButton.selectedSegmentIndex) {
@@ -217,7 +303,8 @@
     
     activeView = LIKED_VIDEOS_VIEW;
     
-    [self getLikedVideos:userProfile];
+    isLikedVideosListRefreshing = true;
+    [self getLikedVideos:userProfile forPage:-1 withVideosCount:(lastlikedVideosPageRequested * 10)];
     
 }
 
@@ -229,7 +316,8 @@
     
     activeView = FOLLWERS_VIEW;
     
-    [self getFollowers:userProfile];
+    isFollowersListRefreshing = true;
+    [self getFollowers:userProfile forPage:-1 withFollowersCount:(lastFollowersPageRequested * 20)];
 }
 
 - (void) onFollowingButtonClicked:(UIButton*)sender {
@@ -240,7 +328,8 @@
     
     activeView = FOLLOWING_VIEW;
     
-    [self getFollowing:userProfile];
+    isFollowingListRefreshing = true;
+    [self getFollowing:userProfile forPage:-1 withFollowingCount:(lastFollowingPageRequested * 20)];
 }
 
 - (void) openUserProfile:(UserProfileObject*)user {
@@ -270,11 +359,21 @@
 - (void) onLikedVideosRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
         NSDictionary* result = [response userProfile];
-        int count = [result objectForKey:@"count"] != [NSNull null] ? [[result objectForKey:@"count"] intValue] : 0;
-		NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
+        
+//        if ([likedVideosView count] == 0 || !isLikedVideosListRefreshing) {
+//            lastlikedVideosPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
+//        }
+        
+        if (!isLikedVideosListRefreshing) {
+            lastlikedVideosPageRequested += 1;
+        }
+        
+        int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
+        NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
                               [result objectForKey:@"videos"], @"videosList",
-                              [NSNumber numberWithInt:count], @"videoCount",
-                              [NSNumber numberWithBool:YES], @"isRefreshing",
+                              [NSNumber numberWithInt:total], @"videoCount",
+                              [NSNumber numberWithBool:isLikedVideosListRefreshing], @"isRefreshing",
+                              [NSNumber numberWithInt:lastlikedVideosPageRequested], @"lastPageRequested",
                               nil];
         [likedVideosView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
@@ -307,12 +406,20 @@
 - (void) onFollowersRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
         NSDictionary* result = [response userProfile];
-        int count = [result objectForKey:@"count"] != [NSNull null] ? [[result objectForKey:@"count"] intValue] : 0;
-        NSArray* followers = [result objectForKey:@"followers"];
+//        if ([followersView count] == 0 || !isFollowersListRefreshing) {
+//            lastFollowersPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
+//        }
         
-		NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
-                              followers, @"usersList",
-                              [NSNumber numberWithInt:count], @"userCount",
+        if (!isFollowersListRefreshing) {
+            lastFollowersPageRequested += 1;
+        }
+        
+        int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
+        NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [result objectForKey:@"followers"], @"usersList",
+                              [NSNumber numberWithInt:total], @"userCount",
+                              [NSNumber numberWithBool:isFollowersListRefreshing], @"isRefreshing",
+                              [NSNumber numberWithInt:lastFollowersPageRequested], @"lastPageRequested",
                               nil];
         [followersView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
@@ -345,12 +452,20 @@
 - (void) onFollowingRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
         NSDictionary* result = [response userProfile];
-        int count = [result objectForKey:@"count"] != [NSNull null] ? [[result objectForKey:@"count"] intValue] : 0;
-        NSArray* followers = [result objectForKey:@"following"];
+//        if ([followingView count] == 0 || !isFollowingListRefreshing) {
+//            lastFollowingPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
+//        }
         
-		NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
-                              followers, @"usersList",
-                              [NSNumber numberWithInt:count], @"userCount",
+        if (!isFollowingListRefreshing) {
+            lastFollowingPageRequested += 1;
+        }
+        
+        int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
+        NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [result objectForKey:@"following"], @"usersList",
+                              [NSNumber numberWithInt:total], @"userCount",
+                              [NSNumber numberWithBool:isFollowingListRefreshing], @"isRefreshing",
+                              [NSNumber numberWithInt:lastFollowingPageRequested], @"lastPageRequested",
                               nil];
         [followingView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
@@ -421,6 +536,7 @@
 
 - (void) setUserProfile: (UserProfileObject*)user {
     if (userProfile != nil) {
+        [userProfile resetProfileImageLoadedCallback];
         [userProfile release];
     }
     
@@ -447,6 +563,7 @@
     [self layoutSubviews];
     NSString* followButtonTitle = (userProfile.following ? @"unfollow" :  @"follow");
     [followButton setTitle:followButtonTitle forState:UIControlStateNormal];
+    LOG_DEBUG(@"Logged in user:%d", [UserObject getUser].userId);
     if ([UserObject getUser].userId == user.userId) {
         [followButton setHidden:YES];
     } else {
@@ -460,7 +577,7 @@
     if (![[NSThread currentThread] isCancelled]) {
         if (userProfile.normalPictureImage == nil) {
             if (!userProfile.pictureImageLoaded) {
-                [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                [self performSelector:@selector(downloadUserImage) withObject:nil];
             } else {
                 profilePicView.hidden = YES;
             }

@@ -172,22 +172,37 @@
     userNameTextView.delegate = nil;
     userEmailTextView.delegate = nil;
     
-    [nameLabel release];
-    [userProfileImageView release];
-    [userNameLabel release];
-    [userNameTextView release];
-    [userEmailLabel release];
-    [userEmailTextView release];
-    [checkboxImageView release];
-    [pushToFacebookLabel release];
-    [saveButton release];
-    [cancelButton release];
+    [userProfile resetProfileImageLoadedCallback];
+    
+    [nameLabel removeFromSuperview];
+    [userProfileImageView removeFromSuperview];
+    [userNameLabel removeFromSuperview];
+    [userNameTextView removeFromSuperview];
+    [userEmailLabel removeFromSuperview];
+    [userEmailTextView removeFromSuperview];
+    [checkboxImageView removeFromSuperview];
+    [pushToFacebookLabel removeFromSuperview];
+    [saveButton removeFromSuperview];
+    [cancelButton removeFromSuperview];
     
     if (loadingView != nil) {
-        [loadingView release];
+        [loadingView removeFromSuperview];
     }
     
     [userProfile release];
+    
+    nameLabel = nil;
+    userProfileImageView = nil;
+    userNameLabel = nil;
+    userNameTextView = nil;
+    userEmailLabel = nil;
+    userEmailTextView = nil;
+    checkboxImageView = nil;
+    pushToFacebookLabel = nil;
+    saveButton = nil;
+    cancelButton = nil;
+    loadingView = nil;
+    
     [super dealloc];
 }
 
@@ -203,7 +218,7 @@
         if (DeviceUtils.isIphone) {
             if (userProfile.smallPictureImage == nil) {
                 if (!userProfile.pictureImageLoaded) {
-                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                    [self performSelector:@selector(downloadUserImage) withObject:nil];
                 } else {
                     userProfileImageView.hidden = YES;
                 }
@@ -217,7 +232,7 @@
         } else {
             if (userProfile.normalPictureImage == nil) {
                 if (!userProfile.pictureImageLoaded) {
-                    [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                    [self performSelector:@selector(downloadUserImage) withObject:nil];
                 } else {
                     userProfileImageView.hidden = YES;
                 }
@@ -319,10 +334,11 @@
 
 - (void) downloadUserImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    [userProfile setProfileImageLoadedCallback:[Callback create:self selector:@selector(onUserImageLoaded:)]];
     if (DeviceUtils.isIphone) {
-        [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"small"];
+        [userProfile loadUserImage:@"small"];
     } else {
-        [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"normal"];
+        [userProfile loadUserImage:@"normal"];
     }
     [pool release];
 }
@@ -351,7 +367,10 @@
 
 - (void) onGetUserProfileRequestSuccess: (UserProfileResponse*)response {
 	if (response.success) {
-        if (userProfile != nil) [userProfile release];
+        if (userProfile != nil) {
+            [userProfile resetProfileImageLoadedCallback];
+            [userProfile release];
+        }
 		// save response and get videos
 		userProfile = [[UserProfileObject alloc] initFromDictionary:response.userProfile];
         if (userProfile != nil) {

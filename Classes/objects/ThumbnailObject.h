@@ -16,6 +16,10 @@
 	NSString*   thumbnailUrl;
     UIImage*    thumbnailImage;
     
+    NSMutableData*      thumbnailData;
+    NSURLConnection*    thumbnailUrlConnection;
+    NSLock*             thumbnailImageLoadedCallbackLock;
+    
     Callback*   onThumbnailImageLoaded;
 }
 
@@ -23,9 +27,9 @@
 @property()			int width;
 @property(retain)	NSString* thumbnailUrl;
 @property(retain)	UIImage* thumbnailImage;
-@property(retain)   Callback* onThumbnailImageLoaded;
 
 - (id) initFromDictionary: (NSDictionary*)data;
-
+- (void) setThumnailImageLoadedCallback:(Callback*)callback;
+- (void) resetThumnailImageLoadedCallback;
 
 @end

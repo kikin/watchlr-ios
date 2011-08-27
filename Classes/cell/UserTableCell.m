@@ -49,18 +49,18 @@
 }
 
 - (void) downloadUserImage {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [userProfile loadUserImage:[Callback create:self selector:@selector(onUserImageLoaded:)] withSize:@"square"];
-    [pool release];
+    [userProfile setProfileImageLoadedCallback:[Callback create:self selector:@selector(onUserImageLoaded:)]];
+    [userProfile loadUserImage:@"square"];
 }
 
 - (void) loadImage {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
+    profilePicView.hidden = YES;
     if (![[NSThread currentThread] isCancelled]) {
         if (userProfile.squarePictureImage == nil) {
             if (!userProfile.pictureImageLoaded) {
-                [self performSelectorInBackground:@selector(downloadUserImage) withObject:nil];
+                [self performSelector:@selector(downloadUserImage) withObject:nil];
             } else {
                 profilePicView.hidden = YES;
             }
@@ -82,8 +82,12 @@
 - (void)setUserObject: (UserProfileObject*)userProfileObject {
 	// change user profile object
     // LOG_DEBUG(@"Drawing the cell");
-	if (userProfile) 
+	if (userProfile) {
+        [userProfile resetProfileImageLoadedCallback];
         [userProfile release];
+        
+        userProfile = nil;
+    }
     
     userProfile = [userProfileObject retain];
     
@@ -115,9 +119,19 @@
 }
 
 - (void)dealloc {
-    [profilePicView release];
-    [userNameLabel release];
+    [userProfile resetProfileImageLoadedCallback];
+    
+    [profilePicView removeFromSuperview];
+    [userNameLabel removeFromSuperview];
+    
     [openUserProfileCallback release];
+    [userProfile release];
+    
+    profilePicView = nil;
+    userNameLabel = nil;
+    openUserProfileCallback = nil;
+    userProfile = nil;
+    
     [super dealloc];
 }
 

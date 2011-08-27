@@ -21,12 +21,13 @@
 }
 
 - (id) init;
-- (NSString*) sessionId;
-- (void) setSessionId: (NSString*)_sessionId;
+- (void) saveUserProfile;
+- (void) resetUser;
 
 + (UserObject*) instance;
 + (UserObject*) getUser;
 
+@property(retain) NSString* sessionId;
 @property(retain) UIImage* userImage;
 @property(retain) NSString* userName;
 @property(retain) NSString* userEmail;

@@ -50,5 +50,6 @@ typedef enum {
 - (int)     count;
 - (void)    resetLoadingStatus;
 - (void)    closePlayer;
+- (void)    didReceiveMemoryWarning;
 
 @end

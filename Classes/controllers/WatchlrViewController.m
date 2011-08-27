@@ -8,7 +8,6 @@
 
 #import "WatchlrViewController.h"
 #import "LoginViewController.h"
-#import "UserObject.h"
 #import "VideoPlayerView.h"
 #import "VideoTableCell.h"
 
@@ -17,8 +16,6 @@
 #import "TrackerRequest.h"
 
 @implementation WatchlrViewController
-
-@synthesize onLogoutCallback;
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
@@ -68,15 +65,6 @@
 // --------------------------------------------------------------------------------
 //                      Public functions
 // --------------------------------------------------------------------------------
-
-- (void) logoutUser {
-    // erase userId
-	UserObject* userObject = [UserObject getUser];
-	userObject.sessionId = nil;
-    if (onLogoutCallback != nil) {
-        [onLogoutCallback execute:nil];
-    }
-}
 
 - (void) onTabInactivate {
     // subclasses should implement this method 

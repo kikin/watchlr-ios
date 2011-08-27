@@ -15,6 +15,10 @@
 	NSString*   sourceUrl;
     UIImage*    faviconImage;
     
+    NSMutableData*      faviconImageData;
+    NSURLConnection*    faviconImageUrlConnection;
+    NSLock*             faviconImageLoadedCallbackLock;
+    
     bool        isFaviconImageLoaded;
     Callback*   onFaviconImageLoaded;
 }
@@ -24,8 +28,9 @@
 @property(retain)	NSString* sourceUrl;
 @property(retain)	UIImage* faviconImage;
 @property()         bool isFaviconImageLoaded;
-@property(retain)   Callback* onFaviconImageLoaded;
 
 - (id) initFromDictionary: (NSDictionary*)data;
+- (void) setFaviconImageLoadedCallback:(Callback*)callback;
+- (void) resetFaviconImageLoadedCallback;
 
 @end

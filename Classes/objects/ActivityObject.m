@@ -32,14 +32,13 @@
 
 @synthesize timestamp, activity_heading, activityHeadingLabelsList, userActivities, video;
 
-- (NSArray*) getActivityHeadingLabels {
+- (void) getActivityHeadingLabels:(NSMutableArray*) activityHeadingLabels {
     NSError* error = NULL;
     NSRegularExpression *htmlLinksRegex = [NSRegularExpression regularExpressionWithPattern:@"<a href=(.+?)<\\/a>"
                                                                                   options:NSRegularExpressionCaseInsensitive
                                                                                     error:&error];
     
     // If there is no error in regex, try to find all the matches in regex 
-    NSMutableArray* activityHeadingLabels = [[NSMutableArray alloc] init];
     int previousLinkEndPos = 0;
     if (error == NULL) {
         NSArray* matchedStrings = [htmlLinksRegex matchesInString:activity_heading options:0 range:NSMakeRange(0, [activity_heading length])];
@@ -88,36 +87,37 @@
     }
 //    LOG_DEBUG(@"Text at the end:%@", textWithoutLink);
     
-    return activityHeadingLabels;
 }
 
 - (id) initFromDictionary: (NSDictionary*)data { 
     self.timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
     self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
-    self.video = [data objectForKey:@"video"] != [NSNull null] ? [[VideoObject alloc] initFromDictionary:[data objectForKey:@"video"]] : nil;
+    self.video = [data objectForKey:@"video"] != [NSNull null] ? [[[VideoObject alloc] initFromDictionary:[data objectForKey:@"video"]] autorelease] : nil;
     
-    if (activity_heading != nil) 
-        activityHeadingLabelsList = [self getActivityHeadingLabels];
+    if (self.activity_heading != nil) {
+        activityHeadingLabelsList = [[NSMutableArray alloc] initWithCapacity:5];
+        [self getActivityHeadingLabels:activityHeadingLabelsList];
+    }
     
     NSArray* userActivitiesList = [data objectForKey:@"user_activities"];
     if (userActivitiesList != nil) {
-        self.userActivities = [[NSMutableArray alloc] init];
+        userActivities = [[NSMutableArray alloc] init];
         for (NSDictionary* userActivity in userActivitiesList) {
             UserActivityObject* userActivityObject = [[[UserActivityObject alloc] initFromDictionary:userActivity] autorelease];
-            [self.userActivities addObject:userActivityObject];
+            [userActivities addObject:userActivityObject];
         }
     } else {
-        self.userActivities = nil;
+        userActivities = nil;
     }
     
     return self;
 }
 
 - (void) updateFromDictionary: (NSDictionary*)data { 
-    self.timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
-    self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
+    timestamp = [data objectForKey:@"timestamp"] != [NSNull null] ? [[data objectForKey:@"timestamp"] doubleValue] : 0.0;
+    activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
     if ([data objectForKey:@"video"] != [NSNull null]) {
-        [self.video updateFromDictionary:[data objectForKey:@"video"]];
+        [video updateFromDictionary:[data objectForKey:@"video"]];
     }
     
     if (activityHeadingLabelsList != nil) {
@@ -125,18 +125,20 @@
         activityHeadingLabelsList = nil;
     }
     
-    if (activity_heading != nil) 
-        activityHeadingLabelsList = [self getActivityHeadingLabels];
+    if (activity_heading != nil) {
+        activityHeadingLabelsList = [[NSMutableArray alloc] initWithCapacity:5];
+        [self getActivityHeadingLabels:activityHeadingLabelsList];
+    }
     
     // release the previous list of user activities object and create the new one.
-    [self.userActivities release];
-    self.userActivities = nil;
+    [userActivities release];
+    userActivities = nil;
     NSArray* userActivitiesList = [data objectForKey:@"user_activities"];
     if (userActivitiesList != nil) {
-        self.userActivities = [[NSMutableArray alloc] init];
+        userActivities = [[NSMutableArray alloc] init];
         for (NSDictionary* userActivity in userActivitiesList) {
             UserActivityObject* userActivityObject = [[[UserActivityObject alloc] initFromDictionary:userActivity] autorelease];
-            [self.userActivities addObject:userActivityObject];
+            [userActivities addObject:userActivityObject];
         }
     }
 }
@@ -144,20 +146,25 @@
 - (NSDictionary*) toDictionary {
     NSMutableDictionary* userActivity = [[[NSMutableDictionary alloc] init] autorelease];
     
-    [userActivity setObject:[[NSNumber numberWithDouble:self.timestamp] stringValue] forKey:@"timestamp"];
-    [userActivity setObject:self.activity_heading forKey:@"activity_heading"];
-    [userActivity setObject:self.userActivities forKey:@"user_activities"];
-    [userActivity setObject:self.video forKey:@"video"];
+    [userActivity setObject:[[NSNumber numberWithDouble:timestamp] stringValue] forKey:@"timestamp"];
+    [userActivity setObject:activity_heading forKey:@"activity_heading"];
+    [userActivity setObject:userActivities forKey:@"user_activities"];
+    [userActivity setObject:video forKey:@"video"];
     
     return userActivity;
 }
 
 - (void) dealloc {
-    self.activity_heading = nil;
-    self.userActivities = nil;
-    self.video = nil;
-    
+//    if (activity_heading != nil) {
+//        [activity_heading release];
+//    }
     [activityHeadingLabelsList release];
+    [userActivities release];
+    [video release];
+    
+    activity_heading = nil;
+    userActivities = nil;
+    video = nil;
     activityHeadingLabelsList = nil;
     
     [super dealloc];
