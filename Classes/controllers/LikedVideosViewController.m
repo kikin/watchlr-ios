@@ -9,6 +9,7 @@
 #import "LikedVideosViewController.h"
 #import "VideoResponse.h"
 #import "WebViewController.h"
+#import "VideoDetailedViewController.h"
 
 @implementation LikedVideosViewController
 
@@ -21,6 +22,10 @@
     videosListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     videosListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
     videosListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
+    videosListView.openVideoDetailPageCallback = [Callback create:self selector:@selector(openVideoDetailPage:)];
+    videosListView.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+    videosListView.closeVideoPlayerCallback = [Callback create:self selector:@selector(closeVideoPlayer)];
+    videosListView.sendAllVideoFinishedMessageCallback = [Callback create:self selector:@selector(sendAllVideosFinishedMessage:)];
     videosListView.isViewRefreshable = true;
     [self.view addSubview:videosListView];
     [self.view sendSubviewToBack:videosListView]; 
@@ -53,6 +58,12 @@
     [videosListView removeFromSuperview];
 	[videoListRequest release];
     
+    if (videoPlayerViewController != nil) {
+        [self.navigationController popToViewController:self animated:NO];
+        [videoPlayerViewController release];
+    }
+    
+    videoPlayerViewController = nil;
     videosListView = nil;
     videoListRequest = nil;
     [super dealloc];
@@ -98,6 +109,45 @@
     [self.navigationController pushViewController:webViewController animated:YES];
     [webViewController loadUrl:sourceUrl];
     
+}
+
+- (void) openVideoDetailPage:(VideoObject*)video {
+    VideoDetailedViewController* videoDeatiledViewController = [[[VideoDetailedViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:videoDeatiledViewController animated:YES];
+    [videoDeatiledViewController setVideoObject:video shouldAllowVideoRemoval:NO];
+}
+
+- (void) playVideo:(VideoObject*)video {
+    if (videoPlayerViewController == nil) {
+        videoPlayerViewController = [[VideoPlayerViewController alloc] init];
+        [videosListView setVideoPlayerViewControllerCallbacks:videoPlayerViewController];
+    }
+    
+    bool isLeanBackMode = true;
+    if (self.modalViewController == nil) {
+        isLeanBackMode = false;
+        [self presentModalViewController:videoPlayerViewController animated:NO];
+    }
+    
+    [videoPlayerViewController playVideo:video];
+    
+    if (isLeanBackMode) {
+        [videosListView trackAction:@"leanback-view" forVideo:video.videoId];
+    } else {
+        [videosListView trackAction:@"view" forVideo:video.videoId];
+    }
+}
+
+- (void) closeVideoPlayer {
+    if (videoPlayerViewController != nil) {
+        [videoPlayerViewController closePlayer];
+    }
+}
+
+- (void) sendAllVideosFinishedMessage:(NSNumber*)nextButtonClicked {
+    if (videoPlayerViewController != nil) {
+        [videoPlayerViewController sendAllVideosFinishedMessage:[nextButtonClicked boolValue]];
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -154,12 +204,18 @@
 
 - (void) onTabActivate {
     isActiveTab = true;
-    [self onClickRefresh];
+    if (self.navigationController.visibleViewController == self) {
+        [self onClickRefresh];
+    }
 }
 
 - (void) onApplicationBecomeInactive {
     isActiveTab = false;
     [videosListView closePlayer];
+}
+
+- (BOOL) shouldRotate {
+    return [videosListView isVideoPlaying];
 }
 
 @end

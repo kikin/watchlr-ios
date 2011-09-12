@@ -60,4 +60,8 @@
     [super dealloc];
 }
 
+- (BOOL) shouldRotate {
+    return NO;
+}
+
 @end

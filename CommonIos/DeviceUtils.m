@@ -18,6 +18,10 @@
 	return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
 }
 
++ (NSString*) version {
+    return [[UIDevice currentDevice] systemVersion];
+}
+
 + (OSMemoryNotificationLevel) currentMemoryLevel {
 #if !TARGET_IPHONE_SIMULATOR
 	return OSMemoryNotificationCurrentLevel();

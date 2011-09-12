@@ -29,9 +29,8 @@
         
         // set size/positions
 		if (DeviceUtils.isIphone) {
-			videoImageView.frame = CGRectMake(10, 10, 106, 80);
-			playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
-            
+            userImageView.frame = CGRectMake(5, 5, 30, 30);
+			
             titleLabel.font = [UIFont boldSystemFontOfSize:12];
             titleLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
             titleLabel.numberOfLines = 3;
@@ -100,24 +99,48 @@
 - (void) fixSize {
     if (DeviceUtils.isIphone) {
         
-        int thumbnailWidth = 125;
-        int	faviconAndSourceHeight = 20;
-        int titleHeight = 50;
+        activityHeading.frame = CGRectMake(userImageView.frame.origin.x + userImageView.frame.size.width + 10, 8, 
+                                           (self.frame.size.width - 70), 10);
+        
+        videoImageView.frame = CGRectMake(userImageView.frame.origin.x + userImageView.frame.size.width + 10, 
+                                          activityHeading.frame.origin.y + activityHeading.frame.size.height + 10, 
+                                          93, 70);
+        
+        playButtonImage.frame = CGRectMake((((videoImageView.frame.size.width - 15) / 2) + videoImageView.frame.origin.x), 
+                                           (((videoImageView.frame.size.height - 17) / 2) + videoImageView.frame.origin.y), 22, 22);
         
         // set the size for title label
-        titleLabel.frame = CGRectMake(thumbnailWidth, 12, (self.frame.size.width - (thumbnailWidth + 10)), titleHeight);
+        CGFloat titleLabelHeight = MIN((self.frame.size.height - 30), 
+                                       [titleLabel.text sizeWithFont:titleLabel.font 
+                                                        constrainedToSize:CGSizeMake(self.frame.size.width - 180, self.frame.size.height - 65) 
+                                                        lineBreakMode:UILineBreakModeCharacterWrap].height);
         
-        // set the size for likes label
-        likesLabel.frame = CGRectMake((self.frame.size.width - 68), self.frame.size.height - (faviconAndSourceHeight + 10), 35, 20);
+        titleLabel.frame = CGRectMake(videoImageView.frame.origin.x + videoImageView.frame.size.width + 5, 
+                                      activityHeading.frame.origin.y + activityHeading.frame.size.height + 10, 
+                                      (self.frame.size.width - 180), titleLabelHeight);
         
-        // set the size for like/unlike button
-        likeImageView.frame = CGRectMake((self.frame.size.width - 30), self.frame.size.height - (faviconAndSourceHeight + 10), 20, 20);
+        faviconImageView.frame = CGRectMake(videoImageView.frame.origin.x + videoImageView.frame.size.width + 5, 
+                                            self.frame.size.height - 57, 16, 16);
         
-        // set the size for favicon image
-        faviconImageView.frame = CGRectMake(thumbnailWidth, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+        dotLabel1.frame = CGRectMake(faviconImageView.frame.origin.x + faviconImageView.frame.size.width + 5, 
+                                     self.frame.size.height - 59, 
+                                     [dotLabel1.text sizeWithFont:dotLabel1.font].width, 
+                                     15);
         
-        // set the size for source label
-        sourceLabel.frame = CGRectMake((thumbnailWidth + 20), self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (thumbnailWidth + 20)), 15);
+        // set the timestamp label position
+        timestampLabel.frame = CGRectMake(dotLabel1.frame.origin.x + dotLabel1.frame.size.width + 5, 
+                                          self.frame.size.height - 54, 
+                                          [timestampLabel.text sizeWithFont:timestampLabel.font].width, 
+                                          15);
+        
+        optionsButtonView.frame = CGRectMake(userImageView.frame.origin.x + userImageView.frame.size.width + 10, 
+                                             videoImageView.frame.origin.y + videoImageView.frame.size.height + 2, 
+                                             self.frame.size.width - 70, 30);
+        CGFloat optionsButtonViewMidPoint = optionsButtonView.frame.size.width / 2;
+        likeButton.frame = CGRectMake(6, 10, optionsButtonViewMidPoint - 9, optionsButtonView.frame.size.height - 13);
+        saveButton.frame = CGRectMake(optionsButtonViewMidPoint + 3, 10, optionsButtonViewMidPoint - 9, optionsButtonView.frame.size.height - 13);
+        
+        detailDisclosureButton.frame = CGRectMake(self.frame.size.width - 35, ((videoImageView.frame.size.height - 29) / 2) + videoImageView.frame.origin.y, 29, 29);
         
     } else {
         int userImageAndOptionsWidth = 210;
@@ -194,7 +217,7 @@
     }
     activityObject = [activity retain];
     
-    [self setVideoObject:activityObject.video];
+    [self setVideoObject:activityObject.video shouldAllowVideoRemoval:NO];
     
     // set timestamp
     timestampLabel.text = [self getPrettyDate:activity.timestamp];

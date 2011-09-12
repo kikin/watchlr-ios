@@ -6,48 +6,42 @@
 //  Copyright 2011 kikin. All rights reserved.
 //
 
-#import "SavedVideosViewController.h"
-#import "VideoResponse.h"
+#import "VideosViewController.h"
 #import "WebViewController.h"
 #import "VideoDetailedViewController.h"
+#import "UserProfileRequest.h"
+#import "UserProfileResponse.h"
 
-@implementation SavedVideosViewController
+@implementation VideosViewController
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     [super loadView];
     
-    videosListView = [[SavedVideosListView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    videosListView = [[VideosListView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     videosListView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    videosListView.refreshListCallback = [Callback create:self selector:@selector(onClickRefresh)];
     videosListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
     videosListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     videosListView.openVideoDetailPageCallback = [Callback create:self selector:@selector(openVideoDetailPage:)];
     videosListView.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
     videosListView.closeVideoPlayerCallback = [Callback create:self selector:@selector(closeVideoPlayer)];
     videosListView.sendAllVideoFinishedMessageCallback = [Callback create:self selector:@selector(sendAllVideosFinishedMessage:)];
-    videosListView.isViewRefreshable = true;
+    videosListView.isViewRefreshable = false;
     [self.view addSubview:videosListView];
-    [self.view sendSubviewToBack:videosListView];
+    [self.view sendSubviewToBack:videosListView]; 
 	
 	// request video list
-    isRefreshing = true;
+//    isRefreshing = true;
 //	[self doVideoListRequest:-1 withVideosCount:10];
 }
 
 - (void) didReceiveMemoryWarning {
     if (!isActiveTab) {
         [videosListView didReceiveMemoryWarning];
-        
-        [videoListRequest release];
-        videoListRequest = nil;
     } else {
         int level = [DeviceUtils currentMemoryLevel];
         if (level >= OSMemoryNotificationLevelUrgent) {
             [videosListView didReceiveMemoryWarning];
-            
-            [videoListRequest release];
-            videoListRequest = nil;
         }
     }
     
@@ -58,7 +52,6 @@
 - (void)dealloc {
 	// release memory
     [videosListView removeFromSuperview];
-	[videoListRequest release];
     
     if (videoPlayerViewController != nil) {
         [self.navigationController popToViewController:self animated:NO];
@@ -67,44 +60,31 @@
     
     videoPlayerViewController = nil;
     videosListView = nil;
-    videoListRequest = nil;
     [super dealloc];
 }
 
 // --------------------------------------------------------------------------------
-//                          Private Functions
+//                                  Requests
 // --------------------------------------------------------------------------------
 
-- (void) doVideoListRequest:(int)pageStart withVideosCount:(int)videosCount {
-	// get the list of videos
-	if (videoListRequest == nil) {
-		videoListRequest = [[VideoListRequest alloc] init];
-		videoListRequest.errorCallback = [Callback create:self selector:@selector(onListRequestFailed:)];
-		videoListRequest.successCallback = [Callback create:self selector:@selector(onListRequestSuccess:)];
-	}
-	if ([videoListRequest isRequesting]) {
-		[videoListRequest cancelRequest];
-	}
-	[videoListRequest doGetVideoListRequest:NO startingAt:pageStart withCount:videosCount];	
+- (void) getLikedVideos:(int)user_id forPage:(int)pageNumber withVideosCount:(int)videosCount {
+    UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
+    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onLikedVideosRequestFailed:)];
+    userProfileRequest.successCallback = [Callback create:self selector:@selector(onLikedVideosRequestSuccess:)];
+	[userProfileRequest getLikedVideosByUser:user_id forPage:pageNumber withVideosCount:videosCount];
 }
-
 
 // --------------------------------------------------------------------------------
 //                                  Callbacks
 // --------------------------------------------------------------------------------
 - (void) onApplicationBecomeActive: (NSNotification*)notification {
     isRefreshing = true;
-    [self doVideoListRequest: -1 withVideosCount:10];
-}
-
-- (void) onClickRefresh {
-    isRefreshing = true;
-	[self doVideoListRequest:-1 withVideosCount:(lastPageRequested * 10)];
+    [self getLikedVideos:userId forPage:-1 withVideosCount:10];
 }
 
 - (void) onLoadMoreData {
     isRefreshing = false;
-    [self doVideoListRequest: (lastPageRequested + 1) withVideosCount:10];
+    [self getLikedVideos:userId forPage:(lastPageRequested + 1) withVideosCount:10];
 }
 
 - (void) onViewSourceClicked:(NSString*)sourceUrl {
@@ -117,7 +97,7 @@
 - (void) openVideoDetailPage:(VideoObject*)video {
     VideoDetailedViewController* videoDeatiledViewController = [[[VideoDetailedViewController alloc] init] autorelease];
     [self.navigationController pushViewController:videoDeatiledViewController animated:YES];
-    [videoDeatiledViewController setVideoObject:video shouldAllowVideoRemoval:YES];
+    [videoDeatiledViewController setVideoObject:video shouldAllowVideoRemoval:NO];
 }
 
 - (void) playVideo:(VideoObject*)video {
@@ -157,24 +137,26 @@
 //                             Request Callbacks
 // --------------------------------------------------------------------------------
 
-- (void) onListRequestSuccess: (VideoListResponse*)response {
+- (void) onLikedVideosRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
-		// LOG_DEBUG(@"list request success");
+        NSDictionary* result = [response userProfile];
+        
         if ([videosListView count] == 0 || !isRefreshing) {
-            lastPageRequested = [response page];
+            lastPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
         }
+        
+        int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
         NSDictionary* args = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [response videos], @"videosList",
-                              [NSNumber numberWithInt:[response total]], @"videoCount",
+                              [result objectForKey:@"videos"], @"videosList",
+                              [NSNumber numberWithInt:total], @"videoCount",
                               [NSNumber numberWithBool:isRefreshing], @"isRefreshing",
                               [NSNumber numberWithInt:lastPageRequested], @"lastPageRequested",
                               nil];
         [videosListView performSelectorInBackground:@selector(updateListWrapper:) withObject:args];
 	} else {
         [videosListView resetLoadingStatus];
-        isRefreshing = false;
         
-		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", response.errorMessage];
+		NSString* errorMessage = [NSString stringWithFormat:@"We failed to retrieve user videos: %@", response.errorMessage];
 		
 		// show error message
 		UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to retrieve videos" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -185,11 +167,10 @@
 	}
 }
 
-- (void) onListRequestFailed: (NSString*)errorMessage {
+- (void) onLikedVideosRequestFailed: (NSString*)errorMessage {
     [videosListView resetLoadingStatus];
-    isRefreshing = false;
     
-    NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve your videos: %@", errorMessage];
+    NSString* errorString = [NSString stringWithFormat:@"We failed to retrieve user videos: %@", errorMessage];
 	
 	// show error message
 	UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to retrieve videos" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -203,6 +184,11 @@
 //                          Public Functions
 // --------------------------------------------------------------------------------
 
+- (void) setUserProfile:(int)user_id {
+    userId = user_id;
+    [self getLikedVideos:userId forPage:-1 withVideosCount:10];
+}
+
 - (void) onTabInactivate {
     isActiveTab = false;
     [videosListView closePlayer];
@@ -211,7 +197,9 @@
 - (void) onTabActivate {
     isActiveTab = true;
     if (self.navigationController.visibleViewController == self) {
-        [self onClickRefresh];
+        if ([videosListView count] == 0) {
+            [self getLikedVideos:userId forPage:-1 withVideosCount:10];
+        }
     }
 }
 

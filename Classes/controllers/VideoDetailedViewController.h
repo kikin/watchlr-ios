@@ -7,18 +7,17 @@
 //
 
 #import "WatchlrViewController.h"
-#import "VideoListRequest.h"
-#import "SavedVideosListView.h"
+#import "VideoDetailView.h"
+#import "VideoObject.h"
 #import "VideoPlayerViewController.h"
 
-@interface SavedVideosViewController : WatchlrViewController {
-	VideoListRequest* videoListRequest;
-    SavedVideosListView* videosListView;
+@interface VideoDetailedViewController: WatchlrViewController {
+    VideoDetailView* videoDetailView;
     VideoPlayerViewController* videoPlayerViewController;
     
-	int lastPageRequested;
-    bool isRefreshing;
     bool isActiveTab;
 }
+
+- (void) setVideoObject:(VideoObject*)videoObject shouldAllowVideoRemoval:(BOOL)allowVideoRemoval;
 
 @end

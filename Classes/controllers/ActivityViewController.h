@@ -11,6 +11,7 @@
 #import "UserActivityListRequest.h"
 #import "ActivityListView.h"
 #import "ActivityFilterView.h"
+#import "VideoPlayerViewController.h"
 
 @interface ActivityViewController : WatchlrViewController {
 	UserActivityListRequest* activityListRequest;
@@ -18,6 +19,9 @@
     ActivityListView* facebookOnlyActivitiesListView;
     ActivityListView* watchlrOnlyActivitiesListView;
     ActivityFilterView* activityFilterView;
+    VideoPlayerViewController* allActivitiesVideoPlayerViewController;
+    VideoPlayerViewController* facebookOnlyActivitiesVideoPlayerViewController;
+    VideoPlayerViewController* watchlrOnlyActivitiesVideoPlayerViewController;
     
     UITapGestureRecognizer* tapGesture;
     

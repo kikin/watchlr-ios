@@ -7,10 +7,11 @@
 //
 
 #import "VideoObject.h"
+#import "UserProfileObject.h"
 
 @implementation VideoObject
 
-@synthesize videoId, title, description, thumbnail, videoUrl, hostUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek, savedInCurrentTab, timestamp;
+@synthesize videoId, title, description, thumbnail, videoUrl, hostUrl, embedUrl, htmlCode, likes, videoSource, liked, saved, seek, savedInCurrentTab, timestamp, likedByUsers;
 
 - (id) initFromDictionary: (NSDictionary*)data {
     // LOG_DEBUG(@"Creating new video object");
@@ -37,9 +38,13 @@
         videoSource = [[SourceObject alloc] initFromDictionary:sourceDict];
     }
     
+    likedByUsers = [[data objectForKey:@"liked_by"] retain];
+    
     // set default values
 	if (self.title == nil) title = @"";
 	if (self.description == nil) description = @"";
+    
+    self.savedInCurrentTab = false;
 	
 	return self;
 }
@@ -49,6 +54,13 @@
     likes = [data objectForKey:@"likes"] != [NSNull null] ? [[data objectForKey:@"likes"] intValue] : likes;
     saved = [data objectForKey:@"saved"] != [NSNull null] ? [[data objectForKey:@"saved"] boolValue] : saved;
     seek = [data objectForKey:@"seek"] != [NSNull null] ? [[data objectForKey:@"seek"] doubleValue] : seek;
+    
+    // release the previous list of user activities object and create the new one.
+    if (likedByUsers != nil) 
+        [likedByUsers release];
+    
+    likedByUsers = nil;
+    likedByUsers = [[data objectForKey:@"liked_by"] retain];
 }
 
 - (void) dealloc {
@@ -61,6 +73,10 @@
     [hostUrl release];
     [htmlCode release];
     
+    if (likedByUsers != nil) {
+        [likedByUsers release];
+    }
+    
 	title = nil;
 	description = nil;
 	videoUrl = nil;
@@ -69,6 +85,8 @@
 	thumbnail = nil;
     htmlCode = nil;
     videoSource = nil;
+    likedByUsers = nil;
+    
 	[super dealloc];
 }
 

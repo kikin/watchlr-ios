@@ -12,7 +12,7 @@
 
 @implementation VideoTableCell
 
-@synthesize playVideoCallback, likeVideoCallback, unlikeVideoCallback, addVideoCallback, viewSourceCallback;
+@synthesize playVideoCallback, likeVideoCallback, unlikeVideoCallback, addVideoCallback, removeVideoCallback, viewSourceCallback, viewDetailCallback;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
@@ -32,15 +32,6 @@
 		titleLabel.text = @"title";
 		[self addSubview:titleLabel];
         
-        // create the number of likes label
-		likesLabel = [[UILabel alloc] init];
-		likesLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        likesLabel.text = [[NSNumber numberWithInt:1] stringValue];
-        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
-        likesLabel.textAlignment = UITextAlignmentRight;
-        likesLabel.numberOfLines = 1;
-		[self addSubview:likesLabel];
-        
         // Create the favicon image
         faviconImageView = [[UIImageView alloc] init];
         faviconImageView.autoresizingMask = UIViewAutoresizingNone;
@@ -52,7 +43,6 @@
         dotLabel1 = [[UILabel alloc] init];
 		dotLabel1.backgroundColor = [UIColor clearColor];
 		dotLabel1.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		dotLabel1.font = [UIFont boldSystemFontOfSize:25];
 		dotLabel1.text = @".";
         dotLabel1.textColor = [UIColor blackColor];
         dotLabel1.numberOfLines = 1;
@@ -62,52 +52,52 @@
         timestampLabel = [[UILabel alloc] init];
 		timestampLabel.backgroundColor = [UIColor clearColor];
 		timestampLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		timestampLabel.font = [UIFont systemFontOfSize:13];
 		timestampLabel.textColor = [UIColor colorWithRed:(181.0 / 255.0) green:(181.0 / 255.0) blue:(181.0 / 255.0) alpha:1.0];
         timestampLabel.numberOfLines = 1;
 		[self addSubview:timestampLabel];
         
-        // create the second dot separator
-        dotLabel2 = [[UILabel alloc] init];
-		dotLabel2.backgroundColor = [UIColor clearColor];
-		dotLabel2.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		dotLabel2.font = [UIFont boldSystemFontOfSize:25];
-		dotLabel2.text = @".";
-        dotLabel2.textColor = [UIColor blackColor];
-        dotLabel2.numberOfLines = 1;
-		[self addSubview:dotLabel2];
-        
-        // Create the source label
-        sourceLabel = [[UILabel alloc] init];
-		sourceLabel.backgroundColor = [UIColor clearColor];
-		sourceLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		sourceLabel.font = [UIFont systemFontOfSize:13];
-		sourceLabel.text = @"source";
-        sourceLabel.textColor = [UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0];
-        sourceLabel.numberOfLines = 1;
-		[self addSubview:sourceLabel];
-        sourceLabel.hidden = YES;
-		
-		// create the like button
-        likeImageView = [[UIImageView alloc] init];
-        likeImageView.autoresizingMask = UIViewAutoresizingNone;
-		[self addSubview:likeImageView];
-        
-        // create the save button
-        saveImageView = [[UIImageView alloc] init];
-        saveImageView.autoresizingMask = UIViewAutoresizingNone;
-        [self addSubview:saveImageView];
-        
         // set size/positions
 		if (DeviceUtils.isIphone) {
-			videoImageView.frame = CGRectMake(10, 10, 106, 80);
-			playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
+			videoImageView.frame = CGRectMake(5, 5, 106, 80);
+			playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 20) / 2), ((videoImageView.frame.size.height - 22) / 2), 32, 32);
             
             titleLabel.font = [UIFont boldSystemFontOfSize:12];
-            titleLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
+            titleLabel.lineBreakMode = UILineBreakModeTailTruncation;
             titleLabel.numberOfLines = 3;
             
-            likesLabel.font = [UIFont boldSystemFontOfSize:20];
+            // set the size of dot labels
+            dotLabel1.font = [UIFont boldSystemFontOfSize:25];
+            
+            // set the font for source label and timestamp label
+            timestampLabel.font = [UIFont systemFontOfSize:12];
+            
+            optionsButtonView = [[UIBubbleView alloc] init];
+            optionsButtonView.backgroundColor = [UIColor clearColor];
+            [self addSubview:optionsButtonView];
+            
+            likeButton = [[UICustomButton alloc] init];
+//            likeButton.backgroundColor = [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0];
+            likeButton.titleLabel.font = [UIFont systemFontOfSize:12];
+            likeButton.imageEdgeInsets = UIEdgeInsetsMake(0, -5, 0, 0);
+            likeButton.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+            [likeButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0] forState:UIControlStateNormal];
+            [likeButton addTarget:self action:@selector(onLikeButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [optionsButtonView addSubview:likeButton];
+            
+            saveButton = [[UICustomButton alloc] init];
+//            saveButton.backgroundColor = [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0];
+            saveButton.titleLabel.font = [UIFont systemFontOfSize:12];
+            saveButton.imageEdgeInsets = UIEdgeInsetsMake(0, -5, 0, 0);
+            saveButton.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+            [saveButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1.0] forState:UIControlStateNormal];
+            [saveButton addTarget:self action:@selector(onSaveButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [optionsButtonView addSubview:saveButton];
+            
+            detailDisclosureButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
+            [detailDisclosureButton setImage:[UIImage imageNamed:@"detail_disclosure.png"] forState:UIControlStateNormal];
+            [detailDisclosureButton addTarget:self action:@selector(onDetailButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [self addSubview:detailDisclosureButton];
+            
 		} else {
 			videoImageView.frame = CGRectMake(10, 10, 160, 120);
             playButtonImage.frame = CGRectMake(((videoImageView.frame.size.width - 30) / 2), ((videoImageView.frame.size.height - 32) / 2), 50, 50);
@@ -127,8 +117,55 @@
             descriptionLabel.numberOfLines = 3;
             [self addSubview:descriptionLabel];
             
+            // create the number of likes label
+            likesLabel = [[UILabel alloc] init];
+            likesLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            likesLabel.text = [[NSNumber numberWithInt:1] stringValue];
+            likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+            likesLabel.textAlignment = UITextAlignmentRight;
             likesLabel.font = [UIFont boldSystemFontOfSize:30];
+            likesLabel.numberOfLines = 1;
+            [self addSubview:likesLabel];
+            
+            // create the like button
+            likeImageView = [[UIImageView alloc] init];
+            likeImageView.autoresizingMask = UIViewAutoresizingNone;
+            [self addSubview:likeImageView];
+            
+            // create the save button
+            saveImageView = [[UIImageView alloc] init];
+            saveImageView.autoresizingMask = UIViewAutoresizingNone;
+            [self addSubview:saveImageView];
+            
+            // create the second dot separator
+            dotLabel2 = [[UILabel alloc] init];
+            dotLabel2.backgroundColor = [UIColor clearColor];
+            dotLabel2.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            dotLabel2.text = @".";
+            dotLabel2.textColor = [UIColor blackColor];
+            dotLabel2.numberOfLines = 1;
+            [self addSubview:dotLabel2];
+            
+            // Create the source label
+            sourceLabel = [[UILabel alloc] init];
+            sourceLabel.backgroundColor = [UIColor clearColor];
+            sourceLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            sourceLabel.text = @"source";
+            sourceLabel.textColor = [UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0];
+            sourceLabel.numberOfLines = 1;
+            [self addSubview:sourceLabel];
+            sourceLabel.hidden = YES;
+            
+            // set the font size of dot labels
+            dotLabel1.font = [UIFont boldSystemFontOfSize:25];
+            dotLabel2.font = [UIFont boldSystemFontOfSize:25];
+            
+            // set the font for source label and timestamp label
+            timestampLabel.font = [UIFont systemFontOfSize:13];
+            sourceLabel.font = [UIFont systemFontOfSize:13];
 		}
+        
+        videoRemovalAllowed = false;
 	}
     return self;
 }
@@ -144,18 +181,49 @@
         imageThread = nil;
     }
     
-    [saveImageView removeFromSuperview];
+    if (saveImageView)
+        [saveImageView removeFromSuperview];
+    
+    if (descriptionLabel)
+        [descriptionLabel removeFromSuperview];
+    
+    if (likesLabel)
+        [likesLabel removeFromSuperview];
+    
+    if (likeImageView)
+        [likeImageView removeFromSuperview];
+    
+    if (optionsButtonView) {
+        [optionsButtonView removeFromSuperview];
+    }
+    
+    if (saveButton) {
+        [saveButton removeFromSuperview];
+    }
+    
+    if (likeButton) {
+        [likeButton removeFromSuperview];
+    }
+    
+    if (detailDisclosureButton) {
+        [detailDisclosureButton  removeFromSuperview];
+    }
+    
+    if (dotLabel2) {
+        [dotLabel2 removeFromSuperview];
+    }
+    
+    if (sourceLabel) {
+        [sourceLabel removeFromSuperview];
+    }
+    
     [videoImageView removeFromSuperview];
     [playButtonImage removeFromSuperview];
     [titleLabel removeFromSuperview];
-	[descriptionLabel removeFromSuperview];
+	
     [faviconImageView removeFromSuperview];
     [dotLabel1 removeFromSuperview];
     [timestampLabel removeFromSuperview];
-    [dotLabel2 removeFromSuperview];
-    [sourceLabel removeFromSuperview];
-    [likesLabel removeFromSuperview];
-	[likeImageView removeFromSuperview];
     
     [videoObject release];
     
@@ -164,6 +232,10 @@
     [unlikeVideoCallback release];
     [playVideoCallback release];
     [viewSourceCallback release];
+    [viewDetailCallback release];
+    
+    if (removeVideoCallback != nil)
+        [removeVideoCallback release];
     
     saveImageView = nil;
     videoImageView = nil;
@@ -177,6 +249,10 @@
     sourceLabel = nil;
     likesLabel = nil;
     likeImageView = nil;
+    optionsButtonView = nil;
+    likeButton = nil;
+    saveButton = nil;
+    detailDisclosureButton = nil;
     
     videoObject = nil;
     addVideoCallback = nil;
@@ -184,6 +260,8 @@
     unlikeVideoCallback = nil;
     playVideoCallback = nil;
     viewSourceCallback = nil;
+    viewDetailCallback = nil;
+    removeVideoCallback = nil;
     
     [super dealloc];
 }
@@ -191,6 +269,12 @@
 // --------------------------------------------------------------------------------
 //                             Callbacks
 // --------------------------------------------------------------------------------
+
+- (void) onDetailButtonClicked:(UIButton*)sender {
+    if (viewDetailCallback != nil) {
+        [viewDetailCallback execute:videoObject];
+    } 
+}
 
 - (void) onThumbnailImageLoaded:(UIImage*)thumbnailImage {
      NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -200,6 +284,7 @@
     
     if (![[NSThread currentThread] isCancelled]) {
         [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:thumbnailImage waitUntilDone:YES];
+        videoImageView.hidden = NO;
     }
     [pool release];
 }
@@ -215,6 +300,30 @@
         faviconImageView.hidden = YES;
     }
     [pool release];
+}
+
+- (void) onLikeButtonClicked:(UIButton*) sender {
+    if (!videoObject.liked) {
+        if (likeVideoCallback != nil) {
+            [likeVideoCallback execute:videoObject];
+        }
+    } else {
+        if (unlikeVideoCallback != nil) {
+            [unlikeVideoCallback execute:videoObject];
+        }
+    }
+}
+
+- (void) onSaveButtonClicked:(UIButton*) sender {
+    if (videoObject.saved) {
+        if (videoRemovalAllowed && removeVideoCallback != nil) {
+            [removeVideoCallback execute:videoObject];
+        }
+    } else {
+        if (addVideoCallback != nil) {
+            [addVideoCallback execute:videoObject];
+        }
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -237,18 +346,32 @@
         // update play button image
         [playButtonImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"play_button.png"] waitUntilDone:YES];
         
-        // update like button
-        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:(videoObject.liked ? @"heart_red.png" : @"heart_grey.png")] waitUntilDone:YES];
-        
-        // update save button
-        if (!videoObject.saved) {
-            [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"save_video.png"] waitUntilDone:YES];
-            saveImageView.hidden = NO;
-        } else if (videoObject.savedInCurrentTab) {
-            [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
-            saveImageView.hidden = NO;
+        if (!DeviceUtils.isIphone) {
+            // update like button
+            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:(videoObject.liked ? @"heart_red.png" : @"heart_grey.png")] waitUntilDone:YES];
+            
+            // update save button
+            if (!videoObject.saved) {
+                [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"save_video.png"] waitUntilDone:YES];
+                saveImageView.hidden = NO;
+            } else if (videoRemovalAllowed) {
+                [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"x_grey.png"] waitUntilDone:YES];
+                saveImageView.hidden = NO;
+            } else if (videoObject.savedInCurrentTab) {
+                [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
+                saveImageView.hidden = NO;
+            } else {
+                saveImageView.hidden = NO;
+            }
         } else {
-            saveImageView.hidden = NO;
+            [likeButton setImage:[UIImage imageNamed:(videoObject.liked ? @"heart_red_small.png" : @"heart_grey_small.png")] forState:UIControlStateNormal];
+            if (!videoObject.saved) {
+                [saveButton setImage:[UIImage imageNamed:@"save_video_small.png"] forState:UIControlStateNormal];
+            } else if (videoRemovalAllowed) {
+                [saveButton setImage:[UIImage imageNamed:@"x_grey_small.png"] forState:UIControlStateNormal];
+            } else {
+                [saveButton setImage:[UIImage imageNamed:@"check_mark_green_small.png"] forState:UIControlStateNormal];
+            }
         }
     }
 	
@@ -258,6 +381,7 @@
             // make sure the thread was not killed
             if (![[NSThread currentThread] isCancelled]) {
                 [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:(videoObject.thumbnail.thumbnailImage) waitUntilDone:YES];
+                videoImageView.hidden = NO;
             }
         } else {
             [self performSelector:@selector(downloadThumbnailImage:) withObject:videoObject.thumbnail];
@@ -266,6 +390,7 @@
         // make sure the thread was not killed
         if (![[NSThread currentThread] isCancelled]) {
             [videoImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"default_video_icon.png"] waitUntilDone:YES];
+            videoImageView = NO;
         }
     }
 
@@ -289,8 +414,8 @@
         }
         
         // set the source name
-        if (videoObject.videoSource.sourceUrl != nil) {
-            // sourceLabel.text = videoObject.videoSource.sourceUrl;
+        if (videoObject.videoSource.sourceUrl != nil && DeviceUtils.isIphone) {
+            sourceLabel.text = videoObject.videoSource.sourceUrl;
             sourceLabel.hidden = NO;
         }
     }
@@ -298,25 +423,30 @@
 
 - (void) fixSize {
 	if (DeviceUtils.isIphone) {
-        
-        int thumbnailWidth = 125;
-        int	faviconAndSourceHeight = 20;
-        int titleHeight = 50;
-        
         // set the size for title label
-        titleLabel.frame = CGRectMake(thumbnailWidth, 12, (self.frame.size.width - (thumbnailWidth + 10)), titleHeight);
+        CGFloat titleLabelHeight = MIN((self.frame.size.height - 30), 
+                                       [titleLabel.text sizeWithFont:titleLabel.font constrainedToSize:CGSizeMake(self.frame.size.width - 157, self.frame.size.height - 30) lineBreakMode:UILineBreakModeCharacterWrap].height);
+        titleLabel.frame = CGRectMake(120, 5, (self.frame.size.width - 157), titleLabelHeight);
         
-        // set the size for likes label
-        likesLabel.frame = CGRectMake((self.frame.size.width - 68), self.frame.size.height - (faviconAndSourceHeight + 10), 35, 20);
+        faviconImageView.frame = CGRectMake(120, self.frame.size.height - 57, 16, 16);
         
-        // set the size for like/unlike button
-        likeImageView.frame = CGRectMake((self.frame.size.width - 30), self.frame.size.height - (faviconAndSourceHeight + 10), 20, 20);
+        dotLabel1.frame = CGRectMake(faviconImageView.frame.origin.x + faviconImageView.frame.size.width + 5, 
+                                     self.frame.size.height - 59, 
+                                     [dotLabel1.text sizeWithFont:dotLabel1.font].width, 
+                                     15);
         
-        // set the size for favicon image
-        faviconImageView.frame = CGRectMake(thumbnailWidth, self.frame.size.height - (faviconAndSourceHeight + 5), 15, 15);
+        // set the timestamp label position
+        timestampLabel.frame = CGRectMake(dotLabel1.frame.origin.x + dotLabel1.frame.size.width + 5, 
+                                          self.frame.size.height - 54, 
+                                          [timestampLabel.text sizeWithFont:timestampLabel.font].width, 
+                                          15);
         
-        // set the size for source label
-        sourceLabel.frame = CGRectMake((thumbnailWidth + 20), self.frame.size.height - (faviconAndSourceHeight + 5), (self.frame.size.width - (thumbnailWidth + 20)), 15);
+        optionsButtonView.frame = CGRectMake(25, videoImageView.frame.origin.y + videoImageView.frame.size.height + 2, self.frame.size.width - 50, 30);
+        CGFloat optionsButtonViewMidPoint = optionsButtonView.frame.size.width / 2;
+        likeButton.frame = CGRectMake(6, 10, optionsButtonViewMidPoint - 9, optionsButtonView.frame.size.height - 13);
+        saveButton.frame = CGRectMake(optionsButtonViewMidPoint + 3, 10, optionsButtonViewMidPoint - 9, optionsButtonView.frame.size.height - 13);
+        
+        detailDisclosureButton.frame = CGRectMake(self.frame.size.width - 35, (videoImageView.frame.size.height / 2) - 10, 29, 29);
         
     } else {
         
@@ -329,7 +459,7 @@
         
         descriptionLabel.frame = CGRectMake(180, 20, (self.frame.size.width - titleAndDescriptionLabelWidth), (self.frame.size.height - (titleHeight + faviconAndSourceHeight + 10)));
         
-        if (!videoObject.saved || videoObject.savedInCurrentTab) {
+        if (!videoObject.saved || videoObject.savedInCurrentTab || videoRemovalAllowed) {
             // set the size for save/unsaved button
             saveImageView.frame = CGRectMake((self.frame.size.width - 50), 10, 30, 30);
             saveImageView.hidden = NO;
@@ -444,36 +574,28 @@
             }
         }
         
-        CGRect likeRect = [likeImageView bounds];
-        likeRect = [likeImageView convertRect:likeRect toView:self];
-        if (CGRectContainsPoint(likeRect, touchLocation)) {
-            if (!videoObject.liked) {
-                if (likeVideoCallback != nil) {
-                    [likeVideoCallback execute:videoObject];
-                }
-            } else {
-                if (unlikeVideoCallback != nil) {
-                    [unlikeVideoCallback execute:videoObject];
-                }
+        if (!DeviceUtils.isIphone) {
+           CGRect likeRect = [likeImageView bounds];
+            likeRect = [likeImageView convertRect:likeRect toView:self];
+            if (CGRectContainsPoint(likeRect, touchLocation)) {
+                [self onLikeButtonClicked:nil];
             }
-        }
-        
-        CGRect addVideoRect = [saveImageView bounds];
-        addVideoRect = [saveImageView convertRect:addVideoRect toView:self];
-        if (CGRectContainsPoint(addVideoRect, touchLocation)) {
-            if (addVideoCallback != nil) {
-                [addVideoCallback execute:videoObject];
+            
+            CGRect addVideoRect = [saveImageView bounds];
+            addVideoRect = [saveImageView convertRect:addVideoRect toView:self];
+            if (CGRectContainsPoint(addVideoRect, touchLocation)) {
+                [self onSaveButtonClicked:nil];
             }
-        }
-        
-        CGRect sourceRect = [sourceLabel bounds];
-        sourceRect = [sourceLabel convertRect:sourceRect toView:self];
-        if (CGRectContainsPoint(sourceRect, touchLocation)) {
-            if (viewSourceCallback != nil) {
-                if (videoObject.hostUrl != nil) {
-                    [viewSourceCallback execute:videoObject.hostUrl];
-                } else {
-                    [viewSourceCallback execute:videoObject.videoUrl];
+            
+            CGRect sourceRect = [sourceLabel bounds];
+            sourceRect = [sourceLabel convertRect:sourceRect toView:self];
+            if (CGRectContainsPoint(sourceRect, touchLocation)) {
+                if (viewSourceCallback != nil) {
+                    if (videoObject.hostUrl != nil) {
+                        [viewSourceCallback execute:videoObject.hostUrl];
+                    } else {
+                        [viewSourceCallback execute:videoObject.videoUrl];
+                    }
                 }
             }
         }
@@ -484,7 +606,7 @@
 //                             Public Functions
 // --------------------------------------------------------------------------------
 
-- (void)setVideoObject: (VideoObject*)video {
+- (void)setVideoObject: (VideoObject*)video shouldAllowVideoRemoval:(BOOL)allowVideoRemoval {
     // change video object
     // LOG_DEBUG(@"Drawing the cell");
 	if (videoObject) {
@@ -495,37 +617,61 @@
     
 	videoObject = [video retain];
     faviconImageView.hidden = YES;
+    videoImageView.hidden = YES;
+    videoRemovalAllowed = allowVideoRemoval;
     
 	// change text
 	titleLabel.text = video.title;
-	if (video.description != nil) {
-		NSString* description = [video.description stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		
-        if (!DeviceUtils.isIphone) 
-            descriptionLabel.text = description;
+    if (!DeviceUtils.isIphone) {
+        if (video.description != nil) {
+            NSString* description = [video.description stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            
+            if (!DeviceUtils.isIphone) 
+                descriptionLabel.text = description;
+            
+            [self performSelector:@selector(fixSize) withObject:nil];
+            //descriptionLabel.backgroundColor = [UIColor yellowColor];
+        }
         
-		[self performSelector:@selector(fixSize) withObject:nil];
-		//descriptionLabel.backgroundColor = [UIColor yellowColor];
-	}
-    
-    if (videoObject.likes > 0) {
-        likesLabel.hidden = NO;
-        likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
+        if (videoObject.likes > 0) {
+            likesLabel.hidden = NO;
+            likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
+        } else {
+            likesLabel.hidden = YES;
+        }
+        
+        if (videoObject.liked) {
+            likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+        } else {
+            likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+        }
     } else {
-        likesLabel.hidden = YES;
-    }
-    
-    if (videoObject.liked) {
-        likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-    } else {
-        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+        if (videoObject.liked) {
+            [likeButton setTitle:@"Unlike" forState:UIControlStateNormal];
+        } else {
+            [likeButton setTitle:@"Like" forState:UIControlStateNormal];
+        }
+        
+        if (!videoObject.saved) {
+            [saveButton setTitle:@"Save" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:YES];
+        } else if(videoRemovalAllowed) {
+            [saveButton setTitle:@"Remove" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:YES];
+        } else {
+            [saveButton setTitle:@"Saved" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(73.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:NO];
+        }
     }
     
     // update timestamp
     timestampLabel.text = [self getPrettyDate:videoObject.timestamp];
 	
 	// update image
-	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
+//	videoImageView.image = [UIImage imageNamed:@"NoImage.png"];
     [self loadImage];
 }
 
@@ -533,19 +679,24 @@
     if (videoObject) [videoObject release];
 	videoObject = [video retain];
     
-    if (videoObject.likes > 0) {
-        likesLabel.hidden = NO;
-        likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
-    } else {
-        likesLabel.hidden = YES;
-    }
-    
-    if (videoObject.liked) {
-        likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
-        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_red.png"] waitUntilDone:YES];
-    } else {
-        likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
-        [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_grey.png"] waitUntilDone:YES];
+    if (!DeviceUtils.isIphone) { // if iPad
+        if (videoObject.likes > 0) {
+            likesLabel.hidden = NO;
+            likesLabel.text = [[NSNumber numberWithInt:videoObject.likes] stringValue];
+        } else {
+            likesLabel.hidden = YES;
+        }
+        
+        if (videoObject.liked) {
+            likesLabel.textColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:1.0];
+            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_red.png"] waitUntilDone:YES];
+        } else {
+            likesLabel.textColor = [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0];
+            [likeImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"heart_grey.png"] waitUntilDone:YES];
+        }
+    } else { // if iPhone
+        [likeButton setImage:[UIImage imageNamed:(videoObject.liked ? @"heart_red_small.png" : @"heart_grey_small.png")] forState:UIControlStateNormal];
+        [likeButton setTitle:(videoObject.liked ? @"Unlike" : @"Like") forState:UIControlStateNormal];
     }
 }
 
@@ -553,7 +704,27 @@
     if (videoObject) [videoObject release];
     videoObject = [video retain];
     
-    [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
+    if (!DeviceUtils.isIphone) { // if iPad
+        [saveImageView performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageNamed:@"check_mark_green.png"] waitUntilDone:YES];
+    } else { // if iPhone
+        if (!videoObject.saved) {
+            [saveButton setImage:[UIImage imageNamed:@"save_video_small.png"] forState:UIControlStateNormal];
+            [saveButton setTitle:@"Save" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:YES];
+        } else if(videoRemovalAllowed) {
+            [saveButton setImage:[UIImage imageNamed:@"x_grey_small.png"] forState:UIControlStateNormal];
+            [saveButton setTitle:@"Remove" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(12.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:YES];
+        } else {
+            [saveButton setImage:[UIImage imageNamed:@"check_mark_green_small.png"] forState:UIControlStateNormal];
+            [saveButton setTitle:@"Saved" forState:UIControlStateNormal];
+            [saveButton setTitleColor:[UIColor colorWithRed:(73.0/255.0) green:(83.0/255.0) blue:(111.0/255.0) alpha:1] forState:UIControlStateNormal];
+            [saveButton setEnabled:NO];
+        }
+    }
+    
     videoObject.savedInCurrentTab = true;
 }
 

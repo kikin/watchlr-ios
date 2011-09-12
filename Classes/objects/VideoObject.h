@@ -21,6 +21,7 @@
 	ThumbnailObject*	thumbnail;
     SourceObject*       videoSource;
     NSString*           htmlCode;
+    NSArray*            likedByUsers;
     bool                liked;
     bool                saved;
     double              seek;
@@ -38,6 +39,7 @@
 @property(retain)	ThumbnailObject*    thumbnail;
 @property(retain)	SourceObject*       videoSource;
 @property(retain)	NSString*           htmlCode;
+@property(retain)   NSArray*            likedByUsers;
 @property()			bool                liked;
 @property()			bool                saved;
 @property()         double              seek;

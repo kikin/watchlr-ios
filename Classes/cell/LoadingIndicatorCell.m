@@ -24,7 +24,11 @@
 		loadingLabel.backgroundColor = [UIColor clearColor];
 		loadingLabel.autoresizingMask = UIViewAutoresizingNone;
 		loadingLabel.text = @"Loading...";
-        loadingLabel.font = [UIFont boldSystemFontOfSize:18];
+        if (DeviceUtils.isIphone) {
+            loadingLabel.font = [UIFont boldSystemFontOfSize:12];
+        } else {
+            loadingLabel.font = [UIFont boldSystemFontOfSize:18];
+        }
         loadingLabel.numberOfLines = 1;
 		[self addSubview:loadingLabel];
         

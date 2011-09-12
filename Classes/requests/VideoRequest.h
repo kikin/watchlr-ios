@@ -14,12 +14,14 @@
 
 }
 
-- (void) addVideo:(VideoObject*)video;
-- (void) deleteVideo:(VideoObject*)video;
-- (void) likeVideo:(VideoObject*)video;
-- (void) unlikeVideo:(VideoObject*)video;
-- (void) getSeekTime:(VideoObject*)video;
-- (void) updateSeekTime:(NSString*)seekTime forVideo:(VideoObject*)video;
+- (void) addVideo:(int)videoId;
+- (void) deleteVideo:(int)videoId;
+- (void) likeVideo:(int)videoId;
+- (void) unlikeVideo:(int)videoId;
+- (void) getSeekTime:(int)videoId;
+- (void) updateSeekTime:(NSString*)seekTime forVideo:(int)videoId;
+- (void) getVideoDetail:(int)videoId;
+- (void) getLikedByUsers:(int)videoId forPage:(int)pageNumber withLikedByUsersCount:(int)likedByUsersCount;
 
 - (id) processReceivedString: (NSString*)receivedString;
 

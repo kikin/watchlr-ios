@@ -20,5 +20,6 @@
 - (void) onApplicationBecomeInactive;
 - (void) onTabInactivate;
 - (void) onTabActivate;
+- (BOOL) shouldRotate;
 
 @end

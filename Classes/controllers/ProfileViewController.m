@@ -9,9 +9,10 @@
 #import "ProfileViewController.h"
 #import "UserProfileRequest.h"
 #import "UserProfileResponse.h"
-#import "VideoPlayerView.h"
 #import "WebViewController.h"
 #import "FeedbackViewController.h"
+#import "VideosViewController.h"
+#import "UsersViewController.h"
 #import "UserObject.h"
 
 @implementation ProfileViewController
@@ -33,13 +34,22 @@
     userSettingsView.logoutCallback = [Callback create:self selector:@selector(logoutUser)];
 	[self.view addSubview:userSettingsView];
     
-    userProfileView = [[UserProfileView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    userProfileView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    userProfileView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
-    userProfileView.openUserProfileCallback = [Callback create:self selector:@selector(openUserProfile:)];
-    
-    [self.view addSubview:userProfileView];
-    [self.view sendSubviewToBack:userProfileView];
+    if (DeviceUtils.isIphone) {
+        userProfileIphoneView = [[UserProfileIphoneView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        userProfileIphoneView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        userProfileIphoneView.showLikedVideosListCallback = [Callback create:self selector:@selector(showLikedVideosList:)];
+        userProfileIphoneView.showFollowersListCallback = [Callback create:self selector:@selector(showFollowersList:)];
+        userProfileIphoneView.showFollowingListCallback = [Callback create:self selector:@selector(showFollowingList:)];
+        [self.view addSubview:userProfileIphoneView];
+        [self.view sendSubviewToBack:userProfileIphoneView];
+    } else {
+        userProfileView = [[UserProfileView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        userProfileView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        userProfileView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
+        userProfileView.openUserProfileCallback = [Callback create:self selector:@selector(openUserProfile:)];
+        [self.view addSubview:userProfileView];
+        [self.view sendSubviewToBack:userProfileView];
+    }
 }
 
 - (void) viewDidLoad {
@@ -76,7 +86,11 @@
 - (void)didReceiveMemoryWarning {
     if (!isActiveTab) {
         // release memory
-        [userProfileView didReceiveMemoryWarning:true];
+        if (DeviceUtils.isIphone) {
+            [userProfileIphoneView didReceiveMemoryWarning:true];
+        } else {
+            [userProfileView didReceiveMemoryWarning:true];
+        }
         
         [tapGesture release];
         [settingsIconViewTapGesture release];
@@ -89,7 +103,11 @@
     } else {
         int level = [DeviceUtils currentMemoryLevel];
         if (level >= OSMemoryNotificationLevelUrgent) {
-            [userProfileView didReceiveMemoryWarning:false];
+            if (DeviceUtils.isIphone) {
+                [userProfileIphoneView didReceiveMemoryWarning:false];
+            } else {
+                [userProfileView didReceiveMemoryWarning:false];
+            }
             
             [tapGesture release];
             [settingsIconViewTapGesture release];
@@ -117,11 +135,19 @@
     settingsIconViewTapGesture = nil;
     tapGesture = nil;
     
-    [userProfileView removeFromSuperview];
+    if (userProfileIphoneView != nil) {
+        [userProfileIphoneView removeFromSuperview];
+    }
+    
+    if (userProfileView != nil) {
+        [userProfileView removeFromSuperview];
+    }
+    
 	[userProfileSettingsView removeFromSuperview];
     [userSettingsView removeFromSuperview];
     [settingsIconView removeFromSuperview];
     
+    userProfileIphoneView = nil;
     userProfileView = nil;
     userProfileSettingsView = nil;
     userSettingsView = nil;
@@ -170,11 +196,18 @@
 	[userProfileRequest getUserProfile];
 }
 
-- (void) getUserProfile:(NSString*)userName {
+- (void) getUserProfile:(NSNumber*)userId {
 	UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onUserProfileRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onUserProfileRequestSuccess:)];
-	[userProfileRequest getUserProfile:userName];	
+	[userProfileRequest getUserProfile:[userId intValue]];	
+}
+
+- (void) getUserProfileForName:(NSString*)username {
+	UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
+    userProfileRequest.errorCallback = [Callback create:self selector:@selector(onUserProfileRequestFailed:)];
+    userProfileRequest.successCallback = [Callback create:self selector:@selector(onUserProfileRequestSuccess:)];
+	[userProfileRequest getUserProfileForName:username];	
 }
 
 // --------------------------------------------------------------------------------
@@ -182,7 +215,11 @@
 // --------------------------------------------------------------------------------
 
 - (void) onApplicationBecomeActive: (NSNotification*)notification {
-    [self setUserObject:[userProfileView getUserProfile]];
+    if (DeviceUtils.isIphone) {
+        [self setUserObject:[userProfileIphoneView getUserProfile]];
+    } else {
+        [self setUserObject:[userProfileView getUserProfile]];
+    }
 }
 
 - (void) openUserProfile:(UserProfileObject*)user {
@@ -225,6 +262,24 @@
     }
 }
 
+- (void) showLikedVideosList:(NSNumber*) user_id {
+    VideosViewController* videosViewController = [[[VideosViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:videosViewController animated:YES];
+    [videosViewController setUserProfile:[user_id intValue]];
+}
+
+- (void) showFollowersList:(NSNumber*) user_id {
+    UsersViewController* usersViewController = [[[UsersViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:usersViewController animated:YES];
+    [usersViewController showFollowersList:[user_id intValue]];
+}
+
+- (void) showFollowingList:(NSNumber*) user_id {
+    UsersViewController* usersViewController = [[[UsersViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:usersViewController animated:YES];
+    [usersViewController showFollowingUsersList:[user_id intValue]];
+}
+
 - (void) showUserProfile {
     [self removePageTapGestureRecognizer];
     if (DeviceUtils.isIphone) {
@@ -255,7 +310,11 @@
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
             NSDictionary* result = [response userProfile];
             UserProfileObject* userProfile = [[UserProfileObject alloc] initFromDictionary:result];
-            [userProfileView setUserProfile:userProfile];
+            if (DeviceUtils.isIphone) {
+                [userProfileIphoneView setUserProfile:userProfile];
+            } else {
+                [userProfileView setUserProfile:userProfile];
+            }
             [userProfile release];
             [pool release];
         } else {
@@ -296,7 +355,7 @@
 - (void) setUserObject:(UserProfileObject*)user {
     isActiveTab = true;
     if (user != nil) {
-        [self performSelector:@selector(getUserProfile:) withObject:user.userName];
+        [self performSelector:@selector(getUserProfile:) withObject:[NSNumber numberWithInt:user.userId]];
     } else {
         [self performSelector:@selector(getLoggedInUserProfile) withObject:nil];
     }
@@ -304,18 +363,25 @@
 
 - (void) openUserProfileForName:(NSString*)userName {
     isActiveTab = true;
-    [self performSelector:@selector(getUserProfile:) withObject:userName];
+    [self performSelector:@selector(getUserProfileForName:) withObject:userName];
 }
 
 - (void) onTabInactivate {
     isActiveTab = false;
-    [userProfileView closePlayer];
+    if (!DeviceUtils.isIphone) {
+        [userProfileView closePlayer];
+    }
 }
 
 - (void) onTabActivate {
     isActiveTab = true;
     if (self == self.navigationController.visibleViewController) {
-        [self setUserObject:[userProfileView getUserProfile]];
+        if (DeviceUtils.isIphone) {
+            [self setUserObject:[userProfileIphoneView getUserProfile]];
+        } else {
+            [self setUserObject:[userProfileView getUserProfile]];
+        }
+        
     }
 }
 
@@ -324,5 +390,8 @@
     [self onTabInactivate];
 }
 
+- (BOOL) shouldRotate {
+    return NO;
+}
 
 @end

@@ -7,18 +7,20 @@
 //
 
 #import "WatchlrViewController.h"
-#import "VideoListRequest.h"
 #import "VideosListView.h"
 #import "VideoPlayerViewController.h"
 
-@interface LikedVideosViewController : WatchlrViewController {
-	VideoListRequest* videoListRequest;
-    VideosListView* videosListView;
+@interface VideosViewController : WatchlrViewController {
+	VideosListView*     videosListView;
     VideoPlayerViewController* videoPlayerViewController;
     
-    int lastPageRequested;
-    bool isRefreshing;
-    bool isActiveTab;
+    int                 lastPageRequested;
+    bool                isRefreshing;
+    bool                isActiveTab;
+    
+    int                 userId;
 }
+
+- (void) setUserProfile:(int)user_id;
 
 @end

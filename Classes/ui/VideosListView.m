@@ -16,7 +16,7 @@
 
 @implementation VideosListView
 
-@synthesize isViewRefreshable, refreshListCallback, loadMoreDataCallback, addVideoPlayerCallback, onViewSourceClickedCallback;
+@synthesize isViewRefreshable, refreshListCallback, loadMoreDataCallback, addVideoPlayerCallback, onViewSourceClickedCallback, openVideoDetailPageCallback, playVideoCallback, closeVideoPlayerCallback, sendAllVideoFinishedMessageCallback;
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
@@ -53,6 +53,8 @@
         [loadingView startAnimating];
         [self addSubview:loadingView];
         [self bringSubviewToFront:loadingView];
+        
+        userTappedDetailButton = false;
     }
     return self;
 }
@@ -65,16 +67,55 @@
 }
 
 - (void) dealloc {
-    [videoPlayerView removeFromSuperview];
-    [videoPlayerView release];
+    if (videoPlayerView != nil) {
+        [videoPlayerView removeFromSuperview];
+        [videoPlayerView release];
+    }
+    
     [loadingView release];
+    
     [refreshListCallback release];
     [loadMoreDataCallback release];
-    [addVideoPlayerCallback release];
+    
+    if (addVideoPlayerCallback != nil) { 
+        [addVideoPlayerCallback release];
+    }
+    
     [onViewSourceClickedCallback release];
+    [openVideoDetailPageCallback release];
+    
+    if (playVideoCallback != nil) {
+        [playVideoCallback release];
+    }
+    
+    if (closeVideoPlayerCallback != nil) {
+        [closeVideoPlayerCallback release];
+    }
+    
+    if (sendAllVideoFinishedMessageCallback != nil) {
+        [sendAllVideoFinishedMessageCallback release];
+    }
+    
     [refreshStatusView release];
 	[videosListView release];
     [videosList release];
+    
+    videoPlayerView = nil;
+    loadingView = nil;
+    refreshStatusView = nil;
+    videosListView = nil;
+    
+    refreshListCallback = nil;
+    loadMoreDataCallback = nil;
+    addVideoPlayerCallback = nil;
+    onViewSourceClickedCallback = nil;
+    openVideoDetailPageCallback = nil;
+    playVideoCallback = nil;
+    closeVideoPlayerCallback = nil;
+    sendAllVideoFinishedMessageCallback = nil;
+    
+    videosList = nil;
+    
     [super dealloc];
 }
 
@@ -276,10 +317,10 @@
     videoPlayerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     videoPlayerView.hidden = YES;
     videoPlayerView.onCloseButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerCloseButtonClicked)];
-    videoPlayerView.onNextButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerNextButtonClicked)];
-    videoPlayerView.onPreviousButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerPreviousButtonClicked)];
-    videoPlayerView.onVideoFinishedCallback = [Callback create:self selector:@selector(onVideoPlaybackFinished)];
-    videoPlayerView.onPlaybackErrorCallback = [Callback create:self selector:@selector(onPlaybackError)];
+    videoPlayerView.onNextButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerNextButtonClicked:)];
+    videoPlayerView.onPreviousButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerPreviousButtonClicked:)];
+    videoPlayerView.onVideoFinishedCallback = [Callback create:self selector:@selector(onVideoPlaybackFinished:)];
+    videoPlayerView.onPlaybackErrorCallback = [Callback create:self selector:@selector(onPlaybackError:)];
     videoPlayerView.onLikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoLiked:)];
     videoPlayerView.onUnlikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
     videoPlayerView.onSaveButtonClickedCallback = [Callback create:self selector:@selector(onVideoSaved:)];
@@ -294,34 +335,41 @@
 
 - (void) playVideo:(VideoObject *)videoObject {
     if (videoObject != nil) {
-        bool isLeanback = true;
-        
-        if (videoPlayerView == nil) {
-            [self performSelector:@selector(createVideoPlayer)];
-        }
-        
-        if (videoPlayerView.hidden == YES) {
-            [self bringSubviewToFront:videoPlayerView];
-            videoPlayerView.hidden = NO;
-            isLeanback = false;
-        }
-        
-        [videoPlayerView playVideo:videoObject];
-        
-        if (isLeanback) {
-            [self trackAction:@"leanback-view" forVideo:videoObject.videoId];
+        if (DeviceUtils.isIphone) {
+            if (playVideoCallback != nil) {
+                [playVideoCallback execute:videoObject];
+            }
         } else {
-            [self trackAction:@"view" forVideo:videoObject.videoId];
+            bool isLeanback = true;
+            
+            if (videoPlayerView == nil) {
+                [self performSelector:@selector(createVideoPlayer)];
+            }
+            
+            if (videoPlayerView.hidden == YES) {
+                [self bringSubviewToFront:videoPlayerView];
+                videoPlayerView.hidden = NO;
+                isLeanback = false;
+            }
+            
+            [videoPlayerView playVideo:videoObject];
+            
+            if (isLeanback) {
+                [self trackAction:@"leanback-view" forVideo:videoObject.videoId];
+            } else {
+                [self trackAction:@"view" forVideo:videoObject.videoId];
+            }
         }
     }
 }
 
 - (void) onVideoPlayerCloseButtonClicked {
-    videoPlayerView.hidden = YES;
+    if (!DeviceUtils.isIphone) {
+        videoPlayerView.hidden = YES;
+    }
 }
 
-- (void) onVideoPlayerNextButtonClicked {
-    VideoObject* videoObject = videoPlayerView.video;
+- (void) onVideoPlayerNextButtonClicked:(VideoObject*) videoObject {
     NSUInteger idx = [videosList indexOfObject:videoObject] + 1;
     // LOG_DEBUG(@"next idx = %ld %ld", idx, videoObject);
     
@@ -335,12 +383,17 @@
             }
         }
     } else {
-        [videoPlayerView onAllVideosPlayed:true];
+        if (DeviceUtils.isIphone) {
+            if (sendAllVideoFinishedMessageCallback != nil) {
+                [sendAllVideoFinishedMessageCallback execute:[NSNumber numberWithBool:YES]];
+            }
+        } else {
+            [videoPlayerView onAllVideosPlayed:true];
+        }
     }
 }
 
-- (void) onVideoPlayerPreviousButtonClicked {
-    VideoObject* videoObject = videoPlayerView.video;
+- (void) onVideoPlayerPreviousButtonClicked:(VideoObject*) videoObject {
     NSUInteger idx = [videosList indexOfObject:videoObject];
     if (idx > 0) {
         idx -= 1;
@@ -348,20 +401,32 @@
         [self playVideo:[videosList objectAtIndex:idx]];
         
     } else {
-        [videoPlayerView onAllVideosPlayed: false];
+        if (DeviceUtils.isIphone) {
+            if (sendAllVideoFinishedMessageCallback != nil) {
+                [sendAllVideoFinishedMessageCallback execute:[NSNumber numberWithBool:NO]];
+            }
+        } else {
+            [videoPlayerView onAllVideosPlayed:false];
+        }
     }
 }
 
-- (void) onPlaybackError {
-    [self trackEvent:@"VideoPlaybackError" withValue:[[NSNumber numberWithInt:videoPlayerView.video.videoId] stringValue]];
+- (void) onPlaybackError:(VideoObject*) videoObject {
+    [self trackEvent:@"VideoPlaybackError" withValue:[[NSNumber numberWithInt:videoObject.videoId] stringValue]];
 }
 
-- (void) onVideoPlaybackFinished {
-    [self onVideoPlayerNextButtonClicked];
+- (void) onVideoPlaybackFinished:(VideoObject*) videoObject {
+    [self onVideoPlayerNextButtonClicked:videoObject];
 }
 
 - (void) closePlayer {
-    [videoPlayerView closePlayer];
+    if (DeviceUtils.isIphone) {
+        if (closeVideoPlayerCallback != nil) {
+            [closeVideoPlayerCallback execute:nil];
+        }
+    } else {
+        [videoPlayerView closePlayer];
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -372,28 +437,35 @@
     VideoRequest* likeRequest = [[[VideoRequest alloc] init] autorelease];
     likeRequest.errorCallback = [Callback create:self selector:@selector(onLikeVideoRequestFailed:)];
     likeRequest.successCallback = [Callback create:self selector:@selector(onLikeVideoRequestSuccess:)];
-    [likeRequest likeVideo:videoObject];
+    [likeRequest likeVideo:videoObject.videoId];
 }
 
 - (void) onVideoUnliked:(VideoObject*)videoObject {
     VideoRequest* unlikeRequest = [[[VideoRequest alloc] init] autorelease];
     unlikeRequest.errorCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestFailed:)];
     unlikeRequest.successCallback = [Callback create:self selector:@selector(onUnlikeVideoRequestSuccess:)];
-    [unlikeRequest unlikeVideo:videoObject];
+    [unlikeRequest unlikeVideo:videoObject.videoId];
 }
 
 - (void) onVideoSaved:(VideoObject*)videoObject {
     VideoRequest* saveRequest = [[[VideoRequest alloc] init] autorelease];
     saveRequest.errorCallback = [Callback create:self selector:@selector(onAddVideoRequestFailed:)];
     saveRequest.successCallback = [Callback create:self selector:@selector(onAddVideoRequestSuccess:)];
-    [saveRequest addVideo:videoObject];
+    [saveRequest addVideo:videoObject.videoId];
 }
 
 - (void) onVideoRemoved:(VideoObject*)videoObject {
     VideoRequest* removeRequest = [[[VideoRequest alloc] init] autorelease];
     removeRequest.errorCallback = [Callback create:self selector:@selector(onDeleteRequestFailed:)];
     removeRequest.successCallback = [Callback create:self selector:@selector(onDeleteRequestSuccess:)];
-    [removeRequest deleteVideo:videoObject];
+    [removeRequest deleteVideo:videoObject.videoId];
+}
+
+- (void) getVideoDetail:(VideoObject*)videoObject {
+    VideoRequest* videoDetailRequest = [[[VideoRequest alloc] init] autorelease];
+    videoDetailRequest.errorCallback = [Callback create:self selector:@selector(onVideoDetailRequestFailed:)];
+    videoDetailRequest.successCallback = [Callback create:self selector:@selector(onVideoDetailRequestSuccess:)];
+    [videoDetailRequest getVideoDetail:videoObject.videoId];
 }
 
 // --------------------------------------------------------------------------------
@@ -560,6 +632,71 @@
 	LOG_ERROR(@"failed to delete video: %@", errorMessage);
 }
 
+- (void) onVideoDetailRequestSuccess: (VideoResponse*)response {
+	if (response.success) {
+        NSArray* videosArray = [response.videoResponse objectForKey:@"videos"];
+        if (videosArray != nil && [videosArray count] > 0) { 
+            NSDictionary* videoDic = [videosArray objectAtIndex:0];
+            int videoId = [[videoDic objectForKey:@"id"] intValue];
+            NSUInteger idx =[videosList indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                if (((VideoObject*)obj).videoId == videoId) {
+                    *stop = YES;
+                    return YES;
+                }
+                return NO;
+            }];
+            
+            if (idx != NSNotFound) {
+                VideoObject* videoObject = [videosList objectAtIndex:idx];
+                [videoObject updateFromDictionary:videoDic];
+                [videosList replaceObjectAtIndex:idx withObject:videoObject];
+                
+                
+                [videosListView beginUpdates];
+                NSIndexPath *index = [NSIndexPath indexPathForRow:idx inSection:0];
+                if (index.row < videosList.count) {
+                    // Update data for the cell
+                    // LOG_DEBUG(@"Updating video object.");
+                    VideoTableCell* cell = (VideoTableCell*)[videosListView cellForRowAtIndexPath:index];
+                    [cell updateLikeButton:videoObject];
+                    [cell updateSaveButton:videoObject];
+                }
+                [videosListView endUpdates];
+                
+                // if user has tapped on the table view accessory button
+                // then open the video detail page.
+//                if (userTappedDetailButton) {
+                    userTappedDetailButton = false;
+                    if (openVideoDetailPageCallback != nil) {
+                        [openVideoDetailPageCallback execute:videoObject];
+                    }
+//                }
+            }
+        }
+        
+	} else {
+//		NSString* errorMessage = [NSString stringWithFormat:@"We failed to delete this video: %@", response.errorMessage];
+//		
+//		// show error message
+//		UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to delete" message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//		[alertView show];
+//		[alertView release];
+		
+		LOG_ERROR(@"request success but failed to delete video: %@", response.errorMessage);
+	}
+}
+
+- (void) onVideoDetailRequestFailed: (NSString*)errorMessage {		
+//	NSString* errorString = [NSString stringWithFormat:@"We failed to delete this video: %@", errorMessage];
+//	
+//	// show error message
+//	UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Failed to delete" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//	[alertView show];
+//	[alertView release];
+	
+	LOG_ERROR(@"failed to delete video: %@", errorMessage);
+}
+
 // --------------------------------------------------------------------------------
 //                              Callbacks
 // --------------------------------------------------------------------------------
@@ -598,12 +735,13 @@
         cell.unlikeVideoCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
         cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
         cell.viewSourceCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
+        cell.viewDetailCallback = [Callback create:self selector:@selector(getVideoDetail:)];
     }
     
     if (indexPath.row < videosList.count) {
         // Update data for the cell
         VideoObject* videoObject = [videosList objectAtIndex:indexPath.row];
-        [cell setVideoObject: videoObject];
+        [cell setVideoObject: videoObject shouldAllowVideoRemoval:NO];
 
         if (indexPath.row == (videosList.count - 1)) {
             if (loadMoreState != LOADING) {
@@ -625,6 +763,15 @@
     return cell;
 }
 
+//- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+//    // get the video detail
+//	if (indexPath.row < videosList.count) {
+//        userTappedDetailButton = true;
+//		VideoObject* video = [videosList objectAtIndex:indexPath.row];
+//        [self performSelector:@selector(getVideoDetail:) withObject:video];
+//	}
+//}
+
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -638,7 +785,7 @@
     if (indexPath.row == videosList.count)
         return 40;
     
-    return DeviceUtils.isIphone ? 100 : 150;
+    return DeviceUtils.isIphone ? 120 : 140;
 }
 
 // --------------------------------------------------------------------------------
@@ -715,6 +862,22 @@
     [refreshStatusView setHidden:YES];
     videosListView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f);
     isRefreshing = false;
+}
+
+- (bool) isVideoPlaying {
+    return (videoPlayerView != nil) && (videoPlayerView.hidden != YES);
+}
+
+- (void) setVideoPlayerViewControllerCallbacks:(VideoPlayerViewController*)videoPlayerViewController {
+    videoPlayerViewController.onCloseButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerCloseButtonClicked)];
+    videoPlayerViewController.onNextButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerNextButtonClicked:)];
+    videoPlayerViewController.onPreviousButtonClickedCallback = [Callback create:self selector:@selector(onVideoPlayerPreviousButtonClicked:)];
+    videoPlayerViewController.onVideoFinishedCallback = [Callback create:self selector:@selector(onVideoPlaybackFinished:)];
+    videoPlayerViewController.onPlaybackErrorCallback = [Callback create:self selector:@selector(onPlaybackError:)];
+    videoPlayerViewController.onLikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoLiked:)];
+    videoPlayerViewController.onUnlikeButtonClickedCallback = [Callback create:self selector:@selector(onVideoUnliked:)];
+    videoPlayerViewController.onSaveButtonClickedCallback = [Callback create:self selector:@selector(onVideoSaved:)];
+    videoPlayerViewController.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
 }
 
 @end

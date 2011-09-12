@@ -28,9 +28,23 @@
 		userNameLabel.backgroundColor = [UIColor clearColor];
 		userNameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		userNameLabel.text = @"";
-        userNameLabel.font = [UIFont boldSystemFontOfSize:18];
         userNameLabel.numberOfLines = 1;
 		[self addSubview:userNameLabel];
+        
+        nameLabel = [[UILabel alloc] init];
+		nameLabel.backgroundColor = [UIColor clearColor];
+		nameLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+		nameLabel.text = @"";
+        nameLabel.numberOfLines = 1;
+		[self addSubview:nameLabel];
+        
+        if (DeviceUtils.isIphone) {
+            userNameLabel.font = [UIFont boldSystemFontOfSize:15];
+            nameLabel.font = [UIFont systemFontOfSize:15];
+        } else {
+            userNameLabel.font = [UIFont boldSystemFontOfSize:18];
+            nameLabel.font = [UIFont systemFontOfSize:18];
+        }
 	}
     return self;
 }
@@ -76,7 +90,8 @@
 }
 
 - (void) fixSize {
-    userNameLabel.frame = CGRectMake(70, 10, self.frame.size.width - (profilePicView.frame.size.width + 80), self.frame.size.height - 20);
+    userNameLabel.frame = CGRectMake(70, 10, self.frame.size.width - (profilePicView.frame.size.width + 80), ((self.frame.size.height - 20) / 2));
+    nameLabel.frame = CGRectMake(70, userNameLabel.frame.origin.y + userNameLabel.frame.size.height, self.frame.size.width - (profilePicView.frame.size.width + 80), ((self.frame.size.height - 20) / 2));
 }
 
 - (void)setUserObject: (UserProfileObject*)userProfileObject {
@@ -95,7 +110,8 @@
     if (userProfile.userId == [UserObject getUser].userId) {
         userNameLabel.text = @"You";
     } else {
-        userNameLabel.text = [userProfile.userName stringByAppendingFormat:@" (%@)", userProfile.name];
+        userNameLabel.text = userProfile.userName;
+        nameLabel.text = [NSString stringWithFormat:@"(%@)", userProfile.name];
     }
     
     [self loadImage];
@@ -123,12 +139,14 @@
     
     [profilePicView removeFromSuperview];
     [userNameLabel removeFromSuperview];
+    [nameLabel removeFromSuperview];
     
     [openUserProfileCallback release];
     [userProfile release];
     
     profilePicView = nil;
     userNameLabel = nil;
+    nameLabel = nil;
     openUserProfileCallback = nil;
     userProfile = nil;
     

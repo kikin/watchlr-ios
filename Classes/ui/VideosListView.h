@@ -10,6 +10,7 @@
 #import <CommonIos/Callback.h>
 #import "VideoPlayerView.h"
 #import "RefreshStatusView.h"
+#import "VideoPlayerViewController.h"
 
 /** Refresh States. */
 typedef enum {
@@ -38,6 +39,7 @@ typedef enum {
     LoadMoreState               loadMoreState;
     bool                        loadedAllVideos;
     bool                        isRefreshing;
+    bool                        userTappedDetailButton;
 }
 
 @property()         bool isViewRefreshable;
@@ -45,11 +47,21 @@ typedef enum {
 @property(retain)   Callback* loadMoreDataCallback;
 @property(retain)   Callback* addVideoPlayerCallback;
 @property(retain)   Callback* onViewSourceClickedCallback;
+@property(retain)   Callback* openVideoDetailPageCallback;
+@property(retain)   Callback* playVideoCallback;
+@property(retain)   Callback* closeVideoPlayerCallback;
+@property(retain)   Callback* sendAllVideoFinishedMessageCallback;
 
 - (void)    updateListWrapper: (NSDictionary*)args;
 - (int)     count;
 - (void)    resetLoadingStatus;
 - (void)    closePlayer;
 - (void)    didReceiveMemoryWarning;
+- (bool)    isVideoPlaying;
+- (void)    setVideoPlayerViewControllerCallbacks:(VideoPlayerViewController*)videoPlayerViewController;
+
+- (void) trackAction:(NSString*)action forVideo:(int)vid;
+- (void) trackEvent:(NSString*)name withValue:(NSString*)value;
+- (void) trackError:(NSString*)error from:(NSString*)where withMessage:(NSString*)message;
 
 @end

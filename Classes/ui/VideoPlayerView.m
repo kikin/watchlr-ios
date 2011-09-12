@@ -14,6 +14,7 @@
 #import "GetRequest.h"
 #import "GetResponse.h"
 
+
 @implementation VideoPlayerView
 
 @synthesize video, onVideoFinishedCallback, onCloseButtonClickedCallback, onLikeButtonClickedCallback, onUnlikeButtonClickedCallback, onPreviousButtonClickedCallback, onNextButtonClickedCallback, onSaveButtonClickedCallback, onPlaybackErrorCallback, onViewSourceClickedCallback, isFullScreenMode;
@@ -396,7 +397,7 @@
     NSString* videoPauseTime = [NSString stringWithFormat:@"%.2f", [pauseTime floatValue]];
     video.seek = [pauseTime doubleValue];
     shouldPlayVideo = false;
-    [updateSeekRequest updateSeekTime:videoPauseTime forVideo:video];
+    [updateSeekRequest updateSeekTime:videoPauseTime forVideo:video.videoId];
     LOG_DEBUG(@"Get called in update pause time.");
     // [pool release];
 }
@@ -495,7 +496,7 @@
         seekRequest.errorCallback = [Callback create:self selector:@selector(onSeekRequestFailure:)];
         
         shouldPlayVideo = true;
-        [seekRequest getSeekTime:video];
+        [seekRequest getSeekTime:video.videoId];
     }
 }
 
@@ -1084,7 +1085,7 @@
     hasUserInitiatedVideoFinished = true;
     [moviePlayerController stop];
     if (onPreviousButtonClickedCallback != nil) {
-        [onPreviousButtonClickedCallback execute:nil];
+        [onPreviousButtonClickedCallback execute:video];
     }
 }
 
@@ -1094,7 +1095,7 @@
     hasUserInitiatedVideoFinished = true;
     [moviePlayerController stop];
     if (onNextButtonClickedCallback != nil) {
-        [onNextButtonClickedCallback execute:nil];
+        [onNextButtonClickedCallback execute:video];
     }
 }
 
@@ -1103,7 +1104,7 @@
     hasUserInitiatedVideoFinished = true;
     [moviePlayerController stop];
     if (onPlaybackErrorCallback != nil) {
-        [onPlaybackErrorCallback execute:nil];
+        [onPlaybackErrorCallback execute:video];
     }
 }
 
@@ -1138,6 +1139,7 @@
         window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
     fullScreenModeView = [[window subviews] objectAtIndex:0];
+    
     
     // tap gesture
     UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc] init];
@@ -1178,7 +1180,6 @@
     fullScreenCountdown.textColor = [UIColor whiteColor];
     fullScreenCountdown.backgroundColor = [UIColor clearColor];
     fullScreenCountdown.textAlignment = UITextAlignmentCenter;
-    fullScreenCountdown.font = [UIFont systemFontOfSize:25];
     fullScreenCountdown.numberOfLines = 1;
     fullScreenCountdown.hidden = YES;
     fullScreenCountdown.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -1190,7 +1191,6 @@
     fullScreenErrorMessage.textColor = [UIColor whiteColor];
     fullScreenErrorMessage.backgroundColor = [UIColor clearColor];
     fullScreenErrorMessage.textAlignment = UITextAlignmentCenter;
-    fullScreenErrorMessage.font = [UIFont systemFontOfSize:25];
     fullScreenErrorMessage.numberOfLines = 1;
     fullScreenErrorMessage.hidden = YES;
     fullScreenErrorMessage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -1202,7 +1202,6 @@
     [fullScreenWatchHereButton setTitle:@"Watch here" forState:UIControlStateNormal];
     [fullScreenWatchHereButton setTitleColor:[UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0] forState:UIControlStateNormal];
     fullScreenWatchHereButton.backgroundColor = [UIColor clearColor];
-    fullScreenWatchHereButton.titleLabel.font = [UIFont systemFontOfSize:25];
     fullScreenWatchHereButton.hidden = YES;
     fullScreenWatchHereButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenModeView addSubview:fullScreenWatchHereButton];
@@ -1214,7 +1213,6 @@
     fullScreenNextVideoWillPlayInMessage.textColor = [UIColor whiteColor];
     fullScreenNextVideoWillPlayInMessage.backgroundColor = [UIColor clearColor];
     fullScreenNextVideoWillPlayInMessage.textAlignment = UITextAlignmentCenter;
-    fullScreenNextVideoWillPlayInMessage.font = [UIFont systemFontOfSize:25];
     fullScreenNextVideoWillPlayInMessage.numberOfLines = 1;
     fullScreenNextVideoWillPlayInMessage.hidden = YES;
     fullScreenNextVideoWillPlayInMessage.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -1245,7 +1243,7 @@
     [fullScreenLikeButton setImage:[UIImage imageNamed:(video.liked ? @"heart_red.png" : @"heart_grey.png")] forState:UIControlStateNormal];
     fullScreenLikeButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     fullScreenLikeButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
-    fullScreenLikeButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    fullScreenLikeButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
     [fullScreenModeView addSubview:fullScreenLikeButton];
     
     // create the save button
@@ -1254,7 +1252,7 @@
     [fullScreenSaveButton setImage:[UIImage imageNamed:(video.saved ? @"check_mark_green.png" : @"save_video.png")] forState:UIControlStateNormal];
     fullScreenSaveButton.imageEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     fullScreenSaveButton.backgroundColor = [UIColor colorWithRed:(51.0/255.0) green:(51.0/255.0) blue:(51.0/255.0) alpha:0.5];
-    fullScreenSaveButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
+    fullScreenSaveButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
     if (video.saved && !video.savedInCurrentTab) {
         fullScreenSaveButton.hidden = YES;
     }
@@ -1263,22 +1261,53 @@
     
     // adjust the positions
     if (DeviceUtils.isIphone) {
+        
         UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+        
+        int loadingActivityStartPos = 0;
+        int screenWidth = 0;
+        int screenHeight = 0;
+        
         if (UIInterfaceOrientationIsLandscape(orientation)) {
-            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.height - 75) / 2), 
-                                                         ((window.frame.size.width - 75) / 2), 
-                                                         75, 75);
+            screenWidth = fullScreenModeView.frame.size.height;
+            screenHeight = fullScreenModeView.frame.size.width;
+            
         } else {
-            fullScreenLoadingActivity.frame = CGRectMake(((window.frame.size.width - 75) / 2), 
-                                                         ((window.frame.size.height - 75) / 2), 
-                                                         75, 75);
+            screenWidth = fullScreenModeView.frame.size.width;
+            screenHeight = fullScreenModeView.frame.size.height;
         }
         
-        fullScreenCountdown.font = [UIFont systemFontOfSize: 18];
-        fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 15)/ 2), ((fullScreenLoadingActivity.frame.size.height - 15) / 2), 15, 15);
+        fullScreenLoadingActivity.frame = CGRectMake(((screenWidth - 75) / 2), 
+                                                     ((screenHeight - 75) / 2), 
+                                                     75, 75);
+        loadingActivityStartPos = fullScreenLoadingActivity.frame.origin.y;
         
-        fullScreenErrorMessage.font = [UIFont systemFontOfSize:15];
-        fullScreenErrorMessage.frame = CGRectMake(0, 10, fullScreenModeView.frame.size.width, 75);
+        fullScreenNextVideoWillPlayInMessage.font = [UIFont systemFontOfSize:18];
+        CGSize nextMessageSize = [fullScreenNextVideoWillPlayInMessage.text sizeWithFont:fullScreenNextVideoWillPlayInMessage.font];
+        fullScreenNextVideoWillPlayInMessage.frame = CGRectMake((screenWidth - nextMessageSize.width) / 2, 
+                                                                (loadingActivityStartPos - (nextMessageSize.height + 10)), 
+                                                                nextMessageSize.width, nextMessageSize.height);
+        
+        fullScreenWatchHereButton.titleLabel.font = [UIFont systemFontOfSize:18];
+        CGSize watchHereLabelSize = [fullScreenWatchHereButton.titleLabel.text sizeWithFont:fullScreenWatchHereButton.titleLabel.font];
+        fullScreenWatchHereButton.frame = CGRectMake((screenWidth - watchHereLabelSize.width) / 2, 
+                                                     (loadingActivityStartPos - (nextMessageSize.height + watchHereLabelSize.height + 18)), 
+                                                     watchHereLabelSize.width, watchHereLabelSize.height);
+        
+        fullScreenErrorMessage.font = [UIFont systemFontOfSize:18];
+        CGSize errorMessageSize = [fullScreenErrorMessage.text sizeWithFont:fullScreenErrorMessage.font];
+        fullScreenErrorMessage.frame = CGRectMake(0, 
+                                                  (loadingActivityStartPos - (nextMessageSize.height + watchHereLabelSize.height + errorMessageSize.height + 23)), 
+                                                  screenWidth, errorMessageSize.height);
+        
+        fullScreenCountdown.font = [UIFont systemFontOfSize: 18];
+        fullScreenCountdown.frame = CGRectMake(((fullScreenLoadingActivity.frame.size.width - 15)/ 2), ((fullScreenLoadingActivity.frame.size.height - 15) / 2) - 4, 15, 15);
+        
+        fullScreenPreviousButton.frame = CGRectMake(10, ((screenHeight - 31) / 2) , 18, 31);
+        fullScreenNextButton.frame = CGRectMake(screenWidth - 23, ((screenHeight - 31) / 2), 18, 31);
+        
+        fullScreenLikeButton.frame = CGRectMake(screenWidth - 30, 60, 25, 25);
+        fullScreenSaveButton.frame = CGRectMake(screenWidth - 30, fullScreenLikeButton.frame.origin.y + fullScreenLikeButton.frame.size.height + 10, 25, 25);
     } else {
         UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
         
@@ -1299,12 +1328,15 @@
                                                      150, 150);
         loadingActivityStartPos = fullScreenLoadingActivity.frame.origin.y;
         
+        fullScreenNextVideoWillPlayInMessage.font = [UIFont systemFontOfSize:25];
         int nextMessageHeight = [fullScreenNextVideoWillPlayInMessage.text sizeWithFont:fullScreenNextVideoWillPlayInMessage.font].height;
         fullScreenNextVideoWillPlayInMessage.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + 20)), screenWidth, nextMessageHeight);
         
+        fullScreenWatchHereButton.titleLabel.font = [UIFont systemFontOfSize:25];
         int watchHereLabelHeight = [fullScreenWatchHereButton.titleLabel.text sizeWithFont:fullScreenWatchHereButton.titleLabel.font].height;
         fullScreenWatchHereButton.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + watchHereLabelHeight + 35)), screenWidth, watchHereLabelHeight);
         
+        fullScreenErrorMessage.font = [UIFont systemFontOfSize:25];
         int errorMessageHeight = [fullScreenErrorMessage.text sizeWithFont:fullScreenErrorMessage.font].height;
         fullScreenErrorMessage.frame = CGRectMake(0, (loadingActivityStartPos - (nextMessageHeight + watchHereLabelHeight + errorMessageHeight + 45)) , screenWidth, errorMessageHeight);
         
@@ -1361,8 +1393,12 @@
     fullScreenNextVideoWillPlayInMessage = nil;
     
     wasPlayingInFullScreenMode = (moviePlayerController.playbackState == MPMoviePlaybackStatePlaying);
-    
     isFullScreenMode = false;
+    
+//    if (DeviceUtils.isIphone && UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+//        [[UIApplication sharedApplication] setStatusBarOrientation:UIInterfaceOrientationPortrait animated:NO];
+//
+//    }
 }
 
 - (void) onEmbededMode: (NSNotification*) aNotification {
@@ -1523,7 +1559,7 @@
         (onVideoFinishedCallback != nil) && !hasUserInitiatedVideoFinished) 
     {
         isLeanBackMode = true;
-        [onVideoFinishedCallback execute:nil];
+        [onVideoFinishedCallback execute:video];
         // LOG_DEBUG(@"Updating time because video is finished.");
         [self updatePauseTime:[NSNumber numberWithDouble:0.0]];
     }
@@ -1700,9 +1736,17 @@
  * stops the video and closes the player.
  */
 - (void) closePlayer {
-    if (MPMoviePlaybackStateStopped != moviePlayerController.playbackState) {
+    if (DeviceUtils.isIphone) {
         [self onCloseButtonClicked: nil];
+    } else {
+        // we do not close the player, if we have played all the videos 
+        // and we are showing the message to user that he/she has played
+        // all the videos in their current list.
+        if (MPMoviePlaybackStateStopped != moviePlayerController.playbackState) {
+            [self onCloseButtonClicked: nil];
+        }
     }
+    
 }
 
 - (void) onAllVideosPlayed:(bool)nextButtonClicked {
@@ -1710,6 +1754,10 @@
     [self hideLoadingActivity];
     [self hideErrorMessage];
     
+    // as there is no button to get out of the full screen mode
+    // when all the videos finished playing back, that's why we
+    // have to get out of the full screen mode whenever we are 
+    // done with playing all the videos.
     if (isFullScreenMode) {
         [moviePlayerController setFullscreen:NO animated:NO];
         wasPlayingInFullScreenMode = false;

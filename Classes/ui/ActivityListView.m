@@ -18,7 +18,7 @@
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-		videosListView.rowHeight = DeviceUtils.isIphone ? 100 : 180;
+		videosListView.rowHeight = DeviceUtils.isIphone ? 140 : 180;
     }
     return self;
 }
@@ -257,6 +257,7 @@
         cell.addVideoCallback = [Callback create:self selector:@selector(onVideoSaved:)];
         cell.viewSourceCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
         cell.onUserNameClickedCallback = [Callback create:self selector:@selector(onUserNameClicked:)];
+        cell.viewDetailCallback = [Callback create:self selector:@selector(getVideoDetail:)];
     }
 	
 	if (indexPath.row < activitiesList.count) {
@@ -288,7 +289,7 @@
     if (indexPath.row == activitiesList.count)
         return 40;
     
-    return DeviceUtils.isIphone ? 100 : 180;
+    return DeviceUtils.isIphone ? 135 : 180;
 }
 
 // --------------------------------------------------------------------------------

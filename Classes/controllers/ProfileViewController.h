@@ -8,9 +8,11 @@
 
 #import "WatchlrViewController.h"
 #import "UserProfileView.h"
+#import "UserProfileIphoneView.h"
 
 @interface ProfileViewController: WatchlrViewController {
     UserProfileView* userProfileView;
+    UserProfileIphoneView* userProfileIphoneView;
     UserProfileSettingsView* userProfileSettingsView;
     UserSettingsView* userSettingsView;
     UIImageView* settingsIconView;

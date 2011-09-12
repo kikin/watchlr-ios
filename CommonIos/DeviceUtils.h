@@ -10,11 +10,12 @@
 #import <libkern/OSMemoryNotification.h>
 
 @interface DeviceUtils : NSObject {
-
+    
 }
 
 + (BOOL) isIpad;
 + (BOOL) isIphone;
++ (NSString*) version;
 + (OSMemoryNotificationLevel) currentMemoryLevel;
 
 @end

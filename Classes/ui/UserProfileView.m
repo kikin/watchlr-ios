@@ -165,7 +165,9 @@
     [openUserProfileCallback release];
     [onViewSourceClickedCallback release];
     [userProfile release];
+    
 	[profilePicView removeFromSuperview];
+    [usernameView removeFromSuperview];
     [followButton removeFromSuperview];
     [optionsButton removeFromSuperview];
     [likedVideosView removeFromSuperview];
@@ -175,7 +177,9 @@
     openUserProfileCallback = nil;
     onViewSourceClickedCallback = nil;
     userProfile = nil;
+    
     profilePicView = nil;
+    usernameView = nil;
     followButton = nil;
     optionsButton = nil;
     likedVideosView = nil;
@@ -218,21 +222,21 @@
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onFollowersRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onFollowersRequestSuccess:)];
-	[userProfileRequest getPeopleUserFollows:user.userName forPage:pageNumber withFollowersCount:followersCount];	
+	[userProfileRequest getPeopleUserFollows:user.userId forPage:pageNumber withFollowersCount:followersCount];	
 }
 
 - (void) getFollowing:(UserProfileObject*)user forPage:(int)pageNumber withFollowingCount:(int)followingCount {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onFollowingRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onFollowingRequestSuccess:)];
-	[userProfileRequest getPeopleFollowingUser:user.userName forPage:pageNumber withFollowingCount:followingCount];
+	[userProfileRequest getPeopleFollowingUser:user.userId forPage:pageNumber withFollowingCount:followingCount];
 }
 
 - (void) getLikedVideos:(UserProfileObject*)user forPage:(int)pageNumber withVideosCount:(int)videosCount {
     UserProfileRequest* userProfileRequest = [[[UserProfileRequest alloc] init] autorelease];
     userProfileRequest.errorCallback = [Callback create:self selector:@selector(onLikedVideosRequestFailed:)];
     userProfileRequest.successCallback = [Callback create:self selector:@selector(onLikedVideosRequestSuccess:)];
-	[userProfileRequest getLikedVideosByUser:user.userName forPage:pageNumber withVideosCount:videosCount];
+	[userProfileRequest getLikedVideosByUser:user.userId forPage:pageNumber withVideosCount:videosCount];
 }
 
 - (void) followUser:(UserProfileObject*)user {
@@ -360,12 +364,8 @@
     if (response.success) {
         NSDictionary* result = [response userProfile];
         
-//        if ([likedVideosView count] == 0 || !isLikedVideosListRefreshing) {
-//            lastlikedVideosPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
-//        }
-        
-        if (!isLikedVideosListRefreshing) {
-            lastlikedVideosPageRequested += 1;
+        if ([likedVideosView count] == 0 || !isLikedVideosListRefreshing) {
+            lastlikedVideosPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
         }
         
         int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
@@ -406,12 +406,8 @@
 - (void) onFollowersRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
         NSDictionary* result = [response userProfile];
-//        if ([followersView count] == 0 || !isFollowersListRefreshing) {
-//            lastFollowersPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
-//        }
-        
-        if (!isFollowersListRefreshing) {
-            lastFollowersPageRequested += 1;
+        if ([followersView count] == 0 || !isFollowersListRefreshing) {
+            lastFollowersPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
         }
         
         int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;
@@ -452,12 +448,8 @@
 - (void) onFollowingRequestSuccess: (UserProfileResponse*)response {
     if (response.success) {
         NSDictionary* result = [response userProfile];
-//        if ([followingView count] == 0 || !isFollowingListRefreshing) {
-//            lastFollowingPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
-//        }
-        
-        if (!isFollowingListRefreshing) {
-            lastFollowingPageRequested += 1;
+        if ([followingView count] == 0 || !isFollowingListRefreshing) {
+            lastFollowingPageRequested = [result objectForKey:@"page"] != [NSNull null] ? [[result objectForKey:@"page"] intValue] : 1;
         }
         
         int total = [result objectForKey:@"total"] != [NSNull null] ? [[result objectForKey:@"total"] intValue] : 0;

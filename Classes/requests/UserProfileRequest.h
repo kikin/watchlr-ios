@@ -15,10 +15,11 @@
 
 - (void) getUserProfile;
 - (void) updateUserProfile:(NSDictionary*)userProfile;
-- (void) getUserProfile:(NSString*)username;
-- (void) getPeopleUserFollows:(NSString*)username forPage:(int)page withFollowersCount:(int)followersCount;
-- (void) getPeopleFollowingUser:(NSString*)username forPage:(int)page withFollowingCount:(int)followingCount;
-- (void) getLikedVideosByUser:(NSString*)username forPage:(int)page withVideosCount:(int)videosCount;
+- (void) getUserProfile:(int)userId;
+- (void) getUserProfileForName:(NSString*)username;
+- (void) getPeopleUserFollows:(int)userId forPage:(int)page withFollowersCount:(int)followersCount;
+- (void) getPeopleFollowingUser:(int)userId forPage:(int)page withFollowingCount:(int)followingCount;
+- (void) getLikedVideosByUser:(int)userId forPage:(int)page withVideosCount:(int)videosCount;
 - (void) followUser:(int) userId;
 - (void) unfollowUser:(int) userId;
 

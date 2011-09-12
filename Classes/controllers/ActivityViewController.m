@@ -12,6 +12,7 @@
 #import "VideoResponse.h"
 #import "ProfileViewController.h"
 #import "WebViewController.h"
+#import "VideoDetailedViewController.h"
 
 @implementation ActivityViewController
 
@@ -25,6 +26,10 @@
     allActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
     allActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     allActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    allActivitiesListView.openVideoDetailPageCallback = [Callback create:self selector:@selector(openVideoDetailPage:)];
+    allActivitiesListView.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+    allActivitiesListView.closeVideoPlayerCallback = [Callback create:self selector:@selector(closeVideoPlayer)];
+    allActivitiesListView.sendAllVideoFinishedMessageCallback = [Callback create:self selector:@selector(sendAllVideosFinishedMessage:)];
     allActivitiesListView.isViewRefreshable = true;
     allActivitiesListView.hidden = NO;
     [self.view addSubview:allActivitiesListView];
@@ -36,6 +41,10 @@
     facebookOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
     facebookOnlyActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     facebookOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    facebookOnlyActivitiesListView.openVideoDetailPageCallback = [Callback create:self selector:@selector(openVideoDetailPage:)];
+    facebookOnlyActivitiesListView.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+    facebookOnlyActivitiesListView.closeVideoPlayerCallback = [Callback create:self selector:@selector(closeVideoPlayer)];
+    facebookOnlyActivitiesListView.sendAllVideoFinishedMessageCallback = [Callback create:self selector:@selector(sendAllVideosFinishedMessage:)];
     facebookOnlyActivitiesListView.isViewRefreshable = true;
     facebookOnlyActivitiesListView.hidden = YES;
     [self.view addSubview:facebookOnlyActivitiesListView];
@@ -47,6 +56,10 @@
     watchlrOnlyActivitiesListView.loadMoreDataCallback = [Callback create:self selector:@selector(onLoadMoreData)];
     watchlrOnlyActivitiesListView.onViewSourceClickedCallback = [Callback create:self selector:@selector(onViewSourceClicked:)];
     watchlrOnlyActivitiesListView.onUserNameClickedCallback = [Callback create:self selector:@selector(onUsernameClicked:)];
+    watchlrOnlyActivitiesListView.openVideoDetailPageCallback = [Callback create:self selector:@selector(openVideoDetailPage:)];
+    watchlrOnlyActivitiesListView.playVideoCallback = [Callback create:self selector:@selector(playVideo:)];
+    watchlrOnlyActivitiesListView.closeVideoPlayerCallback = [Callback create:self selector:@selector(closeVideoPlayer)];
+    watchlrOnlyActivitiesListView.sendAllVideoFinishedMessageCallback = [Callback create:self selector:@selector(sendAllVideosFinishedMessage:)];
     watchlrOnlyActivitiesListView.isViewRefreshable = true;
     watchlrOnlyActivitiesListView.hidden = YES;
     [self.view addSubview:watchlrOnlyActivitiesListView];
@@ -138,6 +151,25 @@
 //    [allActivitiesListView release];
 //    [facebookOnlyActivitiesListView release];
 //    [watchlrOnlyActivitiesListView release];
+    
+    if (allActivitiesVideoPlayerViewController != nil) {
+        [self.modalViewController dismissModalViewControllerAnimated:NO];
+        [allActivitiesVideoPlayerViewController release];
+    }
+    
+    if (facebookOnlyActivitiesVideoPlayerViewController != nil) {
+        [self.modalViewController dismissModalViewControllerAnimated:NO];
+        [facebookOnlyActivitiesVideoPlayerViewController release];
+    }
+    
+    if (watchlrOnlyActivitiesVideoPlayerViewController != nil) {
+        [self.modalViewController dismissModalViewControllerAnimated:NO];
+        [watchlrOnlyActivitiesVideoPlayerViewController release];
+    }
+    
+    allActivitiesVideoPlayerViewController = nil;
+    facebookOnlyActivitiesVideoPlayerViewController = nil;
+    watchlrOnlyActivitiesVideoPlayerViewController = nil;
     
     activityFilterView = nil;
     allActivitiesListView = nil;
@@ -302,6 +334,139 @@
     [self onClickRefresh];
 }
 
+- (void) openVideoDetailPage:(VideoObject*)video {
+    VideoDetailedViewController* videoDeatiledViewController = [[[VideoDetailedViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:videoDeatiledViewController animated:YES];
+    [videoDeatiledViewController setVideoObject:video shouldAllowVideoRemoval:NO];
+}
+
+-(void) playVideo:(VideoObject*)video inVideoPlayerViewController:(VideoPlayerViewController*)videoPlayerViewController {
+    bool isLeanBackMode = true;
+    if (self.modalViewController == nil) {
+        isLeanBackMode = false;
+        [self presentModalViewController:videoPlayerViewController animated:NO];
+    }
+    
+    [videoPlayerViewController playVideo:video];
+    
+    NSString* trackActionType = @"view";
+    if (isLeanBackMode) {
+        trackActionType = @"leanback-view";
+    }
+    
+    switch (activityType) {
+        case ALL:
+            [allActivitiesListView trackAction:trackActionType forVideo:video.videoId];
+            break;
+            
+        case FACEBOOK_ONLY:
+            [facebookOnlyActivitiesListView trackAction:trackActionType forVideo:video.videoId];
+            break;
+            
+        case WATCHLR_ONLY:
+            [watchlrOnlyActivitiesListView trackAction:trackActionType forVideo:video.videoId];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void) playVideo:(VideoObject*)video {
+    switch (activityType) {
+        case ALL: {
+            if (allActivitiesVideoPlayerViewController == nil) {
+                allActivitiesVideoPlayerViewController = [[VideoPlayerViewController alloc] init];
+                [allActivitiesListView setVideoPlayerViewControllerCallbacks:allActivitiesVideoPlayerViewController];
+            }
+            
+            [self playVideo:video inVideoPlayerViewController:allActivitiesVideoPlayerViewController];
+            break;
+        }
+            
+        case FACEBOOK_ONLY: {
+            if (facebookOnlyActivitiesVideoPlayerViewController == nil) {
+                facebookOnlyActivitiesVideoPlayerViewController = [[VideoPlayerViewController alloc] init];
+                [facebookOnlyActivitiesListView setVideoPlayerViewControllerCallbacks:facebookOnlyActivitiesVideoPlayerViewController];
+            }
+            
+            [self playVideo:video inVideoPlayerViewController:facebookOnlyActivitiesVideoPlayerViewController];
+            break;
+        }
+            
+        case WATCHLR_ONLY: {
+            if (watchlrOnlyActivitiesVideoPlayerViewController == nil) {
+                watchlrOnlyActivitiesVideoPlayerViewController = [[VideoPlayerViewController alloc] init];
+                [watchlrOnlyActivitiesListView setVideoPlayerViewControllerCallbacks:watchlrOnlyActivitiesVideoPlayerViewController];
+            }
+            
+            [self playVideo:video inVideoPlayerViewController:watchlrOnlyActivitiesVideoPlayerViewController];
+            break;
+        }
+            
+        default:
+            break;
+    }
+}
+
+- (void) closeVideoPlayer {
+    switch (activityType) {
+        case ALL: {
+            if (allActivitiesVideoPlayerViewController != nil) {
+                [allActivitiesVideoPlayerViewController closePlayer];
+            }
+            break;
+        }
+            
+        case FACEBOOK_ONLY: {
+            if (facebookOnlyActivitiesVideoPlayerViewController != nil) {
+                [facebookOnlyActivitiesVideoPlayerViewController closePlayer];
+            }
+            break;
+        }
+            
+        case WATCHLR_ONLY: {
+            if (watchlrOnlyActivitiesVideoPlayerViewController != nil) {
+                [watchlrOnlyActivitiesVideoPlayerViewController closePlayer];
+            }
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+}
+
+- (void) sendAllVideosFinishedMessage:(NSNumber*)nextButtonClicked {
+    switch (activityType) {
+        case ALL: {
+            if (allActivitiesVideoPlayerViewController != nil) {
+                [allActivitiesVideoPlayerViewController sendAllVideosFinishedMessage:[nextButtonClicked boolValue]];
+            }
+            break;
+        }
+            
+        case FACEBOOK_ONLY: {
+            if (facebookOnlyActivitiesVideoPlayerViewController != nil) {
+                [facebookOnlyActivitiesVideoPlayerViewController sendAllVideosFinishedMessage:[nextButtonClicked boolValue]];
+            }
+            break;
+        }
+            
+        case WATCHLR_ONLY: {
+            if (watchlrOnlyActivitiesVideoPlayerViewController != nil) {
+                [watchlrOnlyActivitiesVideoPlayerViewController sendAllVideosFinishedMessage:[nextButtonClicked boolValue]];
+            }
+            break;
+        }
+            
+        default:
+            break;
+    }
+}
+
+
 // --------------------------------------------------------------------------------
 //                             Request Callbacks
 // --------------------------------------------------------------------------------
@@ -365,12 +530,18 @@
 
 - (void) onTabActivate {
     isActiveTab = true;
-    [self onClickRefresh];
+    if (self.navigationController.visibleViewController == self) {
+        [self onClickRefresh];
+    }
 }
 
 - (void) onApplicationBecomeInactive {
     isActiveTab = true;
     [self onTabInactivate];
+}
+
+- (BOOL) shouldRotate {
+    return NO;
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "Request.h"
 #import "Logger.h"
 #import "UrlUtils.h"
+#import "DeviceUtils.h"
 
 @implementation Request
 
@@ -79,7 +80,9 @@
 	
 	// do the request
 	NSMutableURLRequest* urlRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
-    [urlRequest setValue: @"AppleCoreMedia/1.0.0.8H7 (iPad; U; CPU OS 4_3_2 like Mac OS X; en_us)" forHTTPHeaderField:@"User-Agent"];
+    NSString* version = [[DeviceUtils version] stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+    NSString* userAgentString = [NSString stringWithFormat:@"AppleCoreMedia/1.0.0.8H7 (%@; U; CPU OS %@ like Mac OS X; en_us)", ([DeviceUtils isIphone] ? @"iPhone" : @"iPad"), version];
+    [urlRequest setValue: userAgentString forHTTPHeaderField:@"User-Agent"];
     
 	urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
 	[urlRequest release];

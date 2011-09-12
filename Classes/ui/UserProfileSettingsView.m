@@ -238,7 +238,7 @@
                 }
             } else {
                 if (![[NSThread currentThread] isCancelled]) {
-                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 50, userProfile.normalPictureImage.size.height);
+                    userProfileImageView.frame = CGRectMake(userProfileImageView.frame.origin.x, userProfileImageView.frame.origin.y, 100, userProfile.normalPictureImage.size.height);
                     [userProfileImageView performSelectorOnMainThread:@selector(setImage:) withObject:userProfile.normalPictureImage waitUntilDone:YES];
                     userProfileImageView.hidden = NO;
                 }
@@ -336,7 +336,7 @@
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     [userProfile setProfileImageLoadedCallback:[Callback create:self selector:@selector(onUserImageLoaded:)]];
     if (DeviceUtils.isIphone) {
-        [userProfile loadUserImage:@"small"];
+        [userProfile loadUserImage:@"square"];
     } else {
         [userProfile loadUserImage:@"normal"];
     }

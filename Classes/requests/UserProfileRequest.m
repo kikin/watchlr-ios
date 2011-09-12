@@ -43,17 +43,24 @@
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getUserProfile:(NSString*)username {
+- (void) getUserProfile:(int)userId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/user", WATCHLR_COM_URL];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setValue:[NSNumber numberWithInt:userId] forKey:@"user_id"];
+    [self doUserProfileRequest:requestUrl withParams:params];
+}
+
+- (void) getUserProfileForName:(NSString*)username {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/user", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
     [params setValue:username forKey:@"username"];
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getPeopleUserFollows:(NSString*)username forPage:(int)page withFollowersCount:(int)followersCount {
+- (void) getPeopleUserFollows:(int)userId forPage:(int)page withFollowersCount:(int)followersCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/followers", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-    [params setValue:username forKey:@"username"];
+    [params setValue:[NSNumber numberWithInt:userId] forKey:@"user_id"];
     [params setObject:[NSString stringWithFormat:@"%d", (followersCount > 0 ? followersCount : 10)] forKey:@"count"];
     
     // send the page index only if you are loading more videos
@@ -63,10 +70,10 @@
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getPeopleFollowingUser:(NSString*)username forPage:(int)page withFollowingCount:(int)followingCount {
+- (void) getPeopleFollowingUser:(int)userId forPage:(int)page withFollowingCount:(int)followingCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/following", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-    [params setValue:username forKey:@"username"];
+    [params setValue:[NSNumber numberWithInt:userId] forKey:@"user_id"];
     [params setObject:[NSString stringWithFormat:@"%d", (followingCount > 0 ? followingCount : 10)] forKey:@"count"];
     
     // send the page index only if you are loading more videos
@@ -76,10 +83,10 @@
     [self doUserProfileRequest:requestUrl withParams:params];
 }
 
-- (void) getLikedVideosByUser:(NSString*)username forPage:(int)page withVideosCount:(int)videosCount {
+- (void) getLikedVideosByUser:(int)userId forPage:(int)page withVideosCount:(int)videosCount {
     NSString* requestUrl = [NSString stringWithFormat:@"%@/api/liked_videos", WATCHLR_COM_URL];
     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-    [params setValue:username forKey:@"username"];
+    [params setValue:[NSNumber numberWithInt:userId] forKey:@"user_id"];
     [params setObject:[NSString stringWithFormat:@"%d", (videosCount > 0 ? videosCount : 10)] forKey:@"count"];
     
     // send the page index only if you are loading more videos

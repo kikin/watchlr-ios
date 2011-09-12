@@ -17,39 +17,48 @@
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         label1 = [[UILabel alloc] init];
-        label1.font = [UIFont systemFontOfSize:18];
         label1.numberOfLines = 1;
         label1.backgroundColor = [UIColor clearColor];
         label1.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:label1]; 
         
         label2 = [[UILabel alloc] init];
-        label2.font = [UIFont systemFontOfSize:18];
         label2.numberOfLines = 1;
         label2.backgroundColor = [UIColor clearColor];
         label2.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:label2]; 
         
         label3 = [[UILabel alloc] init];
-        label3.font = [UIFont systemFontOfSize:18];
         label3.numberOfLines = 1;
         label3.backgroundColor = [UIColor clearColor];
         label3.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:label3]; 
         
         label4 = [[UILabel alloc] init];
-        label4.font = [UIFont systemFontOfSize:18];
         label4.numberOfLines = 1;
         label4.backgroundColor = [UIColor clearColor];
         label4.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:label4]; 
         
         label5 = [[UILabel alloc] init];
-        label5.font = [UIFont systemFontOfSize:18];
         label5.numberOfLines = 1;
         label5.backgroundColor = [UIColor clearColor];
         label5.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self addSubview:label5];
+        
+        if (DeviceUtils.isIphone) {
+            label1.font = [UIFont systemFontOfSize:13];
+            label2.font = [UIFont systemFontOfSize:13];
+            label3.font = [UIFont systemFontOfSize:13];
+            label4.font = [UIFont systemFontOfSize:13];
+            label5.font = [UIFont systemFontOfSize:13];
+        } else {
+            label1.font = [UIFont systemFontOfSize:18];
+            label2.font = [UIFont systemFontOfSize:18];
+            label3.font = [UIFont systemFontOfSize:18];
+            label4.font = [UIFont systemFontOfSize:18];
+            label5.font = [UIFont systemFontOfSize:18];
+        }
     }
     return self;
 }
@@ -109,12 +118,12 @@
     links = [activityHeadingLabels retain];
     ActivityStringPair* pair = [links objectAtIndex:0];
     label1.text = pair.key;
-    label1.frame = CGRectMake(0, 0, [label1.text sizeWithFont:label1.font].width, self.frame.size.height);
     if ([pair.value length] > 0) {
         label1.textColor = [UIColor colorWithRed:(42.0/255.0) green:(172.0/255.0) blue:(225.0/255.0) alpha:1.0];
     } else {
         label1.textColor = [UIColor blackColor];
     }
+    label1.frame = CGRectMake(0, 0, [label1.text sizeWithFont:label1.font].width, self.frame.size.height);
     
     int labelStartPos = label1.frame.size.width;
     

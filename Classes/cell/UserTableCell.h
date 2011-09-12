@@ -16,6 +16,7 @@
 	
     UIImageView* profilePicView;
     UILabel* userNameLabel;
+    UILabel* nameLabel;
 
 	Callback* openUserProfileCallback;
 }

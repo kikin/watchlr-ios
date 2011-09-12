@@ -19,7 +19,12 @@
 	NSString* sessionId = [UserObject getUser].sessionId;
     
     [params setObject:sessionId forKey:@"session_id"];
-    [params setObject:@"iPad" forKey:@"agent"];
+    if (DeviceUtils.isIphone) {
+        [params setObject:@"iPhone" forKey:@"agent"];
+    } else {
+        [params setObject:@"iPad" forKey:@"agent"];
+    }
+    
     [params setObject:@"1.0" forKey:@"version"];
     
     // do request	

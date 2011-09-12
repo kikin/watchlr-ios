@@ -16,6 +16,20 @@
 #import <CommonIos/DeviceUtils.h>
 #import <CommonIos/Callback.h>
 
+@interface CustomizedTabBarController : UITabBarController {
+}
+@end
+
+
+@implementation CustomizedTabBarController 
+
+- (BOOL) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    UINavigationController* navigationController = (UINavigationController*) self.selectedViewController;
+    return [navigationController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
+}
+
+@end
+
 @implementation KikinVideoAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
@@ -123,7 +137,7 @@
     profileTabNavigationController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"My Profile" image:profileTabImage tag:1] autorelease];
                                                                                                  
     // create the tabbed view
-    UITabBarController* tabBarController = [[[UITabBarController alloc] init] autorelease];
+    CustomizedTabBarController* tabBarController = [[[CustomizedTabBarController alloc] init] autorelease];
     [tabBarController setViewControllers:[NSArray arrayWithObjects:activitiesTabNavigationController, savedTabNavigationController, likedTabNavigationController, profileTabNavigationController, nil] animated:YES];
     // tabBarController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [tabBarController setSelectedViewController:activitiesTabNavigationController];

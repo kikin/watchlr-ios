@@ -32,34 +32,51 @@
     [params release];
 }
 
-- (void) addVideo:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/save/%d", WATCHLR_COM_URL, video.videoId];
+- (void) addVideo:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/save/%d", WATCHLR_COM_URL, videoId];
     [self doVideoRequest:requestUrl withParams:nil];
 }
 
-- (void) deleteVideo:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/remove/%d", WATCHLR_COM_URL, video.videoId];
+- (void) deleteVideo:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/remove/%d", WATCHLR_COM_URL, videoId];
     [self doVideoRequest:requestUrl withParams:nil];
 }
 
-- (void) likeVideo:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/like/%d", WATCHLR_COM_URL, video.videoId];
+- (void) likeVideo:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/like/%d", WATCHLR_COM_URL, videoId];
     [self doVideoRequest:requestUrl withParams:nil];
 }
 
-- (void) unlikeVideo:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/unlike/%d", WATCHLR_COM_URL, video.videoId];
+- (void) unlikeVideo:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/unlike/%d", WATCHLR_COM_URL, videoId];
     [self doVideoRequest:requestUrl withParams:nil];
 }
 
-- (void) getSeekTime:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d", WATCHLR_COM_URL, video.videoId];
+- (void) getSeekTime:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d", WATCHLR_COM_URL, videoId];
     [self doVideoRequest:requestUrl withParams:nil];
 }
 
-- (void) updateSeekTime:(NSString*)seekTime forVideo:(VideoObject*)video {
-    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d/%@", WATCHLR_COM_URL, video.videoId, seekTime];
+- (void) updateSeekTime:(NSString*)seekTime forVideo:(int)videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/seek/%d/%@", WATCHLR_COM_URL, videoId, seekTime];
     [self doVideoRequest:requestUrl withParams:nil];
+}
+
+- (void) getVideoDetail:(int) videoId {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/get/%d", WATCHLR_COM_URL, videoId];
+    [self doVideoRequest:requestUrl withParams:nil];
+}
+
+- (void) getLikedByUsers:(int)videoId forPage:(int)pageNumber withLikedByUsersCount:(int)likedByUsersCount {
+    NSString* requestUrl = [NSString stringWithFormat:@"%@/api/liked_by/%d", WATCHLR_COM_URL, videoId];
+    NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
+    [params setObject:[NSString stringWithFormat:@"%d", (likedByUsersCount > 0 ? likedByUsersCount : 10)] forKey:@"count"];
+    
+    // send the page index only if you are loading more videos
+    if (pageNumber > -1) {
+        [params setObject:[NSString stringWithFormat:@"%d", pageNumber] forKey:@"page"];
+    }
+    [self doVideoRequest:requestUrl withParams:params];
 }
 
 - (id) processReceivedString: (NSString*)receivedString {

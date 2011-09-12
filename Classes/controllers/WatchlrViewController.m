@@ -35,8 +35,12 @@
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // return !DeviceUtils.isIphone;
-    return YES;
+    if (DeviceUtils.isIphone) {
+//        return [self shouldRotate] || (interfaceOrientation == UIInterfaceOrientationPortrait);
+        return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    } else {
+        return YES;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,6 +80,10 @@
 
 - (void) onApplicationBecomeInactive {
     // subclasses should implement this method
+}
+
+- (BOOL) shouldRotate {
+    return NO;
 }
 
 @end
