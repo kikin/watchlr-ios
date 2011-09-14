@@ -24,13 +24,13 @@ const char* FB_APP_ID = "220283271338035";
 	view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	self.view = view;
 	[view release];
-	
+    
 	// add the kikin logo in the middle
-	UIImageView* logoImage = [[[UIImageView alloc] init] autorelease];
-	logoImage.frame = CGRectMake((view.frame.size.width-350)/2, (view.frame.size.height-350)/2, 350, 350);
-	logoImage.image = [UIImage imageNamed:@"watchlr_favicon_big.png"];
-	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-	[view addSubview:logoImage];
+//	UIImageView* logoImage = [[[UIImageView alloc] init] autorelease];
+//	logoImage.frame = CGRectMake((view.frame.size.width-350)/2, (view.frame.size.height-350)/2, 350, 350);
+//	logoImage.image = [UIImage imageNamed:@"watchlr_favicon_big.png"];
+//	logoImage.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+//	[view addSubview:logoImage];
 	
 	// create the connect view
 	connectMainView = [[ConnectMainView alloc] initWithFrame:CGRectMake((view.frame.size.width-500)/2, (view.frame.size.height-200)/2, 500, 200)];

@@ -19,24 +19,26 @@
 		// add the rounded rect view over the logo
 		self.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.8];
 		self.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-		self.layer.cornerRadius = 5.0f;
+//		self.layer.cornerRadius = 2.0f;
 		self.layer.borderWidth = 1.0f;
 		// self.layer.opacity = 0.95f;
         
         // create the profile button
         userProfileButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Settings"]];
         [userProfileButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [userProfileButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
+        [userProfileButton setTintColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0]];
         [userProfileButton setMomentary:YES];
         [userProfileButton addTarget:self action:@selector(onClickProfileButton:) forControlEvents:UIControlEventValueChanged];
+        userProfileButton.selectedSegmentIndex = 0;
         [self addSubview:userProfileButton];
         
         // create the feedback button
         feedbackButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Feedback"]];
         [feedbackButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [feedbackButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
+        [feedbackButton setTintColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0]];
         [feedbackButton setMomentary:YES];
         [feedbackButton addTarget:self action:@selector(onClickFeedbackButton:) forControlEvents:UIControlEventValueChanged];
+        feedbackButton.selectedSegmentIndex = 0;
         [self addSubview:feedbackButton];
         
         // create the logout button
@@ -51,7 +53,7 @@
             // create the cancel button
             cancelButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"Cancel"]];
             [cancelButton setSegmentedControlStyle:UISegmentedControlStyleBar];
-            [cancelButton setTintColor:[UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:1.0]];
+            [cancelButton setTintColor:[UIColor darkGrayColor]];
             [cancelButton setMomentary:YES];
             [cancelButton addTarget:self action:@selector(onClickCancelButton:) forControlEvents:UIControlEventValueChanged];
             [self addSubview:cancelButton];
@@ -87,12 +89,25 @@
     [self setHidden:YES];
 }
 
+- (void) changeButtonTextColor: (UIView*)aView {
+    for (UIView* view in [aView subviews]) {
+        if ([view isKindOfClass:[UILabel class]]) {
+            [(UILabel*)view setTextColor:[UIColor blackColor]];
+        } else {
+            [self changeButtonTextColor:view];
+        }
+    }
+}
+
 -(void) showUserSettings {
+    [self performSelector:@selector(changeButtonTextColor:) withObject:userProfileButton];
+    [self performSelector:@selector(changeButtonTextColor:) withObject:feedbackButton];
+    
     if (DeviceUtils.isIphone) {
-        userProfileButton.frame = CGRectMake(5, self.frame.size.height-135, self.frame.size.width - 10, 35);
-        feedbackButton.frame = CGRectMake(5, self.frame.size.height-90, self.frame.size.width - 10, 35);
-        logoutButton.frame = CGRectMake(5, self.frame.size.height-180, self.frame.size.width - 10, 35);
-        cancelButton.frame = CGRectMake(5, self.frame.size.height-45, self.frame.size.width - 10, 35);
+        userProfileButton.frame = CGRectMake(5, self.frame.size.height-145, self.frame.size.width - 10, 35);
+        feedbackButton.frame = CGRectMake(5, self.frame.size.height-100, self.frame.size.width - 10, 35);
+        logoutButton.frame = CGRectMake(5, self.frame.size.height- 190, self.frame.size.width - 10, 35);
+        cancelButton.frame = CGRectMake(5, self.frame.size.height - 45, self.frame.size.width - 10, 35);
     } else {
         userProfileButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-135, 200, 35);
         feedbackButton.frame = CGRectMake(self.frame.size.width - 205, self.frame.size.height-90, 200, 35);

@@ -94,6 +94,10 @@
     self.activity_heading = [data objectForKey:@"activity_heading"] != [NSNull null] ? [data objectForKey:@"activity_heading"] : nil;
     self.video = [data objectForKey:@"video"] != [NSNull null] ? [[[VideoObject alloc] initFromDictionary:[data objectForKey:@"video"]] autorelease] : nil;
     
+    if (self.video != nil) {
+        self.video.timestamp = self.timestamp;
+    }
+    
     if (self.activity_heading != nil) {
         activityHeadingLabelsList = [[NSMutableArray alloc] initWithCapacity:5];
         [self getActivityHeadingLabels:activityHeadingLabelsList];
@@ -119,6 +123,8 @@
     if ([data objectForKey:@"video"] != [NSNull null]) {
         [video updateFromDictionary:[data objectForKey:@"video"]];
     }
+    
+    video.timestamp = timestamp;
     
     if (activityHeadingLabelsList != nil) {
         [activityHeadingLabelsList release];

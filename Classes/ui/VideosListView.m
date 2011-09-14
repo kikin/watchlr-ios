@@ -682,7 +682,7 @@
 //		[alertView show];
 //		[alertView release];
 		
-		LOG_ERROR(@"request success but failed to delete video: %@", response.errorMessage);
+		LOG_ERROR(@"request success but failed to update video information: %@", response.errorMessage);
 	}
 }
 
@@ -694,7 +694,7 @@
 //	[alertView show];
 //	[alertView release];
 	
-	LOG_ERROR(@"failed to delete video: %@", errorMessage);
+	LOG_ERROR(@"failed to update video information: %@", errorMessage);
 }
 
 // --------------------------------------------------------------------------------

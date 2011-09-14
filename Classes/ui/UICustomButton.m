@@ -13,20 +13,24 @@
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
-		// add the rounded rect view over the logo
-//		self.backgroundColor = [UIColor colorWithRed:215.0/255.0 green:235.0/255.0 blue:255.0/255.0 alpha:1.0];
 		self.layer.cornerRadius = 5.0f;
-		self.layer.borderWidth = 0.2f;
-
-//        CAGradientLayer *gradient = [CAGradientLayer layer];
-//        gradient.frame = self.bounds;
-//        gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor whiteColor] CGColor], (id)[[UIColor blackColor] CGColor], nil];
-//        [self.layer insertSublayer:gradient atIndex:0];
-//        self.layer.shadowRadius = 5.0f;
-//		self.layer.opacity = 0.8f;
-        
-
 		
+        if (DeviceUtils.isIphone) {
+            UIScreen *screen = [UIScreen mainScreen];
+            BOOL isHighRes;
+            
+            if ([screen respondsToSelector:@selector(scale)]) {
+                isHighRes = ([screen scale] > 1);
+            } else {
+                isHighRes = NO;
+            }
+            
+            if (isHighRes) {
+                self.layer.borderWidth = 0.2f;
+            } else {
+                self.layer.borderWidth = 0.4f;
+            }
+        }
     }
     return self;
 }
@@ -47,9 +51,9 @@
     glossGradient = CGGradientCreateWithColorComponents(rgbColorspace, components, locations, num_locations);
     
     CGRect currentBounds = self.bounds;
-    CGPoint topCenter = CGPointMake(CGRectGetMidX(currentBounds), 0.0f);
+    CGPoint topCenter = CGPointMake(CGRectGetMidX(currentBounds), 0);
     CGPoint midCenter = CGPointMake(CGRectGetMidX(currentBounds), CGRectGetMaxY(currentBounds));
-    CGContextDrawLinearGradient(currentContext, glossGradient, topCenter, midCenter, 0);
+    CGContextDrawLinearGradient(currentContext, glossGradient, topCenter, midCenter, kCGGradientDrawsBeforeStartLocation);
     
     CGGradientRelease(glossGradient);
     CGColorSpaceRelease(rgbColorspace); 

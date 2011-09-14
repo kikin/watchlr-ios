@@ -60,6 +60,7 @@
         optionsButtonList.delegate = self;
         optionsButtonList.dataSource = self;
         optionsButtonList.allowsSelection = YES;
+        optionsButtonList.scrollEnabled = NO;
         [self addSubview:optionsButtonList];
     }
     

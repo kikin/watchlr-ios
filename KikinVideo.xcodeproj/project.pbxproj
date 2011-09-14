@@ -26,8 +26,8 @@
 		2608650C13F5B7470081C53C /* ActivityListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608650B13F5B7470081C53C /* ActivityListView.m */; };
 		2608650F13F6366C0081C53C /* UserProfileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608650E13F6366C0081C53C /* UserProfileView.m */; };
 		2608651213FA17580081C53C /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2608651113FA17580081C53C /* WebViewController.m */; };
+		2630A13214205CCB00E6C01A /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2630A13114205CCB00E6C01A /* Entitlements.plist */; };
 		265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */; };
-		269B6F6013AADF000019133D /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 269B6F5F13AADEFF0019133D /* Entitlements.plist */; };
 		269B6F6513ABB6880019133D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269B6F6413ABB6880019133D /* MediaPlayer.framework */; };
 		26E00A2B14031C8A007B833A /* white-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E00A2A14031C8A007B833A /* white-gear.png */; };
 		26E00A2E1403290E007B833A /* ActivityFilterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E00A2D1403290D007B833A /* ActivityFilterView.m */; };
@@ -52,6 +52,8 @@
 		26E455811416DAA3007C3A5B /* UserProfileIphoneView.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E455801416DAA3007C3A5B /* UserProfileIphoneView.m */; };
 		26E4558914190FE9007C3A5B /* x_grey_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E4558814190FE9007C3A5B /* x_grey_small.png */; };
 		26E4558F1419372C007C3A5B /* VideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26E4558E1419372C007C3A5B /* VideoPlayerViewController.m */; };
+		26E455911420073F007C3A5B /* watchlr_logo_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E455901420073E007C3A5B /* watchlr_logo_blue.png */; };
+		26E4559314200898007C3A5B /* facebook_signin_img.png in Resources */ = {isa = PBXBuildFile; fileRef = 26E4559214200897007C3A5B /* facebook_signin_img.png */; };
 		26EA177E13F2FA3900291CAC /* VideoTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA177C13F2FA3900291CAC /* VideoTableCell.m */; };
 		26EA178613F2FAEA00291CAC /* PListFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178413F2FAEA00291CAC /* PListFile.m */; };
 		26EA178713F2FAEA00291CAC /* UserDataFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 26EA178513F2FAEA00291CAC /* UserDataFile.m */; };
@@ -375,9 +377,9 @@
 		2608650E13F6366C0081C53C /* UserProfileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserProfileView.m; path = ui/UserProfileView.m; sourceTree = "<group>"; };
 		2608651013FA17570081C53C /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewController.h; path = controllers/WebViewController.h; sourceTree = "<group>"; };
 		2608651113FA17580081C53C /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebViewController.m; path = controllers/WebViewController.m; sourceTree = "<group>"; };
+		2630A13114205CCB00E6C01A /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		264DBC3613F448B8003E6E7E /* UserActivityListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserActivityListRequest.h; path = requests/UserActivityListRequest.h; sourceTree = "<group>"; };
 		265A5BE613C3AB9200CE8FBD /* watchlr_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = watchlr_icon.png; sourceTree = "<group>"; };
-		269B6F5F13AADEFF0019133D /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		269B6F6413ABB6880019133D /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		26E00A2A14031C8A007B833A /* white-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "white-gear.png"; path = "images/white-gear.png"; sourceTree = "<group>"; };
 		26E00A2C14032905007B833A /* ActivityFilterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivityFilterView.h; path = ui/ActivityFilterView.h; sourceTree = "<group>"; };
@@ -413,6 +415,8 @@
 		26E4558814190FE9007C3A5B /* x_grey_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = x_grey_small.png; path = images/x_grey_small.png; sourceTree = "<group>"; };
 		26E4558D1419372B007C3A5B /* VideoPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoPlayerViewController.h; path = controllers/VideoPlayerViewController.h; sourceTree = "<group>"; };
 		26E4558E1419372C007C3A5B /* VideoPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPlayerViewController.m; path = controllers/VideoPlayerViewController.m; sourceTree = "<group>"; };
+		26E455901420073E007C3A5B /* watchlr_logo_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = watchlr_logo_blue.png; path = images/watchlr_logo_blue.png; sourceTree = "<group>"; };
+		26E4559214200897007C3A5B /* facebook_signin_img.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = facebook_signin_img.png; path = images/facebook_signin_img.png; sourceTree = "<group>"; };
 		26EA177A13F2FA2E00291CAC /* VideoTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoTableCell.h; path = cell/VideoTableCell.h; sourceTree = "<group>"; };
 		26EA177C13F2FA3900291CAC /* VideoTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoTableCell.m; path = cell/VideoTableCell.m; sourceTree = "<group>"; };
 		26EA177F13F2FA7F00291CAC /* EventsLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventsLocation.h; path = utils/logger/EventsLocation.h; sourceTree = "<group>"; };
@@ -975,8 +979,8 @@
 		29B97314FDCFA39411CA2CEA /* KikinVideo */ = {
 			isa = PBXGroup;
 			children = (
+				2630A13114205CCB00E6C01A /* Entitlements.plist */,
 				26E00A53140ED419007B833A /* QuartzCore.framework */,
-				269B6F5F13AADEFF0019133D /* Entitlements.plist */,
 				26E3FFDC13A4893C00F35642 /* libCommonIos.a */,
 				26E3FFCB13A4831E00F35642 /* CommonIos.xcodeproj */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -1297,6 +1301,7 @@
 				26EA17FB13F2FEED00291CAC /* closeX.png */,
 				26EA17FC13F2FEED00291CAC /* default_video_icon.png */,
 				26E00A7814104750007B833A /* detail_disclosure.png */,
+				26E4559214200897007C3A5B /* facebook_signin_img.png */,
 				26EA17FD13F2FEED00291CAC /* fwd_arrow.png */,
 				26EA17FE13F2FEED00291CAC /* heart_grey.png */,
 				26E00A6E14102594007B833A /* heart_grey_small.png */,
@@ -1309,6 +1314,7 @@
 				26EA180313F2FEED00291CAC /* watchlr_favicon_big1.png */,
 				26EA180413F2FEED00291CAC /* watchlr_icon.png */,
 				26EA180513F2FEED00291CAC /* watchlr_icon_512x512.png */,
+				26E455901420073E007C3A5B /* watchlr_logo_blue.png */,
 				26EA180613F2FEED00291CAC /* watchlr_logo.png */,
 				26E00A2A14031C8A007B833A /* white-gear.png */,
 				26EA180713F2FEED00291CAC /* whiteArrow.png */,
@@ -1611,7 +1617,6 @@
 				357A0A561316AEF30050C2CA /* 97-puzzle.png in Resources */,
 				357A0A571316AEF30050C2CA /* 98-palette.png in Resources */,
 				357A0A581316AEF30050C2CA /* 99-umbrella.png in Resources */,
-				269B6F6013AADF000019133D /* Entitlements.plist in Resources */,
 				265A5BE713C3AB9200CE8FBD /* watchlr_icon.png in Resources */,
 				26E2300613F0503B00DB6D0A /* Icon-72.png in Resources */,
 				26E2300713F0503B00DB6D0A /* Icon-Small-50.png in Resources */,
@@ -1643,6 +1648,9 @@
 				26E00A7414102594007B833A /* save_video_small.png in Resources */,
 				26E00A7914104750007B833A /* detail_disclosure.png in Resources */,
 				26E4558914190FE9007C3A5B /* x_grey_small.png in Resources */,
+				26E455911420073F007C3A5B /* watchlr_logo_blue.png in Resources */,
+				26E4559314200898007C3A5B /* facebook_signin_img.png in Resources */,
+				2630A13214205CCB00E6C01A /* Entitlements.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1732,7 +1740,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1752,56 +1760,11 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = watchlr;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		1D6058950D05DD3E006BFB54 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Classes/KikinVideo_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
-				INFOPLIST_FILE = "KikinVideo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
-				);
-				PRODUCT_NAME = watchlr;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		269B6F6113AADF540019133D /* Ad Hoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PREBINDING = NO;
-				PRODUCT_NAME = "kikin video";
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = "Ad Hoc";
-		};
-		269B6F6213AADF540019133D /* Ad Hoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1826,7 +1789,54 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Ad Hoc";
+			name = Release;
+		};
+		26E4559414204B7F007C3A5B /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PREBINDING = NO;
+				PRODUCT_NAME = "kikin video";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Distribution;
+		};
+		26E4559514204B7F007C3A5B /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: 2B HOLDINGS LLC";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Classes/KikinVideo_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = "KikinVideo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/CommonIos/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"",
+				);
+				PRODUCT_NAME = watchlr;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "DF6339D3-C03C-4A5C-9782-2E31A116C88C";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Distribution;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1871,7 +1881,7 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
-				269B6F6213AADF540019133D /* Ad Hoc */,
+				26E4559514204B7F007C3A5B /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1881,7 +1891,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
-				269B6F6113AADF540019133D /* Ad Hoc */,
+				26E4559414204B7F007C3A5B /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

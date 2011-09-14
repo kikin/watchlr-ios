@@ -289,7 +289,7 @@
     if (indexPath.row == activitiesList.count)
         return 40;
     
-    return DeviceUtils.isIphone ? 135 : 180;
+    return DeviceUtils.isIphone ? 145 : 180;
 }
 
 // --------------------------------------------------------------------------------

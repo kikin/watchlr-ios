@@ -30,12 +30,6 @@
         // set size/positions
 		if (DeviceUtils.isIphone) {
             userImageView.frame = CGRectMake(5, 5, 30, 30);
-			
-            titleLabel.font = [UIFont boldSystemFontOfSize:12];
-            titleLabel.lineBreakMode = UILineBreakModeCharacterWrap | UILineBreakModeTailTruncation;
-            titleLabel.numberOfLines = 3;
-            
-            likesLabel.font = [UIFont boldSystemFontOfSize:20];
 		} else {
             userImageView.frame = CGRectMake(5, 5, 50, 50);
 			videoImageView.frame = CGRectMake(75, 50, 160, 120);
@@ -100,7 +94,7 @@
     if (DeviceUtils.isIphone) {
         
         activityHeading.frame = CGRectMake(userImageView.frame.origin.x + userImageView.frame.size.width + 10, 8, 
-                                           (self.frame.size.width - 70), 10);
+                                           (self.frame.size.width - 70), 20);
         
         videoImageView.frame = CGRectMake(userImageView.frame.origin.x + userImageView.frame.size.width + 10, 
                                           activityHeading.frame.origin.y + activityHeading.frame.size.height + 10, 
@@ -112,24 +106,24 @@
         // set the size for title label
         CGFloat titleLabelHeight = MIN((self.frame.size.height - 30), 
                                        [titleLabel.text sizeWithFont:titleLabel.font 
-                                                        constrainedToSize:CGSizeMake(self.frame.size.width - 180, self.frame.size.height - 65) 
+                                                        constrainedToSize:CGSizeMake(self.frame.size.width - 180, videoImageView.frame.size.height - 22) 
                                                         lineBreakMode:UILineBreakModeCharacterWrap].height);
         
         titleLabel.frame = CGRectMake(videoImageView.frame.origin.x + videoImageView.frame.size.width + 5, 
-                                      activityHeading.frame.origin.y + activityHeading.frame.size.height + 10, 
+                                      videoImageView.frame.origin.y, 
                                       (self.frame.size.width - 180), titleLabelHeight);
         
         faviconImageView.frame = CGRectMake(videoImageView.frame.origin.x + videoImageView.frame.size.width + 5, 
-                                            self.frame.size.height - 57, 16, 16);
+                                            (videoImageView.frame.origin.y + videoImageView.frame.size.height - 16), 16, 16);
         
         dotLabel1.frame = CGRectMake(faviconImageView.frame.origin.x + faviconImageView.frame.size.width + 5, 
-                                     self.frame.size.height - 59, 
+                                     (videoImageView.frame.origin.y + videoImageView.frame.size.height - 18), 
                                      [dotLabel1.text sizeWithFont:dotLabel1.font].width, 
                                      15);
         
         // set the timestamp label position
         timestampLabel.frame = CGRectMake(dotLabel1.frame.origin.x + dotLabel1.frame.size.width + 5, 
-                                          self.frame.size.height - 54, 
+                                          (videoImageView.frame.origin.y + videoImageView.frame.size.height - 13), 
                                           [timestampLabel.text sizeWithFont:timestampLabel.font].width, 
                                           15);
         

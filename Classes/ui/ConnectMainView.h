@@ -10,8 +10,10 @@
 #import <CommonIos/Callback.h>
 
 @interface ConnectMainView : UIView {
-	UILabel* titleLabel;
+	UIImageView* watchlrIcon;
 	UILabel* descriptionLabel;
+    UILabel* footerLabel;
+    UIButton* footerLabelLink;
 	UIButton* loginButton;
 }
 

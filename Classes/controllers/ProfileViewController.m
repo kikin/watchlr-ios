@@ -240,7 +240,7 @@
     if (userSettingsView.hidden) {
         /*userSettingsView.frame = CGRectMake(self.view.frame.size.width - 210, topToolbar.frame.size.height, userSettingsView.frame.size.width, userSettingsView.frame.size.height);*/
         if (DeviceUtils.isIphone) {
-            userSettingsView.frame = CGRectMake(0, self.view.frame.size.height - 190, self.view.frame.size.width, 190);
+            userSettingsView.frame = CGRectMake(0, self.view.frame.size.height - 200, self.view.frame.size.width, 200);
         } else {
             userSettingsView.frame = CGRectMake((self.view.frame.size.width - 210), 0, 210, 145);
         }

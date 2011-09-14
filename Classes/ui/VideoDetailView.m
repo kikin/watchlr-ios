@@ -52,7 +52,6 @@
         descriptionLabel.font = [UIFont systemFontOfSize:12];
         descriptionLabel.editable = NO;
         descriptionLabel.textAlignment = UITextAlignmentLeft;
-        descriptionLabel.layer.borderWidth = 0.2f;
         descriptionLabel.layer.cornerRadius = 5.0f;
         [self addSubview:descriptionLabel];
 		
@@ -126,10 +125,29 @@
         likedByButton.delegate = self;
         likedByButton.dataSource = self;
         likedByButton.allowsSelection = YES;
+        likedByButton.scrollEnabled = NO;
         likedByButton.layer.cornerRadius = 5.0f;
-        likedByButton.layer.borderWidth = 0.2f;
         likedByButton.backgroundColor = [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:0.5];
         [self addSubview:likedByButton];
+        
+        if (DeviceUtils.isIphone) {
+            UIScreen *screen = [UIScreen mainScreen];
+            BOOL isHighRes;
+            
+            if ([screen respondsToSelector:@selector(scale)]) {
+                isHighRes = ([screen scale] > 1);
+            } else {
+                isHighRes = NO;
+            }
+            
+            if (isHighRes) {
+                likedByButton.layer.borderWidth = 0.2f;
+                descriptionLabel.layer.borderWidth = 0.2f;
+            } else {
+                likedByButton.layer.borderWidth = 0.4f;
+                descriptionLabel.layer.borderWidth = 0.4f;
+            }
+        }
         
         videoRemovalAllowed = false;
     }
